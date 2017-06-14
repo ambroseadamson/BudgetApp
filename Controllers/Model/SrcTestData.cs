@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace BudgetApp.Controllers.Model
 {
+    public class SrcTestDataResults
+    {
+        public SrcTestDataResults() {}
+        
+        public string ResultName {set; get;}
+        public IEnumerable<string> Results {set; get;}
+    }
+    
     public class SrcTestDataExt
     {
         public static int ToRandomSrcVal(this Random rnd, int min, int max) => AppCfgExt.ToRandomSrcVal(rnd, min, max);
@@ -32,11 +40,11 @@ namespace BudgetApp.Controllers.Model
 
         // genTestStatementData :: AppCfg -> Date -> (String = Filename|[String = CSV Row])
         // Handler for the REST request "/genTestStatementData" 
-        exports.genTestStatementData = R.curry((appCfg, currentDate) => {
-            const datePropName = 'dateStamp';
-            const fileNamePrefix = 'Statement Download-';
-            const parseDateFmt = 'DD MMM YYYY';
-            const fileNameDateFmt = 'DD-MMM-YYYY';
+        public static SrcTestDataResults GenTestStatementData(AppCfg appCfg, DateTime currentDate) 
+        {
+            var fileNamePrefix = "Statement Download-";
+            var parseDateFmt = "DD MMM YYYY";
+            var fileNameDateFmt = "DD-MMM-YYYY";
 
             // fromTD :: AppCfg -> Date -> int -> int -> double -> Transaction
             fromTD = R.curry((appCfg, dateStamp, transTypeIndex, transNameIndex, amount, useDebit) => {
@@ -45,8 +53,7 @@ namespace BudgetApp.Controllers.Model
             });
 
             let srcValueFns = [
-                () => appCfg,
-                () => AppCfg.toJSONDate(currentDate, exports.toRandomSrcVal(2, 28)), // DateStamp
+                (currDate) => new Transaction() { DateStamp= AppCfg.ToDateStamp(currentDate, AppCfg.ToRandomSrcVal(2, 28))} , // DateStamp
                 () => exports.toRandomSrcVal(1, appCfg.transTypes.length - 1), // TransType
                 () => exports.toRandomSrcVal(0, appCfg.debitNamesOfInterest.length - 1), // DebitName
                 () => AppCfg.toTransAmount(exports.toRandomSrcVal(1, 200), exports.toRandomSrcVal(0, 99)), // Amount in Pounds and Pence
