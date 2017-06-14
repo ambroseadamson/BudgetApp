@@ -19,7 +19,7 @@ namespace BudgetApp.Controllers.Model
         public static int ToRandomSrcVal(this Random rnd, int min, int max) => AppCfgExt.ToRandomSrcVal(rnd, min, max);
 
 
-        public static U ToTransaction<T,U>(this IEnumerable<Func<T,U>> fns) => fns.Aggregate(default<U>, (fn,currVal) => currVal = fn(currVal));
+        public static U ToTransaction<T,U>(this IEnumerable<Func<T,U>> fns) => fns.Aggregate(default<U>, (fn,currVal) => fn(currVal));
 
         public static int ToDayOfMonth(this Transaction transaction) => transaction.DateStamp.Day;
 
@@ -52,13 +52,20 @@ namespace BudgetApp.Controllers.Model
                 return TD.ofTransaction(dateStamp, AppCfg.toTransType(appCfg.transTypes, transTypeIndex), AppCfg.toTransName(transNamesOfInterest, transNameIndex), amount);
             });
 
-            let srcValueFns = [
-                (currDate) => new Transaction() { DateStamp= AppCfg.ToDateStamp(currentDate, AppCfg.ToRandomSrcVal(2, 28))} , // DateStamp
+            var srcValueFns = new List<Func<Transaction,Transaction>> {
+                (currTrans) => { 
+                    return new Transaction() { 
+                        DateStamp= AppCfg.ToDateStamp(AppCfg.ToRandomSrcVal(2, 28))
+                        TransType=currTrans.TransType,
+                        DebitName=currTrans.DebitName,
+                        Amount=currTrans.
+                    };
+                } , // DateStamp
                 () => exports.toRandomSrcVal(1, appCfg.transTypes.length - 1), // TransType
                 () => exports.toRandomSrcVal(0, appCfg.debitNamesOfInterest.length - 1), // DebitName
                 () => AppCfg.toTransAmount(exports.toRandomSrcVal(1, 200), exports.toRandomSrcVal(0, 99)), // Amount in Pounds and Pence
                 () => true
-            ];
+            };
 
         // toCreditTransaction :: [Transaction] -> [Transaction, count = 1]
         let toCreditTransaction = (transactions) => [fromTD(appCfg, R.prop('dateStamp', R.head(transactions)), 0, 0, sumAmounts(transactions), false)];
