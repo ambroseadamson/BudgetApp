@@ -11,13 +11,12 @@ namespace BudgetApp.Controllers.Model
         public static int ToRandomSrcVal(this Random rnd, int min, int max) => AppCfgExt.ToRandomSrcVal(rnd, min, max);
 
 
-        // toTransaction :: ((Transaction|CashReceipt) property type values 1..n -> (Transaction|CashReceipt)) -> [srcValueFn] -> (Transaction|CashReceipt)
-        exports.toTransaction = R.curry((fromTD, fns) => R.apply(fromTD, R.map(fn => fn(), fns)));
+        public static U ToTransaction<T,U>(this IEnumerable<Func<T,U>> fns) => fns.Aggregate(default<U>, (fn,currVal) => currVal = fn(currVal));
 
         public static int ToDayOfMonth(this Transaction transaction) => transaction.DateStamp.Day;
 
         // toOrderedTransactions :: ([int] -> ([Transaction]|[CashReceipt])) -> String -> ([Transaction]|[CashReceipt]) -> ([Transaction]|[CashReceipt])
-        public static IEnumerable<Transaction> ToOrderedTransactions(this IEnumerable<Transaction> transactions) => transactions.OrderBy(transaction => ToDayOfMonth(transaction));
+        public static IEnumerable<T> ToOrderedTransactions(this IEnumerable<T> transactions) => transactions.OrderBy(transaction => ToDayOfMonth(transaction));
 
         public static IEnumerable<int> TransactionRange(AppCfg appCfg) => Enumerable.Range(0, appCfg.numberOfTransactions);
 
