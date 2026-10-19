@@ -1,0 +1,20 @@
+{
+    "income": {
+      "transactions": [
+        {
+          "id": 1,
+          "dateStamp": "2018-04-02T00:00:00",
+          "transType": "BANK CREDIT",
+          "description": "CORDIC",
+          "amount": 923.34
+        }
+      ],
+      "total": 923.34
+    },
+    "expenditure": {
+      "transactions": [],
+      "total": 0
+    },
+    "balance": 923.34,
+    "expSummaryPct": 0
+  }

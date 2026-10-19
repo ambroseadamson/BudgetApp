@@ -1,0 +1,65 @@
+<div *ngIf="isDataLoaded() === true">
+  <mat-sidenav-container class="demo-root">
+    <mat-sidenav #start>
+      <mat-nav-list>
+        <a *ngFor="let group of groups" mat-list-item (click)="onSelectGroup(group)">
+          {{group.name}} : {{ ((group.pct == 0.0) ? 0 : group.pct / 100) | percent}}
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+    <div>
+      <mat-toolbar color="primary">
+        <button mat-icon-button (click)="start.open('mouse')">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span class="demo-toolbar">
+          <h1>{{selectedGroup.name}}</h1>
+        </span>
+      </mat-toolbar>
+      <div #root="dir" dir="ltr" class="demo-content">
+        <div class="container" fxLayout fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="10px" fxLayoutGap.xs="0">
+          <div class="item item-hdr1" fxFlex="35%"></div>
+          <div class="item item-hdr2" fxFlex="12%">
+            <mat-form-field>
+              <input matInput [matDatepicker]="dp" placeholder="Start date" [formControl]="fcStartDate" [min]="minAndMaxDates.minDate"
+                [max]="minAndMaxDates.maxDate">
+              <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker #dp></mat-datepicker>
+            </mat-form-field>
+            <h2>Start Date: {{dateFilter.startDate | date: "dd/MM/yyyy"}}</h2>
+          </div>
+          <div class="item item-hdr3" fxFlex="12%">
+            <mat-form-field>
+              <mat-select placeholder="Date Range" [formControl]="fcDateTypeRange">
+                <mat-option *ngFor="let range of dateRangeTypes" [value]="range">
+                  {{range.type}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <h2>End Date: {{dateFilter.endDate | date: "dd/MM/yyyy"}}</h2>
+          </div>
+          <div class="item item-hdr4" fxFlex="6%">
+            <button mat-raised-btn (click)="onApplyFilter($event)">
+              Apply Filter
+            </button>
+          </div>
+          <div class="item item-hdr5" fxFlex="35%"></div>
+        </div>
+        <div class="container" fxLayout fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="10px" fxLayoutGap.xs="0">
+          <div class="item item-1" fxFlex="50%">
+            <h2>Income</h2>
+            <budgetapp-transaction-summary-data [summaryType]="incSummaryType" [detailsType]="selectedGroup.name"
+              [startDate]="dateFilter.startDate" [endDate]="dateFilter.endDate"></budgetapp-transaction-summary-data>
+          </div>
+          <div class="item item-2" fxFlex="50%">
+            <h2>Expenditure -
+              <span>No. of Items: {{expEntryCount}}</span>
+            </h2>
+            <budgetapp-transaction-summary-data [summaryType]="expSummaryType" [detailsType]="selectedGroup.name"
+              [startDate]="dateFilter.startDate" [endDate]="dateFilter.endDate"></budgetapp-transaction-summary-data>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-sidenav-container>
+</div>

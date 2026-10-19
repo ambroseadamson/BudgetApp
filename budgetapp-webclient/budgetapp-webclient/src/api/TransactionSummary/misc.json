@@ -1,0 +1,39 @@
+{
+  "income": {
+    "transactions": [{
+      "id": 1,
+      "dateStamp": "2018-04-02T00:00:00",
+      "transType": "BANK CREDIT",
+      "description": "CORDIC",
+      "amount": 923.34
+    }],
+    "total": 923.34
+  },
+  "expenditure": {
+    "transactions": [{
+        "id": 10,
+        "dateStamp": "2018-04-03T00:00:00",
+        "transType": "UNPAID TRANSACTION FEE",
+        "description": "SQUIDDLY FISH",
+        "amount": 10.00
+      },
+      {
+        "id": 11,
+        "dateStamp": "2018-04-25T00:00:00",
+        "transType": "DIRECT DEBIT",
+        "description": "FISHLY SQUID",
+        "amount": 10.00
+      },
+      {
+        "id": 12,
+        "dateStamp": "2018-04-26T00:00:00",
+        "transType": "VISA PURCHASE",
+        "description": "DISHLY FID",
+        "amount": 10.00
+      }
+    ],
+    "total": 30.00
+  },
+  "balance": 893.34,
+  "expSummaryPct": 3.249074013906037
+}

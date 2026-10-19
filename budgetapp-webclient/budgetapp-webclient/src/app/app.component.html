@@ -1,0 +1,29 @@
+<div>
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <div>
+        <span class="demo-toolbar">
+          <h1>{{title}}</h1>
+        </span>
+        <span></span>
+        <a mat-button [routerLink]="['/import']" routerLinkActive="router-link-active">
+          <span>
+            <h2>Import</h2>
+          </span>
+        </a>
+        <a mat-button [routerLink]="['/details']" routerLinkActive="router-link-active" [disabled]="isDataLoaded === false">
+          <span>
+            <h2>Details</h2>
+          </span>
+        </a>
+        <a mat-button [routerLink]="['/config']" routerLinkActive="router-link-active">
+          <span>
+            <h2>Config</h2>
+          </span>
+        </a>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <router-outlet></router-outlet>
+</div>
+<!-- </mat-sidenav-container> -->

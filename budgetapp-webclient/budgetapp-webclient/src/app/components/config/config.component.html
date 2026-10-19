@@ -1,0 +1,58 @@
+<mat-sidenav-container class="demo-root">
+  <mat-sidenav #start>
+    <mat-nav-list>
+      <a *ngFor="let groupName of groupNames" mat-list-item (click)="onSelectGroup(groupName)">
+        {{groupName.toUpperCase()}}
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <div>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="start.open('mouse')">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-toolbar>
+    <div #root="dir" dir="ltr" class="demo-content">
+      <div class="container" fxLayout fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="10px" fxLayoutGap.xs="0">
+        <div class="item item-1" fxFlex="45%">
+          <div class="details-container mat-elevation-z8">
+            <div class="details-header">
+              <h1>{{groupOfInterest.groupName.toUpperCase()}}</h1>
+              <mat-selection-list #items>
+                <mat-list-option *ngFor="let transactionName of groupOfInterest.names" (click)="onSelectGroupItem(transactionName)">
+                  {{transactionName}}
+                </mat-list-option>
+              </mat-selection-list>
+            </div>
+          </div>
+        </div>
+        <div class="item item-2" fxFlex="10%">
+          <div class="container" fxLayout="column" fxLayout.xs="column" fxLayoutAlign="center" fxLayoutGap="10px" fxLayoutGap.xs="0">
+            <div>
+              <button mat-raised-btn class="grp-btn" [disabled]="miscItems.selectedOptions.selected.length === 0" (click)="onAddGroupItem($event)">
+                <mat-icon aria-label="Add Group item to config">arrow_back</mat-icon>
+              </button>
+            </div>
+            <div>
+              <button mat-raised-btn class="grp-btn" [disabled]="items.selectedOptions.selected.length === 0" (click)="onRemoveGroupItem($event)">
+                <mat-icon aria-label="Remove Group item from config">arrow_forward</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="item item-3" fxFlex="45%">
+          <div class="details-container mat-elevation-z8">
+            <div class="details-header">
+              <h1>{{miscGroup.groupName.toUpperCase()}}</h1>
+              <mat-selection-list #miscItems>
+                <mat-list-option *ngFor="let transactionName of miscGroup.names" (click)="onSelectMiscGroupItem(transactionName)">
+                  {{transactionName}}
+                </mat-list-option>
+              </mat-selection-list>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-sidenav-container>

@@ -1,0 +1,89 @@
+{
+  "type": "Statement Download",
+  "transactions": [
+    {
+      "id": 1,
+      "dateStamp": "2018-04-02T00:00:00",
+      "transType": "BANK CREDIT",
+      "description": "CORDIC",
+      "amount": 923.34
+    },
+    {
+      "id": 2,
+      "dateStamp": "2018-04-03T00:00:00",
+      "transType": "UNPAID TRANSACTION FEE",
+      "description": "VIRGIN MEDIA PYMTS",
+      "amount": 145.42
+    },
+    {
+      "id": 3,
+      "dateStamp": "2018-04-04T00:00:00",
+      "transType": "ATM WITHDRAWAL",
+      "description": "AMAZON SVCS EUROPE",
+      "amount": 194.46
+    },
+    {
+      "id": 4,
+      "dateStamp": "2018-04-21T00:00:00",
+      "transType": "UNPAID TRANSACTION FEE",
+      "description": "STEPCHANGE",
+      "amount": 196.67
+    },
+    {
+      "id": 5,
+      "dateStamp": "2018-04-22T00:00:00",
+      "transType": "UNPAID TRANSACTION FEE",
+      "description": "E-SAVINGS",
+      "amount": 140.91
+    },
+    {
+      "id": 6,
+      "dateStamp": "2018-04-24T00:00:00",
+      "transType": "ATM WITHDRAWAL",
+      "description": "STEPCHANGE",
+      "amount": 83.54
+    },
+    {
+      "id": 7,
+      "dateStamp": "2018-04-24T00:00:00",
+      "transType": "STANDING ORDER",
+      "description": "SKYE LOANS LTD",
+      "amount": 58.94
+    },
+    {
+      "id": 8,
+      "dateStamp": "2018-04-25T00:00:00",
+      "transType": "DIRECT DEBIT",
+      "description": "PETERBOROUGHCC",
+      "amount": 10.59
+    },
+    {
+      "id": 9,
+      "dateStamp": "2018-04-26T00:00:00",
+      "transType": "VISA PURCHASE",
+      "description": "PETERBOROUGHCC",
+      "amount": 17.41
+    },
+    {
+      "id": 10,
+      "dateStamp": "2018-04-03T00:00:00",
+      "transType": "UNPAID TRANSACTION FEE",
+      "description": "SQUIDDLY FISH",
+      "amount": 10.00
+    },
+    {
+      "id": 11,
+      "dateStamp": "2018-04-25T00:00:00",
+      "transType": "DIRECT DEBIT",
+      "description": "FISHLY SQUID",
+      "amount": 10.00
+    },
+    {
+      "id": 12,
+      "dateStamp": "2018-04-26T00:00:00",
+      "transType": "VISA PURCHASE",
+      "description": "DISHLY FID",
+      "amount": 10.00
+    }
+  ]
+}

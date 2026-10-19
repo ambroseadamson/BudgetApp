@@ -1,0 +1,63 @@
+[
+  {
+    "id": 1,
+    "groupName": "credits",
+    "groupType": "income",
+    "names": ["CORDIC"]
+  },
+  {
+    "id": 2,
+    "groupName": "housekeeping",
+    "groupType": "expense",
+    "names": [
+      "SAINSBURYS S/MKTS PETERBOROUGH GB",
+      "SAINSBURYS S/MKT PETERBOROUGH GB"
+    ]
+  },
+  {
+    "id": 3,
+    "groupName": "bills",
+    "groupType": "expense",
+    "names": [
+      "TV LICENCE MBP",
+      "DGS/RPP DD",
+      "BRITISH GAS SERV",
+      "CHURCHILL INSURANCE",
+      "PETERBOROUGHCC",
+      "BRGAS-ENERGY",
+      "GOCARDLESS LTD",
+      "ANGLIAN WATER",
+      "VIRGIN MEDIA PYMTS",
+      "WHICH 01992822800 GB"
+    ]
+  },
+  {
+    "id": 4,
+    "groupName": "loans",
+    "groupType": "expense",
+    "names": ["NEST MANAGEMENT", "SKYE LOANS LTD", "HALIFAX", "STEPCHANGE"]
+  },
+  {
+    "id": 5,
+    "groupName": "savings",
+    "groupType": "expense",
+    "names": ["E-SAVINGS"]
+  },
+  {
+    "id": 6,
+    "groupName": "tvshopping",
+    "groupType": "expense",
+    "names": [
+      "AMAZON UK MARKETPLACE",
+      "AMAZON UK RETAIL",
+      "AMAZON SVCS EUROPE",
+      "WWW.QVCUK.COM"
+    ]
+  },
+  {
+    "id": 7,
+    "groupName": "misc",
+    "groupType": "expense",
+    "names": ["SQUIDDLY FISH", "FISHLY SQUID", "DISHLY FID"]
+  }
+]

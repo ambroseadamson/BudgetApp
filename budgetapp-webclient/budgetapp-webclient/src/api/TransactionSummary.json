@@ -1,0 +1,50 @@
+{
+  "income": {
+    "transactions": [
+      {
+        "id": 1,
+        "dateStamp": "2018-04-02T00:00:00",
+        "transType": "BANK CREDIT",
+        "description": "CORDIC",
+        "amount": 923.34
+      }
+    ],
+    "total": 923.34
+  },
+  "dateFilter": {
+    "startDate": "2018-04-02T00:00:00",
+    "endDate": "2018-04-26T00:00:00"
+  },
+  "summaryData": [
+    {
+      "name": "housekeeping",
+      "pct": 0,
+      "expEntryCount": 0
+    },
+    {
+      "name": "bills",
+      "pct": 22.03088786362553,
+      "expEntryCount": 3
+    },
+    {
+      "name": "loans",
+      "pct": 36.73078172720774,
+      "expEntryCount": 3
+    },
+    {
+      "name": "savings",
+      "pct": 15.260900643316655,
+      "expEntryCount": 1
+    },
+    {
+      "name": "tvshopping",
+      "pct": 21.06049775813893,
+      "expEntryCount": 1
+    },
+    {
+      "name": "misc",
+      "pct": 3.249074013906037,
+      "expEntryCount": 3
+    }
+  ]
+}
