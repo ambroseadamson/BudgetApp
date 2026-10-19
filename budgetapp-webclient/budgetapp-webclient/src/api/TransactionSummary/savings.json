@@ -1,0 +1,28 @@
+{
+    "income": {
+      "transactions": [
+        {
+          "id": 1,
+          "dateStamp": "2018-04-02T00:00:00",
+          "transType": "BANK CREDIT",
+          "description": "CORDIC",
+          "amount": 923.34
+        }
+      ],
+      "total": 923.34
+    },
+    "expenditure": {
+      "transactions": [
+        {
+          "id": 5,
+          "dateStamp": "2018-04-22T00:00:00",
+          "transType": "UNPAID TRANSACTION FEE",
+          "description": "E-SAVINGS",
+          "amount": 140.91
+        }
+      ],
+      "total": 140.91
+    },
+    "balance": 782.4300000000001,
+    "expSummaryPct": 15.260900643316655
+  }

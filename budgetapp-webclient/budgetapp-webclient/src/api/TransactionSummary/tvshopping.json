@@ -1,0 +1,28 @@
+{
+    "income": {
+      "transactions": [
+        {
+          "id": 1,
+          "dateStamp": "2018-04-02T00:00:00",
+          "transType": "BANK CREDIT",
+          "description": "CORDIC",
+          "amount": 923.34
+        }
+      ],
+      "total": 923.34
+    },
+    "expenditure": {
+      "transactions": [
+        {
+          "id": 3,
+          "dateStamp": "2018-04-04T00:00:00",
+          "transType": "ATM WITHDRAWAL",
+          "description": "AMAZON SVCS EUROPE",
+          "amount": 194.46
+        }
+      ],
+      "total": 194.46
+    },
+    "balance": 728.88,
+    "expSummaryPct": 21.06049775813893
+  }

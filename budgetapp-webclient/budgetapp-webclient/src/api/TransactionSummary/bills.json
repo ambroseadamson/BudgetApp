@@ -1,0 +1,42 @@
+{
+    "income": {
+      "transactions": [
+        {
+          "id": 1,
+          "dateStamp": "2018-04-02T00:00:00",
+          "transType": "BANK CREDIT",
+          "description": "CORDIC",
+          "amount": 923.34
+        }
+      ],
+      "total": 923.34
+    },
+    "expenditure": {
+      "transactions": [
+        {
+          "id": 2,
+          "dateStamp": "2018-04-03T00:00:00",
+          "transType": "UNPAID TRANSACTION FEE",
+          "description": "VIRGIN MEDIA PYMTS",
+          "amount": 145.42
+        },
+        {
+          "id": 8,
+          "dateStamp": "2018-04-25T00:00:00",
+          "transType": "DIRECT DEBIT",
+          "description": "PETERBOROUGHCC",
+          "amount": 10.59
+        },
+        {
+          "id": 9,
+          "dateStamp": "2018-04-26T00:00:00",
+          "transType": "VISA PURCHASE",
+          "description": "PETERBOROUGHCC",
+          "amount": 17.41
+        }
+      ],
+      "total": 203.42
+    },
+    "balance": 719.9200000000001,
+    "expSummaryPct": 22.03088786362553
+  }

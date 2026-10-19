@@ -1,0 +1,42 @@
+{
+    "income": {
+      "transactions": [
+        {
+          "id": 1,
+          "dateStamp": "2018-04-02T00:00:00",
+          "transType": "BANK CREDIT",
+          "description": "CORDIC",
+          "amount": 923.34
+        }
+      ],
+      "total": 923.34
+    },
+    "expenditure": {
+      "transactions": [
+        {
+          "id": 4,
+          "dateStamp": "2018-04-21T00:00:00",
+          "transType": "UNPAID TRANSACTION FEE",
+          "description": "STEPCHANGE",
+          "amount": 196.67
+        },
+        {
+          "id": 6,
+          "dateStamp": "2018-04-24T00:00:00",
+          "transType": "ATM WITHDRAWAL",
+          "description": "STEPCHANGE",
+          "amount": 83.54
+        },
+        {
+          "id": 7,
+          "dateStamp": "2018-04-24T00:00:00",
+          "transType": "STANDING ORDER",
+          "description": "SKYE LOANS LTD",
+          "amount": 58.94
+        }
+      ],
+      "total": 339.15
+    },
+    "balance": 584.19,
+    "expSummaryPct": 36.73078172720774
+  }

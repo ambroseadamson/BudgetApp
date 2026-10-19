@@ -1,0 +1,27 @@
+<div class="form-group">
+  <input type="file" id="file" (change)="handleFileInput($event.target.files)">
+</div>
+<br>
+<div>
+  <div class="details-container mat-elevation-z8">
+    <div class="details-header">
+      <h2>{{inputData.type.toUpperCase()}}</h2>
+
+      <div class="spinner-container" *ngIf="dataSource.loading$ | async">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <mat-table #table [dataSource]="dataSource">
+
+        <!-- Data Column -->
+        <ng-container matColumnDef="data">
+          <mat-header-cell *matHeaderCellDef> data </mat-header-cell>
+          <mat-cell *matCellDef="let dataRow"> {{dataRow}} </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    </div>
+  </div>
+</div>
