@@ -1,0 +1,338 @@
+{
+    "GroupTypesCfgEx": {
+        "CreditTypesOfInterest": [
+            {
+                "Id": 1,
+                "TransTypeFK": 1
+            }
+        ],
+        "DebitTypesOfInterest": [
+            {
+                "Id": 1,
+                "TransTypeFK": 2
+            },
+            {
+                "Id": 2,
+                "TransTypeFK": 3
+            },
+            {
+                "Id": 3,
+                "TransTypeFK": 4
+            },
+            {
+                "Id": 4,
+                "TransTypeFK": 5
+            },
+            {
+                "Id": 5,
+                "TransTypeFK": 6
+            },
+            {
+                "Id": 6,
+                "TransTypeFK": 7
+            },
+            {
+                "Id": 7,
+                "TransTypeFK": 8
+            }
+        ],
+        "TransNames": [
+            {
+                "Id": 1,
+                "Name": "CORDIC"
+            },
+            {
+                "Id": 2,
+                "Name": "SAINSBURYS S/MKTS PETERBOROUGH GB"
+            },
+            {
+                "Id": 3,
+                "Name": "SAINSBURYS S/MKT PETERBOROUGH GB"
+            },
+            {
+                "Id": 4,
+                "Name": "TV LICENCE MBP"
+            },
+            {
+                "Id": 5,
+                "Name": "DGS/RPP DD"
+            },
+            {
+                "Id": 6,
+                "Name": "BRITISH GAS SERV"
+            },
+            {
+                "Id": 7,
+                "Name": "CHURCHILL INSURANCE"
+            },
+            {
+                "Id": 8,
+                "Name": "PETERBOROUGHCC"
+            },
+            {
+                "Id": 9,
+                "Name": "BRGAS-ENERGY"
+            },
+            {
+                "Id": 10,
+                "Name": "GOCARDLESS LTD"
+            },
+            {
+                "Id": 11,
+                "Name": "ANGLIAN WATER"
+            },
+            {
+                "Id": 12,
+                "Name": "VIRGIN MEDIA PYMTS"
+            },
+            {
+                "Id": 13,
+                "Name": "WHICH 01992822800 GB"
+            },
+            {
+                "Id": 14,
+                "Name": "NEST MANAGEMENT"
+            },
+            {
+                "Id": 15,
+                "Name": "SKYE LOANS LTD"
+            },
+            {
+                "Id": 16,
+                "Name": "HALIFAX"
+            },
+            {
+                "Id": 17,
+                "Name": "STEPCHANGE"
+            },
+            {
+                "Id": 18,
+                "Name": "FAMILY EQUITY PLAN"
+            },
+            {
+                "Id": 19,
+                "Name": "MRS D M ADAMSON"
+            },
+            {
+                "Id": 20,
+                "Name": "E-SAVINGS"
+            },
+            {
+                "Id": 21,
+                "Name": "QVC LIVERPOOL GB"
+            },
+            {
+                "Id": 22,
+                "Name": "AMAZON UK MARKETPLACE"
+            },
+            {
+                "Id": 23,
+                "Name": "AMAZON UK RETAIL"
+            },
+            {
+                "Id": 24,
+                "Name": "AMAZON SVCS EUROPE"
+            },
+            {
+                "Id": 25,
+                "Name": "WWW.QVCUK.COM"
+            },
+            {
+                "Id": 26,
+                "Name": "AMAZON UK RETAIL-NEW"
+            },
+            {
+                "Id": 27,
+                "Name": "AMAZON SVCS EUROPE-NEW"
+            }
+        ],
+        "TransTypes": [
+            {
+                "Id": 1,
+                "Type": "BANK CREDIT"
+            },
+            {
+                "Id": 2,
+                "Type": "DIRECT DEBIT"
+            },
+            {
+                "Id": 3,
+                "Type": "ATM WITHDRAWAL"
+            },
+            {
+                "Id": 4,
+                "Type": "CASH RECEIPT"
+            },
+            {
+                "Id": 5,
+                "Type": "VISA PURCHASE"
+            },
+            {
+                "Id": 6,
+                "Type": "STANDING ORDER"
+            },
+            {
+                "Id": 7,
+                "Type": "UNPAID TRANSACTION FEE"
+            },
+            {
+                "Id": 8,
+                "Type": ""
+            }
+        ],
+        "TransGroupTypes": [
+            {
+                "Id": 1,
+                "Type": "income"
+            },
+            {
+                "Id": 2,
+                "Type": "expense"
+            }
+        ],
+        "TransGroups": [
+            {
+                "Id": 1,
+                "GroupName": "credits",
+                "GroupTypeFK": 1
+            },
+            {
+                "Id": 2,
+                "GroupName": "housekeeping",
+                "GroupTypeFK": 2
+            },
+            {
+                "Id": 3,
+                "GroupName": "bills",
+                "GroupTypeFK": 2
+            },
+            {
+                "Id": 4,
+                "GroupName": "loans",
+                "GroupTypeFK": 2
+            },
+            {
+                "Id": 5,
+                "GroupName": "savings",
+                "GroupTypeFK": 2
+            },
+            {
+                "Id": 6,
+                "GroupName": "tvshopping",
+                "GroupTypeFK": 2
+            }
+        ],
+        "NameRefs": [
+            {
+                "Id": 1,
+                "TransGroupFK": 1,
+                "TransNameFK": 1
+            },
+            {
+                "Id": 2,
+                "TransGroupFK": 2,
+                "TransNameFK": 2
+            },
+            {
+                "Id": 3,
+                "TransGroupFK": 2,
+                "TransNameFK": 3
+            },
+            {
+                "Id": 4,
+                "TransGroupFK": 3,
+                "TransNameFK": 4
+            },
+            {
+                "Id": 5,
+                "TransGroupFK": 3,
+                "TransNameFK": 5
+            },
+            {
+                "Id": 6,
+                "TransGroupFK": 3,
+                "TransNameFK": 6
+            },
+            {
+                "Id": 7,
+                "TransGroupFK": 3,
+                "TransNameFK": 7
+            },
+            {
+                "Id": 8,
+                "TransGroupFK": 3,
+                "TransNameFK": 8
+            },
+            {
+                "Id": 9,
+                "TransGroupFK": 3,
+                "TransNameFK": 9
+            },
+            {
+                "Id": 10,
+                "TransGroupFK": 3,
+                "TransNameFK": 10
+            },
+            {
+                "Id": 11,
+                "TransGroupFK": 3,
+                "TransNameFK": 11
+            },
+            {
+                "Id": 12,
+                "TransGroupFK": 3,
+                "TransNameFK": 12
+            },
+            {
+                "Id": 13,
+                "TransGroupFK": 3,
+                "TransNameFK": 13
+            },
+            {
+                "Id": 14,
+                "TransGroupFK": 4,
+                "TransNameFK": 14
+            },
+            {
+                "Id": 15,
+                "TransGroupFK": 4,
+                "TransNameFK": 15
+            },
+            {
+                "Id": 16,
+                "TransGroupFK": 4,
+                "TransNameFK": 16
+            },
+            {
+                "Id": 17,
+                "TransGroupFK": 4,
+                "TransNameFK": 17
+            },
+            {
+                "Id": 20,
+                "TransGroupFK": 5,
+                "TransNameFK": 20
+            },
+            {
+                "Id": 22,
+                "TransGroupFK": 6,
+                "TransNameFK": 22
+            },
+            {
+                "Id": 27,
+                "TransGroupFK": 6,
+                "TransNameFK": 23
+            },
+            {
+                "Id": 24,
+                "TransGroupFK": 6,
+                "TransNameFK": 24
+            },
+            {
+                "Id": 25,
+                "TransGroupFK": 6,
+                "TransNameFK": 25
+            }
+        ]
+    }
+}
