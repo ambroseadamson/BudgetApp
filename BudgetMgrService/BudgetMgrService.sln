@@ -1,13 +1,13 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetMgrServiceLib", "BudgetMgrServiceLib\BudgetMgrServiceLib.csproj", "{2177FA19-4431-4DA0-94C8-42008AD342E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetMgrServiceLib", "BudgetMgrServiceLib\BudgetMgrServiceLib.csproj", "{2177FA19-4431-4DA0-94C8-42008AD342E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetMgrService-WebAPI", "BudgetMgrService-WebAPI\BudgetMgrService-WebAPI.csproj", "{AF8AFE52-DCD9-489C-8B34-C57D053CAE5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetMgrService-WebAPI", "BudgetMgrService-WebAPI\BudgetMgrService-WebAPI.csproj", "{AF8AFE52-DCD9-489C-8B34-C57D053CAE5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetMgrServiceLibTest", "BudgetMgrServiceLibTest\BudgetMgrServiceLibTest.csproj", "{38B9335F-BAF4-406F-8926-75C804C8E37E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetMgrServiceLibTest", "BudgetMgrServiceLibTest\BudgetMgrServiceLibTest.csproj", "{38B9335F-BAF4-406F-8926-75C804C8E37E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
