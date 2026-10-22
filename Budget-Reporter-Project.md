@@ -89,11 +89,11 @@ This would then change the process to the following:
 
 ### Generation of test data
 
-With regards to the statement and receipt data we would also want the facility to generate randomised data sets for testing purposes.
+With regards to the statement data we would also want the facility to generate randomised data sets for testing purposes.
 
 ### Proposed Technologies 
 
-The  application will initially be built as a .net core web api service with sql lite for the database for the back end and Next.js / View for the client, with a view to porting it to an android app for easier access to the application for myself and my wife.
+The  application will initially be built as a .net core web api service with sql lite for the database for the back end and Angular / Next.js / Vue for the client, with a view to porting it to an android app for easier access to the application for myself and my wife.
 
 ### 
 
@@ -101,7 +101,7 @@ The  application will initially be built as a .net core web api service with sql
 
 This would result in the following Workflows With Regard to the use of a MVC architecture :
 
-* Import statement or cash receipt data into the application   
+* Import statement data into the application   
 * Produce summary transaction page (total income, total expenditure, balance, income versus expenditure summary)  
 * Produce details  page (total income, total expenditure, balance, income versus expenditure summary) based upon type of spending group   
 * Import ,update and  export configuration of types of income and expenditure 
@@ -121,10 +121,10 @@ The application will consist of four views:
 
 ### Details view 
 
-This gives a summary of the budget, based upon the imported transactions from the statements and cash receipts for a given type of transactions:
+This gives a summary of the budget, based upon the imported transactions from the statements for a given type of transactions:
 
-* Browse Control to browse for statement or cash receipt files  
-* Import button that triggers the Import request for transactions and receipts  
+* Browse Control to browse for statement files  
+* Import button that triggers the Import request for transactions  
 * Date range displaying the range of transaction data processed  
 * Total income from the transaction data processed   
 * Total expenditure from the transaction data processed  
@@ -151,7 +151,7 @@ This gives a tool to configure the different types  of transactions used in deta
 
    This will be initially implemented as set of classes to represent the model / state in the service layer:
 
-*  the import data types (cash receipt transactions and bank statement transactions) \-  *completed*   
+*  the import data types (bank statement transactions) \-  *completed*   
 * transaction data types to be used in calculation of balance, income and expenditure totals \-  *completed*   
 * The configuration data types to represent the types of income and expenditure *\- completed*  
 * The Transaction Credit Details types to be used in representing the income and expenditure content in the summary and details views:  
@@ -167,14 +167,12 @@ This gives a tool to configure the different types  of transactions used in deta
 
   In addition, the generators that generate:
 
-* The test cash receipt data sets \- *completed*  
 * The test statement data sets \- *completed*  
-* The transaction data sets by transforming the received cash receipt and statement data sets \- *completed*  
+* The transaction data sets by transforming the received statement data sets \- *completed*  
 * Unit tests that verify in the implementation of the aforementioned generators \- *completed*
 
 And the processors that perform the following:
 
-* Provide utility functions to aid in converting the cash receipt data to transaction data \- *completed*    
 * Provide utility functions to aid in converting the statement data to transaction data \- *completed*   
 * Add new sets of income and types of spending to the transaction group types configuration \- *completed*   
 * Update sets of income and types of spending to the transaction group types configuration \- *completed*   
