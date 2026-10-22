@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BudgetMgrServiceLib.Models;
 using Optional;
-using Optional.Linq;
 
 namespace BudgetMgrServiceLib.Processors
 {

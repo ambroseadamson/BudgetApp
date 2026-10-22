@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BudgetMgrServiceLib.Models;
 using BudgetMgrServiceLib.Processors;
 using BudgetMgrService_WebAPI.Models;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Optional;
 using Microsoft.EntityFrameworkCore;
+using Optional;
 
 namespace BudgetMgrService_WebAPI.Processors
 {

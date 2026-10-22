@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -7,8 +6,6 @@ using BudgetMgrService_WebAPI.Models;
 using BudgetMgrService_WebAPI.Processors;
 using BudgetMgrServiceLib.Generators;
 using BudgetMgrServiceLib.Processors;
-using Optional;
-using System;
 
 namespace BudgetMgrService_WebAPI.Controllers
 {

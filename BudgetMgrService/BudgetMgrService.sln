@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.11.12315.225 stable
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetMgrServiceLib", "BudgetMgrServiceLib\BudgetMgrServiceLib.csproj", "{2177FA19-4431-4DA0-94C8-42008AD342E5}"
 EndProject
@@ -17,9 +16,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2177FA19-4431-4DA0-94C8-42008AD342E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,5 +54,11 @@ Global
 		{38B9335F-BAF4-406F-8926-75C804C8E37E}.Release|x64.Build.0 = Release|Any CPU
 		{38B9335F-BAF4-406F-8926-75C804C8E37E}.Release|x86.ActiveCfg = Release|Any CPU
 		{38B9335F-BAF4-406F-8926-75C804C8E37E}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {729C0D49-3E80-4CD1-AD6B-5B07670B6272}
 	EndGlobalSection
 EndGlobal

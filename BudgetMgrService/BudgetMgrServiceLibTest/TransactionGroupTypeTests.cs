@@ -5,7 +5,6 @@ using BudgetMgrServiceLib.Models;
 using BudgetMgrServiceLib.Processors;
 using System;
 using BudgetMgrServiceLib.Generators;
-using System.IO;
 using Optional;
 
 // Extensions methods used in the tests:

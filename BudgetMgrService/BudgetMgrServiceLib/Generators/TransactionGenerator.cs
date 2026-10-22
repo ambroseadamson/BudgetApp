@@ -16,19 +16,11 @@ namespace BudgetMgrServiceLib.Generators
 
             Func<int, IEnumerable<string>, string> extractVal = (n, entries) => entries.Skip(n).First();
 
-            Func<string, DateTime> toDateStamp = (val) => DateTime.Parse(val);
-
-            Func<IEnumerable<string>, CashReceipt> toCashReceipt = (entry) => CashReceipt.Of(toDateStamp(entry.First()), extractVal(1, entry).ToUpper(),
-                                                                                              Double.Parse(extractVal(2, entry)),
-                                                                                              Double.Parse(extractVal(3, entry)));
-
-            Func<CashReceipt, Transaction> toTransactionFromCR = (cashReceipt) => Transaction.Of(0, cashReceipt.DateStamp, "CASH RECEIPT", cashReceipt.Desc, cashReceipt.Total);
-
-            Func<IEnumerable<string>, IEnumerable<Transaction>> genCashReceipts = (entries) =>
+            Func<string, DateTime> toDateStamp = (val) =>
             {
-                return applyUniqueIds(entries.Select(entry => entry.Split(new char[] { ',' }))
-                              .Select(toCashReceipt)
-                              .Select(toTransactionFromCR));
+                DateTime dt;
+                var result = DateTime.TryParse(val, out dt);
+                return result ? dt :DateTime.MinValue;
             };
 
             Func<string, bool> isEmptyEntry = (entry) => entry.Trim().Length == 0;
@@ -81,7 +73,6 @@ namespace BudgetMgrServiceLib.Generators
 
             // pattern match calling genCashReceipts() or genStatementData() on matching result
             var results = srcType.Match()
-                                 .With(_srcType => _srcType.Contains("cashReceipts"), (_srcType) => genCashReceipts(transactionSrcData))
                                  .With(_srcType => _srcType.Contains("Statement Download"), (_srcType) => genStatementData(transactionSrcData))
                                  .Do()
                                  .ToArray();

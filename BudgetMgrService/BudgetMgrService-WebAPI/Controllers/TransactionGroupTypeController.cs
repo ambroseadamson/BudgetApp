@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using BudgetMgrServiceLib.Models;
 using BudgetMgrService_WebAPI.Models;
 using BudgetMgrService_WebAPI.Processors;
 using BudgetMgrServiceLib.Processors;
-using Optional;
-using Optional.Linq;
 using System;
 
 namespace BudgetMgrService_WebAPI.Controllers

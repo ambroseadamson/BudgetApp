@@ -27,7 +27,12 @@ namespace BudgetMgrServiceLib.Processors
         public static T RandomElement<T>(this Random rnd, IEnumerable<T> collection) => collection.ElementAt(rnd.ToRandomSrcVal(0, collection.Count() - 1));
 
 
-        public static IEnumerable<string> ObtainCsvData(Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData, TestDataCfg testDataCfg, GroupTypesCfgEx groupTypesCfg) => genSrcData(testDataCfg, groupTypesCfg, DateTime.Now, new Random()).Data;
+        public static IEnumerable<string> ObtainCsvData(Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData, 
+                                                        TestDataCfg testDataCfg, 
+                                                        GroupTypesCfgEx groupTypesCfg) 
+        {
+            return genSrcData(testDataCfg, groupTypesCfg, DateTime.Now, new Random()).Data;
+        }
 
         public static IEnumerable<Transaction> ObtainTransactionData(Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData, TestDataCfg testDataCfg, GroupTypesCfgEx groupTypesCfg)
         {
@@ -44,7 +49,7 @@ namespace BudgetMgrServiceLib.Processors
             {
                 Double.Parse(numericValue);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 parseSucceeded = false;
             }
