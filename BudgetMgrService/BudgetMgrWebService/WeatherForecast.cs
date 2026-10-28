@@ -1,4 +1,4 @@
-namespace WebAPIService
+namespace BudgetMgrWebService
 {
     public class WeatherForecast
     {

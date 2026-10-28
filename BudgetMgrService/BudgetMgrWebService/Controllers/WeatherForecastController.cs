@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPIService.Controllers
+namespace BudgetMgrWebService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
