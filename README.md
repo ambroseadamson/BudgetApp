@@ -18,5 +18,5 @@ The application is to simplify the calculation and managing my family budget.
 
 6. Manage the different types of expenditure represented in the statement.
 
-This currently being implemented using .NET to implemented as for the web service backend and Angular to implement the client application.
+This currently being implemented using .NET Web API for the web service backend and Angular to implement the client application.
 
