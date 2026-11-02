@@ -5,10 +5,10 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="NLog" />
     <PackageReference Include="Optional" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
-    <PackageReference Include="NLog.Web.AspNetCore" />
-    <PackageReference Include="NLog" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
