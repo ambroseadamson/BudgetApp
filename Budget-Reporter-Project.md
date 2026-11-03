@@ -102,8 +102,10 @@ The  application will initially be built as a .net core web api service with sql
 This would result in the following Workflows With Regard to the use of a MVC architecture :
 
 * Import statement data into the application   
-* Produce details page containing the  transaction summary (total income, total expenditure, balance, income versus expenditure summary) and transaction details (total income, total expenditure, balance, income versus expenditure summary) based upon type of spending group   
-* Import ,update and  export configuration of types of income and expenditure 
+* Produce details page containing:
+  * the  transaction summary (total income, total expenditure, balance, income versus expenditure summary)
+  * the transaction details (total income, total expenditure, balance, income versus expenditure summary) based upon type of spending group   
+* Import, update and  export configuration of types of income and expenditure 
 
 
 ## Application Views 
@@ -119,7 +121,7 @@ The application will consist of two views:
 
 ### Details view 
 
-This gives a summary of the budget,  and transaction details based upon the requested transactions from the statements for a given types of transactions:
+This gives a summary of the budget,  and transaction details based upon the requested transactions from the statements for a given types of transactions
 
 * Browse Control to browse for statement files  
 * Import button that triggers the Import request for transactions  
