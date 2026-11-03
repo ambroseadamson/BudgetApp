@@ -102,16 +102,14 @@ The  application will initially be built as a .net core web api service with sql
 This would result in the following Workflows With Regard to the use of a MVC architecture :
 
 * Import statement data into the application   
-* Produce summary transaction page (total income, total expenditure, balance, income versus expenditure summary)  
-* Produce details  page (total income, total expenditure, balance, income versus expenditure summary) based upon type of spending group   
+* Produce details page containing the  transaction summary (total income, total expenditure, balance, income versus expenditure summary) and transaction details (total income, total expenditure, balance, income versus expenditure summary) based upon type of spending group   
 * Import ,update and  export configuration of types of income and expenditure 
 
 
 ## Application Views 
 
-The application will consist of four views:
+The application will consist of two views:
 
-* Import view  
 * Details view   
 * Configuration view 
 
@@ -121,15 +119,16 @@ The application will consist of four views:
 
 ### Details view 
 
-This gives a summary of the budget, based upon the imported transactions from the statements for a given type of transactions:
+This gives a summary of the budget,  and transaction details based upon the requested transactions from the statements for a given types of transactions:
 
 * Browse Control to browse for statement files  
 * Import button that triggers the Import request for transactions  
-* Date range displaying the range of transaction data processed  
+* Date range displaying the range of transaction data requested for processing 
 * Total income from the transaction data processed   
 * Total expenditure from the transaction data processed  
 * Balance from the transaction data processed   
-* Pie chart to summarise the income vs expenditure from the transaction data processed 
+* Pie chart to summarise the income vs expenditure from the transaction data processed
+* List of the transactions processed
 
 ### Configuration view 
 
@@ -151,7 +150,7 @@ This gives a tool to configure the different types  of transactions used in deta
 
    This will be initially implemented as set of classes to represent the model / state in the service layer:
 
-*  the import data types (bank statement transactions) \-  *completed*   
+*  the import data types (bank statement transactions) \-  *to be completed to use real data from service instead of dummy statement data*   
 * transaction data types to be used in calculation of balance, income and expenditure totals \-  *completed*   
 * The configuration data types to represent the types of income and expenditure *\- completed*  
 * The Transaction Credit Details types to be used in representing the income and expenditure content in the summary and details views:  
@@ -188,8 +187,7 @@ And the processors that perform the following:
 This would essentially be:
 
 * Controllers which are mappings of the requests to the service layer  and the responses from the service layer  to forwarded to the relevant views, with the views being updated via the relevant data bindings to properties in the model from the service layer.  
-* Implementations of the Views:  
-  * Import View  
+* Implementations of the Views:    
   * Details View  
   * Configuration View
 
