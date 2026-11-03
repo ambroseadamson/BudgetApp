@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 namespace BudgetMgrServiceLib.Models
 {
     public class TransactionSummary
@@ -30,6 +27,7 @@ namespace BudgetMgrServiceLib.Models
 
     public class TransactionSummaryEntry
     {
+        public int Id { get; set; }
         public string Name { set; get; }
         public double Pct { get; set; }
 

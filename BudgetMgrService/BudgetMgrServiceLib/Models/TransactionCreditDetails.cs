@@ -1,11 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BudgetMgrServiceLib.Models
 {
     public class TransactionCreditDetails
     {
+        public int Id { get; set; }
+        
         public IEnumerable<Transaction> Transactions { get; set; }
 
         public double Total { get; set; }

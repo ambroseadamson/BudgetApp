@@ -1,6 +1,6 @@
 @BudgetMgrWebService_HostAddress = http://localhost:5049
 
-GET {{BudgetMgrWebService_HostAddress}}/weatherforecast/
+GET {{BudgetMgrWebService_HostAddress}}/transactionsummary/
 Accept: application/json
 
 ###

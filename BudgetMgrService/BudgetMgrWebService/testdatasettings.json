@@ -1,0 +1,38 @@
+﻿{
+  "TestDataCfg": {
+    "NumberOfTransactions": 10,
+    "MiscTransactionNames": [
+      "zqm",
+      "qmz",
+      "mqz"
+    ],
+    "MiscTransactionValue": 10.00,
+    "Months": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "Years": [
+      "2015",
+      "2016"
+    ],
+    "CharsToRemove": [
+      "\"",
+      "�"
+    ],
+    "DateFilter": {
+      "StartDate": "2017-02-01T00:00:00",
+      "EndDate": "2017-02-20T00:00:00",
+      "UseDateFilter": "false"
+    }
+  }
+}
