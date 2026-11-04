@@ -1,6 +1,9 @@
+using BudgetMgrServiceLib.Generators;
 using BudgetMgrServiceLib.Models;
 using BudgetMgrServiceLib.Processors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Optional;
 
 namespace BudgetMgrWebService.Processors
@@ -133,7 +136,129 @@ namespace BudgetMgrWebService.Processors
                 return (content.IncomeGroupNames.Any(name => name == currTransaction.Description) == false);
             })
             .ToMiscNamesOfInterest("expense", content.GroupTypeCfg);     
-        }         
+        }
+
+        public static Task<ActionResult<SummaryResult>> ToSummaryResultAsync(this TransactionContext _context, string miscellaenousGroupType)
+        {
+            var task = new Task<ActionResult<SummaryResult>>(() =>
+            {
+                var content = TransactionContent.Of(_context);
+                return SummaryResult.Of(content, content.Transactions, miscellaenousGroupType);                    
+            });
+            return task;
+        }
+
+        public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this TransactionContext _context, string miscellaenousGroupType, string startDate, string endDate)
+        {
+            var task = new Task<ActionResult<SummaryResult>>(() =>
+            {
+                var content = TransactionContent.Of(_context);
+                var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
+                return ((transactions == null) || (transactions.Count() == 0)) 
+                        ? null 
+                        : SummaryResult.Of(content, transactions, miscellaenousGroupType);
+            });
+            return task;
+        }
+
+        public static Task<ActionResult<TransactionSummary>> FindTransactionSummaryAsync(this TransactionContext _context, string miscellaenousGroupType, string groupType, string startDate, string endDate)
+        {
+            var task = new Task<ActionResult<TransactionSummary>>(() =>
+            {
+                var content = TransactionContent.Of(_context);
+                var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
+                if ((transactions == null) || (transactions.Count() == 0))
+                {
+                    return null;
+                }
+
+                var miscTransNamesOfInterest = transactions.ToMiscTransNamesOfInterest(content);
+
+                var expenditureGroupNames = (groupType == miscellaenousGroupType) 
+                                            ? miscTransNamesOfInterest 
+                                            : content.GroupTypeCfg.ToExpenseGroup(groupType).Names.ToArray();
+
+                return transactions.GenTransactionSummaryData(content.IncomeGroupNames, expenditureGroupNames);
+            });
+            return task;
+        }
+
+        public static void AddTransactions(this TransactionContext _context, SrcData srcData, IOptions<TestDataCfg> testDataCfgAccessor)
+        {
+            var results = TransactionGenerator.GenTransactionData(srcData.Data, testDataCfgAccessor.Value,
+                                                                  _context.ToGroupTypeCfgEx(),
+                                                                  srcData.Type, _context.ApplyUniqueIds);
+
+            _context.Transactions.AddRange(results.Results.RemoveDuplicates(_context.Transactions));
+        }
+
+        public static Task<IEnumerable<TransactionGroupCfg>> ToListAsync(this TransactionContext _context)
+        {
+            var task = new Task<IEnumerable<TransactionGroupCfg>>(() =>
+            {
+                var content = TransactionContent.Of(_context);
+
+                var _groups = content.GroupTypeCfg.ToTransNamesEx();
+
+                var miscGroup = new TransactionGroupCfg()
+                {
+                    Id = _groups.GenerateUniqueId(cfg => (int)cfg.Id),
+                    GroupName = "misc",
+                    GroupType = "expense",
+                    Names = content.Transactions.ToMiscTransNamesOfInterest(content)
+                }.AsCollection();
+                return _groups.Concat(miscGroup).ToArray();
+            });
+
+            return task;            
+        }
+
+
+        public static Task<TransactionGroupCfg> FindTransactionGroupCfgAsync(this TransactionContext _context, UpdateTransactionName transactionName)
+        {
+            var task = new Task<TransactionGroupCfg>(() =>
+            {
+                var groupOfInterest = _context.ToGroupTypeCfgEx()
+                                              .ToTransNamesEx()
+                                              .FirstOrDefault(group => group.Id == transactionName.Id);
+
+                return (groupOfInterest == null)
+                        ? null 
+                        : new TransactionGroupCfg()
+                        {
+                            Id = groupOfInterest.Id,
+                            GroupName = groupOfInterest.GroupName,
+                            GroupType = groupOfInterest.GroupType,
+                            Names = groupOfInterest.Names
+                        };
+            });
+            return task;
+        }
+
+        public static async Task<string> CommitChangesAsync(this TransactionContext _context, TransactionGroupCfg groupCfg)
+        {
+            _context.TransactionGroupCfg.Add(groupCfg);
+            await _context.SaveChangesAsync();
+
+            _context.WriteDataToFile(_context.ContentFilePath.First().Value, AppCfgProcessor.DefaultGroupTypeCfgFileName);
+
+            return string.Join(",", _context.ToGroupTypeCfgEx().ToTransNamesEx().Select(group => group.GroupName));
+        }
+
+        public static void UpdateTransactionGroupCfg(this TransactionContext _context, TransactionGroupCfg groupCfg)
+        {
+            // update existing entries in the groupType Data set...
+            var groupsToUpdate = groupCfg.AsCollection().ToArray();
+
+            var groupTypesCfg = _context.ToGroupTypeCfgEx();
+            groupTypesCfg.UpdateGroupDataWithDefault(groupsToUpdate).UpdateGroupDataSource(_context);
+        }
+
+        public static void RemoveTransactionGroupCfg(this TransactionContext _context, TransactionGroupCfg groupCfg)
+        {
+            UpdateTransactionGroupCfg(_context, groupCfg);
+        }
+
     }
 
 }
