@@ -371,15 +371,47 @@ namespace BudgetMgrServiceLib.Processors
         }
 
 
-        public static IEnumerable<string> ToMiscNamesOfInterest(this IEnumerable<Transaction> transactions, string groupType, GroupTypesCfgEx groupTypesCfg)
+        public static IEnumerable<string> ToConfiguredNamesOfInterest(
+            this GroupTypesCfgEx groupTypesCfg,
+            string groupType)
         {
-            var namesOfInterest =  groupTypesCfg.ToTransNamesEx().Where(transName => transName.GroupType == groupType)
-                                                                 .Select(transName => transName.Names)
-                                                                 .Flatten();
+            return groupTypesCfg.ToTransNamesEx()
+                                .Where(transName => transName.GroupType == groupType)
+                                .Select(transName => transName.Names)
+                                .Flatten();
+        }
 
-            return transactions.Where(currTrans => namesOfInterest.Contains(currTrans.Description) == false)
-                               .Select(currTrans => currTrans.Description)
+        public static IEnumerable<string> ToDescriptions(
+            this IEnumerable<Transaction> transactions)
+        {
+            return transactions.Select(transaction => transaction.Description)
                                .Distinct();
+        }
+
+        public static IEnumerable<string> ExcludeDescriptions(
+            this IEnumerable<Transaction> transactions,
+            IEnumerable<string> descriptions)
+        {
+            return transactions.Where(transaction => descriptions.Contains(transaction.Description) == false)
+                               .Select(transaction => transaction.Description);
+        }
+
+        public static IEnumerable<string> ToMiscNamesOfInterest(
+            this IEnumerable<Transaction> transactions,
+            string groupType,
+            GroupTypesCfgEx groupTypesCfg)
+        {
+            return transactions.ExcludeDescriptions(groupTypesCfg.ToConfiguredNamesOfInterest(groupType))
+                               .Distinct();
+        }
+
+
+        public static IEnumerable<string> ToKnownNamesOfInterest(
+            this IEnumerable<Transaction> transactions,
+            string groupType,
+            GroupTypesCfgEx groupTypesCfg)
+        {
+            return transactions.ToDescriptions().Distinct();
         }
 
         public static IEnumerable<string> ToMiscNamesOfInterestFromCfg(this GroupTypesCfgEx groupTypesCfg)

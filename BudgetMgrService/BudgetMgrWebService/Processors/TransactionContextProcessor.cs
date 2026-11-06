@@ -10,6 +10,12 @@ namespace BudgetMgrWebService.Processors
 {
     public static class TransactionContextProcessor
     {
+        // TODO: expose the following group types via the web service API, so that the front end
+        // can obtain the relevant transactions based upon those types from the back end.
+        private static readonly string miscellaenousGroupType = "misc";
+        private static readonly string expenseGroupType = "expense";
+
+
         public static Transaction ApplyUniqueId(Transaction transaction, int _Id) => Transaction.Of(_Id, transaction.DateStamp, transaction.TransType, transaction.Description, transaction.Amount);
 
         public static IEnumerable<Transaction> ApplyUniqueIds(this TransactionContext context, IEnumerable<Transaction> transactions)
@@ -141,74 +147,109 @@ namespace BudgetMgrWebService.Processors
             return _srcData.Where((transaction) => ((transaction.DateStamp.CompareTo(_startDate) >= 0) && (transaction.DateStamp.CompareTo(_endDate) <= 0)));
         }
 
-        public static IEnumerable<string> ToMiscTransNamesOfInterest(this IEnumerable<Transaction> _srcData, TransactionContent content)
+        public static IEnumerable<Transaction> ExcludeIncomeTransactions(
+            this IEnumerable<Transaction> transactions,
+            IEnumerable<string> incomeGroupNames)
         {
-            return _srcData.Where(currTransaction => {
-                return (content.IncomeGroupNames.Any(name => name == currTransaction.Description) == false);
-            })
-            .ToMiscNamesOfInterest("expense", content.GroupTypeCfg);     
+            return transactions.Where(transaction =>
+                incomeGroupNames.Contains(transaction.Description) == false);
         }
 
-        public static Task<ActionResult<SummaryResult>> ToSummaryResultAsync(this TransactionContext _context, string miscellaenousGroupType)
+        public static IEnumerable<string> ToMiscTransNamesOfInterest(
+            this IEnumerable<Transaction> transactions,
+            TransactionContent content) =>
+            transactions.ExcludeIncomeTransactions(content.IncomeGroupNames)
+                        .ToMiscNamesOfInterest(expenseGroupType, content.GroupTypeCfg);
+
+        public static IEnumerable<string> ToKnownTransNamesOfInterest(
+            this IEnumerable<Transaction> transactions,
+            TransactionContent content) =>
+            transactions.ExcludeIncomeTransactions(content.IncomeGroupNames)
+                        .ToKnownNamesOfInterest(expenseGroupType, content.GroupTypeCfg);
+
+
+        private static ActionResult<SummaryResult> CreateSummaryResult(TransactionContent content,
+                                                                       IEnumerable<Transaction> transactions,
+                                                                       string groupType)
+        {
+            var materializedTransactions = transactions.ToArray();
+
+            return materializedTransactions.Length == 0
+                ? null!
+                : SummaryResult.Of(content, materializedTransactions, groupType);
+        }
+
+        public static Task<ActionResult<SummaryResult>> ToSummaryResultAsync(this TransactionContext _context, string? groupType = null)
         {
             var content = TransactionContent.Of(_context);
-            return Task.FromResult<ActionResult<SummaryResult>>(SummaryResult.Of(content, content.Transactions, miscellaenousGroupType));
+            return Task.FromResult(CreateSummaryResult(content, content.Transactions, groupType ?? expenseGroupType));
         }
 
-        public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this TransactionContext _context, string miscellaenousGroupType, string startDate, string endDate)
+        public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this TransactionContext _context, string startDate, string endDate, string groupType)
         {
             var content = TransactionContent.Of(_context);
             var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
-            var summaryResult = ((transactions == null) || (transactions.Count() == 0))
-                                ? null
-                                : SummaryResult.Of(content, transactions, miscellaenousGroupType);
 
-            return Task.FromResult<ActionResult<SummaryResult>>(summaryResult);
+            return Task.FromResult(CreateSummaryResult(content, transactions, groupType));
         }
 
-        public static Task<ActionResult<TransactionSummary>> FindTransactionSummaryAsync(this TransactionContext _context, string miscellaenousGroupType, string groupType, string startDate, string endDate)
+        private static ActionResult<TransactionSummary> CreateTransactionSummary(
+            TransactionContent content,
+            IEnumerable<Transaction> transactions,
+            string groupType)
         {
-            var content = TransactionContent.Of(_context);
-            var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
-            if ((transactions == null) || (transactions.Count() == 0))
+            var materializedTransactions = transactions.ToArray();
+            if (materializedTransactions.Length == 0)
             {
-                return Task.FromResult<ActionResult<TransactionSummary>>(null);
+                return null!;
             }
 
-            var miscTransNamesOfInterest = transactions.ToMiscTransNamesOfInterest(content);
+            IEnumerable<string> expenditureGroupNames = groupType switch
+            {
+                var type when type == expenseGroupType => materializedTransactions.ToKnownTransNamesOfInterest(content),
+                _ => materializedTransactions.ToMiscTransNamesOfInterest(content),
+            };
 
-            var expenditureGroupNames = (groupType == miscellaenousGroupType)
-                                        ? miscTransNamesOfInterest
-                                        : content.GroupTypeCfg.ToExpenseGroup(groupType).Names.ToArray();
-
-            var transactionSummary = transactions.GenTransactionSummaryData(content.IncomeGroupNames, expenditureGroupNames);
-            return Task.FromResult<ActionResult<TransactionSummary>>(transactionSummary);
+            return materializedTransactions.GenTransactionSummaryData(
+                content.IncomeGroupNames,
+                expenditureGroupNames);
         }
 
-        public static void AddTransactions(this TransactionContext _context, SrcData srcData, IOptions<TestDataCfg> testDataCfgAccessor)
-        {
-            var results = TransactionGenerator.GenTransactionData(srcData.Data, testDataCfgAccessor.Value,
-                                                                  _context.ToGroupTypeCfgEx(),
-                                                                  srcData.Type, _context.ApplyUniqueIds);
-
-            _context.Transactions.AddRange(results.Results.RemoveDuplicates(_context.Transactions));
-        }
-
-        public static Task<IEnumerable<TransactionGroupCfg>> ToListAsync(this TransactionContext _context)
+        public static Task<ActionResult<TransactionSummary>> FindTransactionSummaryAsync(this TransactionContext _context)
         {
             var content = TransactionContent.Of(_context);
-            var _groups = content.GroupTypeCfg.ToTransNamesEx();
-            var miscGroup = new TransactionGroupCfg()
-            {
-                Id = _groups.GenerateUniqueId(cfg => (int)cfg.Id),
-                GroupName = "misc",
-                GroupType = "expense",
-                Names = content.Transactions.ToMiscTransNamesOfInterest(content)
-            }.AsCollection();
-            var transactionGroupCfgs = _groups.Concat(miscGroup).ToArray();
-
-            return Task.FromResult<IEnumerable<TransactionGroupCfg>>(transactionGroupCfgs);
+            return Task.FromResult(CreateTransactionSummary(content, content.Transactions, expenseGroupType));
         }
+
+        public static Task<ActionResult<TransactionSummary>> FindTransactionSummaryAsync(this TransactionContext _context, string startDate, string endDate)
+        {
+            var content = TransactionContent.Of(_context);
+            var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
+            return Task.FromResult(CreateTransactionSummary(content, transactions, expenseGroupType));
+        }
+
+        public static Task<ActionResult<TransactionSummary>> FindTransactionSummaryAsync(this TransactionContext _context, string groupType, string startDate, string endDate)
+        {
+            var content = TransactionContent.Of(_context);
+            var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
+            return Task.FromResult(CreateTransactionSummary(content, transactions, groupType));
+        }
+
+        //public static Task<IEnumerable<TransactionGroupCfg>> ToListAsync(this TransactionContext _context)
+        //{
+        //    var content = TransactionContent.Of(_context);
+        //    var _groups = content.GroupTypeCfg.ToTransNamesEx();
+        //    var miscGroup = new TransactionGroupCfg()
+        //    {
+        //        Id = _groups.GenerateUniqueId(cfg => (int)cfg.Id),
+        //        GroupName = "misc",
+        //        GroupType = "expense",
+        //        Names = content.Transactions.ToMiscTransNamesOfInterest(content)
+        //    }.AsCollection();
+        //    var transactionGroupCfgs = _groups.Concat(miscGroup).ToArray();
+
+        //    return Task.FromResult<IEnumerable<TransactionGroupCfg>>(transactionGroupCfgs);
+        //}
 
 
         public static Task<TransactionGroupCfg> FindTransactionGroupCfgAsync(this TransactionContext _context, UpdateTransactionName transactionName)

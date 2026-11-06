@@ -16,3 +16,33 @@ public class DateFilter
         };
     }
 }
+
+public class DateFilterBodyParams
+{
+    public required string StartDate { set; get; }
+    public required string EndDate { get; set; }
+    public static DateFilterBodyParams Of(string startDate, string endDate)
+    {
+        return new DateFilterBodyParams()
+        {
+            StartDate = startDate,
+            EndDate = endDate
+        };
+    }
+
+}
+
+public class DateFilterAndGroupTypeBodyParams : DateFilterBodyParams
+{
+    public required string GroupType { get; set; }
+    public static DateFilterAndGroupTypeBodyParams Of(string startDate, string endDate, string groupType)
+    {
+        return new DateFilterAndGroupTypeBodyParams()
+        {
+            StartDate = startDate,
+            EndDate = endDate,
+            GroupType = groupType
+        };
+    }
+
+}

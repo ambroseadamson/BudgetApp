@@ -34,7 +34,7 @@ namespace BudgetMgrWebService.Controllers
         // POST: api/TransactionGroupType
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TransactionGroupCfg>> Create([FromBody] TransactionGroupCfg groupCfg)
+        public async Task<ActionResult<TransactionGroupCfg>> Post([FromBody] TransactionGroupCfg groupCfg)
         {
             if (groupCfg == null)
             {

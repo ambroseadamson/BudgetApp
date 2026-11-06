@@ -13,19 +13,20 @@ public class SummaryResult
 
     public static SummaryResult Of(TransactionContent content, 
                                   IEnumerable<Transaction> allTransactions,
-                                  string miscellaenousGroupType)
+                                  string groupType)
     {
         Func<IEnumerable<string>> fnObtainGroupNames = () => content.GroupTypeCfg.ToTransNamesEx()
                                                                                  .Select(group => group.GroupName)
                                                                                  .Where(groupName => groupName != "credits")
-                                                                                 .Concat(miscellaenousGroupType.AsCollection())
+                                                                                 .Concat(groupType.AsCollection())
                                                                                  .ToArray();
 
         var miscTransNamesOfInterest = allTransactions.ToMiscTransNamesOfInterest(content);
 
         Func<string, TransactionSummaryEntry> fnGenTransData = (_groupType) =>
         {
-            var _expenditureGroupNames = (_groupType == miscellaenousGroupType) ? miscTransNamesOfInterest : content.GroupTypeCfg.ToExpenseGroup(_groupType).Names.ToArray();
+      
+            var _expenditureGroupNames = (_groupType == groupType) ? miscTransNamesOfInterest : content.GroupTypeCfg.ToExpenseGroup(_groupType).Names.ToArray();
 
             return TransactionSummaryEntry.Of(_groupType, allTransactions.GenTransactionSummaryData(content.IncomeGroupNames, _expenditureGroupNames));
         };
