@@ -49,10 +49,15 @@ namespace BudgetMgrWebService.Processors
 
             // TODO: this is a temporary solution to seed the database with transactions.
             // In the future, we will need to implement a more robust solution for seeding the database with transactions.
-            var testDataCfg = AppCfgProcessor.ToTestDataCfg(contentFilePath);
-            Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData = StatementGenerator.GenStatementData;
-            var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesEx).ToArray();
-            context.Transactions.AddRange(transactions);
+            // This should be via the post summaryResult endpoint, which will be called by the front end to seed the database with transactions.
+            // Once that is implemented, we can remove this code and the testdatasettings.json file from the Web API project.
+            {
+                var testDataCfg = AppCfgProcessor.ToTestDataCfg(contentFilePath);
+                Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData = StatementGenerator.GenStatementData;
+                var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesEx).ToArray();
+                context.Transactions.AddRange(transactions);
+            }
+
             context.SaveChanges();
         }
 
