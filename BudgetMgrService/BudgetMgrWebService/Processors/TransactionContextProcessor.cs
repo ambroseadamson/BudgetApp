@@ -47,6 +47,12 @@ namespace BudgetMgrWebService.Processors
             context.TransGroups.AddRange(groupTypesEx.TransGroups);
             context.NameRefs.AddRange(groupTypesEx.NameRefs);
 
+            // TODO: this is a temporary solution to seed the database with transactions.
+            // In the future, we will need to implement a more robust solution for seeding the database with transactions.
+            var testDataCfg = AppCfgProcessor.ToTestDataCfg(contentFilePath);
+            Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData = StatementGenerator.GenStatementData;
+            var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesEx).ToArray();
+            context.Transactions.AddRange(transactions);
             context.SaveChanges();
         }
 
@@ -140,47 +146,38 @@ namespace BudgetMgrWebService.Processors
 
         public static Task<ActionResult<SummaryResult>> ToSummaryResultAsync(this TransactionContext _context, string miscellaenousGroupType)
         {
-            var task = new Task<ActionResult<SummaryResult>>(() =>
-            {
-                var content = TransactionContent.Of(_context);
-                return SummaryResult.Of(content, content.Transactions, miscellaenousGroupType);                    
-            });
-            return task;
+            var content = TransactionContent.Of(_context);
+            return Task.FromResult<ActionResult<SummaryResult>>(SummaryResult.Of(content, content.Transactions, miscellaenousGroupType));
         }
 
         public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this TransactionContext _context, string miscellaenousGroupType, string startDate, string endDate)
         {
-            var task = new Task<ActionResult<SummaryResult>>(() =>
-            {
-                var content = TransactionContent.Of(_context);
-                var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
-                return ((transactions == null) || (transactions.Count() == 0)) 
-                        ? null 
-                        : SummaryResult.Of(content, transactions, miscellaenousGroupType);
-            });
-            return task;
+            var content = TransactionContent.Of(_context);
+            var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
+            var summaryResult = ((transactions == null) || (transactions.Count() == 0))
+                                ? null
+                                : SummaryResult.Of(content, transactions, miscellaenousGroupType);
+
+            return Task.FromResult<ActionResult<SummaryResult>>(summaryResult);
         }
 
         public static Task<ActionResult<TransactionSummary>> FindTransactionSummaryAsync(this TransactionContext _context, string miscellaenousGroupType, string groupType, string startDate, string endDate)
         {
-            var task = new Task<ActionResult<TransactionSummary>>(() =>
+            var content = TransactionContent.Of(_context);
+            var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
+            if ((transactions == null) || (transactions.Count() == 0))
             {
-                var content = TransactionContent.Of(_context);
-                var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
-                if ((transactions == null) || (transactions.Count() == 0))
-                {
-                    return null;
-                }
+                return Task.FromResult<ActionResult<TransactionSummary>>(null);
+            }
 
-                var miscTransNamesOfInterest = transactions.ToMiscTransNamesOfInterest(content);
+            var miscTransNamesOfInterest = transactions.ToMiscTransNamesOfInterest(content);
 
-                var expenditureGroupNames = (groupType == miscellaenousGroupType) 
-                                            ? miscTransNamesOfInterest 
-                                            : content.GroupTypeCfg.ToExpenseGroup(groupType).Names.ToArray();
+            var expenditureGroupNames = (groupType == miscellaenousGroupType)
+                                        ? miscTransNamesOfInterest
+                                        : content.GroupTypeCfg.ToExpenseGroup(groupType).Names.ToArray();
 
-                return transactions.GenTransactionSummaryData(content.IncomeGroupNames, expenditureGroupNames);
-            });
-            return task;
+            var transactionSummary = transactions.GenTransactionSummaryData(content.IncomeGroupNames, expenditureGroupNames);
+            return Task.FromResult<ActionResult<TransactionSummary>>(transactionSummary);
         }
 
         public static void AddTransactions(this TransactionContext _context, SrcData srcData, IOptions<TestDataCfg> testDataCfgAccessor)
@@ -194,45 +191,38 @@ namespace BudgetMgrWebService.Processors
 
         public static Task<IEnumerable<TransactionGroupCfg>> ToListAsync(this TransactionContext _context)
         {
-            var task = new Task<IEnumerable<TransactionGroupCfg>>(() =>
+            var content = TransactionContent.Of(_context);
+            var _groups = content.GroupTypeCfg.ToTransNamesEx();
+            var miscGroup = new TransactionGroupCfg()
             {
-                var content = TransactionContent.Of(_context);
+                Id = _groups.GenerateUniqueId(cfg => (int)cfg.Id),
+                GroupName = "misc",
+                GroupType = "expense",
+                Names = content.Transactions.ToMiscTransNamesOfInterest(content)
+            }.AsCollection();
+            var transactionGroupCfgs = _groups.Concat(miscGroup).ToArray();
 
-                var _groups = content.GroupTypeCfg.ToTransNamesEx();
-
-                var miscGroup = new TransactionGroupCfg()
-                {
-                    Id = _groups.GenerateUniqueId(cfg => (int)cfg.Id),
-                    GroupName = "misc",
-                    GroupType = "expense",
-                    Names = content.Transactions.ToMiscTransNamesOfInterest(content)
-                }.AsCollection();
-                return _groups.Concat(miscGroup).ToArray();
-            });
-
-            return task;            
+            return Task.FromResult<IEnumerable<TransactionGroupCfg>>(transactionGroupCfgs);
         }
 
 
         public static Task<TransactionGroupCfg> FindTransactionGroupCfgAsync(this TransactionContext _context, UpdateTransactionName transactionName)
         {
-            var task = new Task<TransactionGroupCfg>(() =>
-            {
-                var groupOfInterest = _context.ToGroupTypeCfgEx()
-                                              .ToTransNamesEx()
-                                              .FirstOrDefault(group => group.Id == transactionName.Id);
+            var groupOfInterest = _context.ToGroupTypeCfgEx()
+                              .ToTransNamesEx()
+                              .FirstOrDefault(group => group.Id == transactionName.Id);
 
-                return (groupOfInterest == null)
-                        ? null 
-                        : new TransactionGroupCfg()
-                        {
-                            Id = groupOfInterest.Id,
-                            GroupName = groupOfInterest.GroupName,
-                            GroupType = groupOfInterest.GroupType,
-                            Names = groupOfInterest.Names
-                        };
-            });
-            return task;
+            var transactionGroupCfg = (groupOfInterest == null)
+                                        ? null
+                                        : new TransactionGroupCfg()
+                                        {
+                                            Id = groupOfInterest.Id,
+                                            GroupName = groupOfInterest.GroupName,
+                                            GroupType = groupOfInterest.GroupType,
+                                            Names = groupOfInterest.Names
+                                        };
+
+            return Task.FromResult<TransactionGroupCfg>(transactionGroupCfg);
         }
 
         public static async Task<string> CommitChangesAsync(this TransactionContext _context, TransactionGroupCfg groupCfg)

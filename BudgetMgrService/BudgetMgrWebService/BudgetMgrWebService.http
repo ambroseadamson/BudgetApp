@@ -1,6 +1,5 @@
-@BudgetMgrWebService_HostAddress = http://localhost:5049
+@BudgetMgrWebService_HostAddress = https://localhost:7261
 
-GET {{BudgetMgrWebService_HostAddress}}/transactionsummary/
-Accept: application/json
+GET {{BudgetMgrWebService_HostAddress}}/api/summaryresult
 
 ###

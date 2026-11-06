@@ -26,5 +26,8 @@
   <ItemGroup>
     <ProjectReference Include="..\BudgetMgrServiceLib\BudgetMgrServiceLib.csproj" />
   </ItemGroup>
-
+	<ItemGroup>
+		<Content Update="testdatasettings.json" CopyToOutputDirectory="PreserveNewest" />
+		<Content Update="grouptypesettings.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 </Project>
