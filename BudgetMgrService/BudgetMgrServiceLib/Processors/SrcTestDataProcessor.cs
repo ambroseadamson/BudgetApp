@@ -39,7 +39,7 @@ namespace BudgetMgrServiceLib.Processors
             Func<IEnumerable<Transaction>, IEnumerable<int>> fnUniqueIds = (transactions) => transactions.GenerateUniqueIds(transactions, (trans) => (int)trans.Id);
             Func<IEnumerable<Transaction>, IEnumerable<Transaction>> applyUniqueIds = (transactions) => transactions.Zip(fnUniqueIds(transactions), TransactionProcessor.ApplyUniqueId);
             var srcData = genSrcData(testDataCfg, groupTypesCfg, DateTime.Now, new Random());
-            return TransactionGenerator.GenTransactionData(srcData.Data, testDataCfg, groupTypesCfg, srcData.Type, applyUniqueIds).Results;
+            return srcData.Data.GenTransactionData(testDataCfg, groupTypesCfg, applyUniqueIds).Results;
         }
 
         public static bool NumericValueIsValid(this string numericValue)

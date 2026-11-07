@@ -35,13 +35,31 @@ namespace BudgetMgrWebService.Controllers
 
         // GET: api/SummaryResultByDateRange
         [HttpGet("SummaryResultByDateRange")]
-        public async Task<ActionResult<SummaryResult>> GetSummaryResultByDateRange([FromQuery] DateFilterAndGroupTypeBodyParams dateFilter)
+        public async Task<ActionResult<SummaryResult>> GetSummaryResultByDateRange([FromQuery] DateFilterBodyParams dateFilter)
+        {
+
+            var summaryResult = await _context.FindSummaryResultAsync(dateFilter.StartDate, dateFilter.EndDate);
+
+            // TODO:  Revert to the following usage context connects to an actaul database    
+            // var summaryResult = await _context.SummaryResult.FindAsync(startDate, endDate);
+
+            if (summaryResult == null)
+            {
+                return NotFound();
+            }
+
+            return summaryResult;
+        }
+
+        // GET: api/SummaryResultByDateRangeAndGroupType
+        [HttpGet("SummaryResultByDateRangeAndGroupType")]
+        public async Task<ActionResult<SummaryResult>> GetSummaryResultByDateRangeAndGroupType([FromQuery] DateFilterAndGroupTypeBodyParams dateFilter)
         {
 
             var summaryResult = await _context.FindSummaryResultAsync(dateFilter.StartDate, dateFilter.EndDate, dateFilter.GroupType);
 
             // TODO:  Revert to the following usage context connects to an actaul database    
-            // var summaryResult = await _context.SummaryResult.FindAsync(miscellaenousGroupType, startDate, endDate);
+            // var summaryResult = await _context.SummaryResult.FindAsync(startDate, endDate, gropuType);
 
             if (summaryResult == null)
             {

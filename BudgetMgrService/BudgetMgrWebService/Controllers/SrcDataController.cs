@@ -25,13 +25,13 @@ namespace BudgetMgrWebService.Controllers
         public async Task<ActionResult<SummaryResult>> Post([FromServices] IOptions<TestDataCfg> testDataCfgAccessor,
                                                             [FromBody] SrcData srcData)
         {
-            var results = srcData.Data.GenTransactionData(testDataCfgAccessor.Value, _context.ToGroupTypeCfgEx(), srcData.Type, _context.ApplyUniqueIds);
+            var results = srcData.Data.GenTransactionData(testDataCfgAccessor.Value, _context.ToGroupTypeCfgEx(), _context.ApplyUniqueIds);
 
             _context.Transactions.AddRange(results.Results.RemoveDuplicates(_context.Transactions));
 
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSummaryResult", null);
+            return Ok();
         }
     }
 }

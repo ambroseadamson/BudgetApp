@@ -55,14 +55,14 @@ namespace BudgetMgrWebService.Processors
 
             // TODO: this is a temporary solution to seed the database with transactions.
             // In the future, we will need to implement a more robust solution for seeding the database with transactions.
-            // This should be via the post summaryResult endpoint, which will be called by the front end to seed the database with transactions.
-            // Once that is implemented, we can remove this code and the testdatasettings.json file from the Web API project.
-            {
-                var testDataCfg = AppCfgProcessor.ToTestDataCfg(contentFilePath);
-                Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData = StatementGenerator.GenStatementData;
-                var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesEx).ToArray();
-                context.Transactions.AddRange(transactions);
-            }
+            // This should be via the post SrcData endpoint, which will be called by the front end to seed the database with transactions.
+            // Once that is implemented, we can move this code and the testdatasettings.json file usage to the unit testing in the test project for the BudgetMgrWebService project.
+            //{
+            //    var testDataCfg = AppCfgProcessor.ToTestDataCfg(contentFilePath);
+            //    Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData = StatementGenerator.GenStatementData;
+            //    var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesEx).ToArray();
+            //    context.Transactions.AddRange(transactions);
+            //}
 
             context.SaveChanges();
         }
@@ -183,6 +183,14 @@ namespace BudgetMgrWebService.Processors
         {
             var content = TransactionContent.Of(_context);
             return Task.FromResult(CreateSummaryResult(content, content.Transactions, groupType ?? expenseGroupType));
+        }
+
+        public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this TransactionContext _context, string startDate, string endDate)
+        {
+            var content = TransactionContent.Of(_context);
+            var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
+
+            return Task.FromResult(CreateSummaryResult(content, transactions, expenseGroupType));
         }
 
         public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this TransactionContext _context, string startDate, string endDate, string groupType)

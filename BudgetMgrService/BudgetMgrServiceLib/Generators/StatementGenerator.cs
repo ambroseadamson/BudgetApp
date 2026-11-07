@@ -112,11 +112,8 @@ namespace BudgetMgrServiceLib.Generators
                 "\"Date\",\"Transaction type\",\"Description\",\"Paid out\",\"Paid in\",\"Balance\""
             };
 
-            return SrcData.Of(_transactions.GenSrcFileName(fileNameDateFmt, fileNamePrefix, date),
-                               srcTestDataType,
-                               // a collection of Transaction values, prepended with a header and rendered as CSV Rows.... 
-                               transactionHeader.Concat(ToTransactionStrings(ToTransactionSet(_transactions))),
-                               DateFilterCfg.Of(_transactions.First().DateStamp, _transactions.Last().DateStamp, true));
+            // a collection of Transaction values, prepended with a header and rendered as CSV Rows.... 
+            return SrcData.Of(transactionHeader.Concat(ToTransactionStrings(ToTransactionSet(_transactions))));
         }
 
 

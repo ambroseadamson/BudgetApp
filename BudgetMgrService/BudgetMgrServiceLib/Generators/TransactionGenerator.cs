@@ -10,7 +10,7 @@ namespace BudgetMgrServiceLib.Generators
     public static class TransactionGenerator
     {
         public static TransactionResults GenTransactionData(this IEnumerable<string> transactionSrcData,
-                                                            TestDataCfg testDataCfg, GroupTypesCfgEx groupTypesCfg, string srcType,
+                                                            TestDataCfg testDataCfg, GroupTypesCfgEx groupTypesCfg,
                                                             Func<IEnumerable<Transaction>, IEnumerable<Transaction>> applyUniqueIds)
         {
 
@@ -36,8 +36,8 @@ namespace BudgetMgrServiceLib.Generators
             Func<IEnumerable<string>, Transaction> toTransactionFromE = (entry) =>
             {
                 return Transaction.Of(0, toDateStamp(entry.First()), extractVal(1, entry).ToUpper(),
-                                         extractVal(2, entry).ToUpper(), extractTransAmount(extractVal(3, entry),
-                                         extractVal(4, entry)));
+                                         extractVal(2, entry).ToUpper(), 
+                                         extractTransAmount(extractVal(3, entry).Replace('£', ' '),extractVal(4, entry).Replace('£', ' ')));
             };
 
             string[] debitCreditTypes = { "BANK CREDIT", "DIRECT DEBIT" };
@@ -71,12 +71,7 @@ namespace BudgetMgrServiceLib.Generators
 
 
 
-            // pattern match calling genCashReceipts() or genStatementData() on matching result
-            var results = srcType.Match()
-                                 .With(_srcType => _srcType.Contains("Statement Download"), (_srcType) => genStatementData(transactionSrcData))
-                                 .Do()
-                                 .ToArray();
-
+            var results = genStatementData(transactionSrcData).ToArray();
             return TransactionResults.Of("transactions.json",
                                          results,
                                          results.GenDateFilterCfgURLParam(testDataCfg.DateFilter.UseDateFilter));

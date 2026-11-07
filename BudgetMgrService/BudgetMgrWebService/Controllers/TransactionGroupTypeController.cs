@@ -42,7 +42,7 @@ namespace BudgetMgrWebService.Controllers
             }
 
             _ = await _context.CommitChangesAsync(groupCfg);
-            return CreatedAtAction("GetTransactionGroupCfg", null);
+            return Ok();
         }
 
         // PUT: api/TransactionGroupCfg
@@ -83,7 +83,7 @@ namespace BudgetMgrWebService.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // DELETE: api/TransactionGroupCfg
@@ -107,7 +107,7 @@ namespace BudgetMgrWebService.Controllers
 
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
 
