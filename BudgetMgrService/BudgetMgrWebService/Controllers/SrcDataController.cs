@@ -25,6 +25,8 @@ namespace BudgetMgrWebService.Controllers
         public async Task<ActionResult<SummaryResult>> Post([FromServices] IOptions<TestDataCfg> testDataCfgAccessor,
                                                             [FromBody] SrcData srcData)
         {
+            // TODO: See testSrcData.json for the format of the data that is expected to be posted to this endpoint.
+            // NOTE: SrcData data type will change to meet the requirements of the national bank statement data that will be posted to this endpoint.
             var results = srcData.Data.GenTransactionData(testDataCfgAccessor.Value, _context.ToGroupTypeCfgEx(), _context.ApplyUniqueIds);
 
             _context.Transactions.AddRange(results.Results.RemoveDuplicates(_context.Transactions));
