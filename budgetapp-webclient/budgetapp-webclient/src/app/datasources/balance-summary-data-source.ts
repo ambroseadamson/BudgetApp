@@ -1,7 +1,5 @@
 import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { Observable } from "rxjs/Observable";
-import { of } from "rxjs/observable/of";
+import { BehaviorSubject, Observable, of } from "rxjs";
 import { catchError, finalize } from "rxjs/operators";
 import { TransactionSummaryData } from "../models/transactiondetails";
 import { TransactiondetailsService } from "../services/transactiondetails.service";
