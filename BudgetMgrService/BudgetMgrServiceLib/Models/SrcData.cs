@@ -23,14 +23,12 @@ namespace BudgetMgrServiceLib.Models
 
     public class SrcData
     {
-        public string Type { get; set; }
         public IEnumerable<string> Data { get; set; }
 
-        public static SrcData Of(string fileName, string type, IEnumerable<string> data, DateFilterCfg dateRange)
+        public static SrcData Of(IEnumerable<string> data)
         {
             return new SrcData()
             {
-                Type = type,
                 Data = data,
             };
         }

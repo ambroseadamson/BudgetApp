@@ -20,7 +20,13 @@ namespace BudgetMgrServiceLibTest
 {
     public class StatementTest
     {
-        public static Func<string, DateTime> toDateStamp = (val) => DateTime.Parse(val);
+        public static Func<string, DateTime> toDateStamp = (val) =>
+        {
+            DateTime dt;
+            var result = DateTime.TryParse(val, out dt);
+            return result ? dt : DateTime.MinValue;
+        };
+
         public static Func<string, IEnumerable<string>> genCsvEntries = (row) => row.Replace("\"", "").Split(new char[] { ',' });
 
         public static readonly TestDataCfg testDataCfg = AppCfgProcessor.ToTestDataCfg();
@@ -54,7 +60,9 @@ namespace BudgetMgrServiceLibTest
         public void Test2_DatesAreValid(string rowData)
         {
             var element = genCsvEntries(rowData).First();
-            Assert.True(toDateStamp(element) != null);
+
+            // NOTE: DateTime.MinValue is used as an indicator of an invalid date, so we assert that the parsed date is not equal to DateTime.MinValue.
+            Assert.True(toDateStamp(element) != DateTime.MinValue);
         }
 
         // // Transaction types are values are valid (second val in entry should exist in range of known types)

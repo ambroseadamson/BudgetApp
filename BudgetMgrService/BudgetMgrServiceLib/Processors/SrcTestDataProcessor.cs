@@ -27,14 +27,19 @@ namespace BudgetMgrServiceLib.Processors
         public static T RandomElement<T>(this Random rnd, IEnumerable<T> collection) => collection.ElementAt(rnd.ToRandomSrcVal(0, collection.Count() - 1));
 
 
-        public static IEnumerable<string> ObtainCsvData(Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData, TestDataCfg testDataCfg, GroupTypesCfgEx groupTypesCfg) => genSrcData(testDataCfg, groupTypesCfg, DateTime.Now, new Random()).Data;
+        public static IEnumerable<string> ObtainCsvData(Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData, 
+                                                        TestDataCfg testDataCfg, 
+                                                        GroupTypesCfgEx groupTypesCfg) 
+        {
+            return genSrcData(testDataCfg, groupTypesCfg, DateTime.Now, new Random()).Data;
+        }
 
         public static IEnumerable<Transaction> ObtainTransactionData(Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData, TestDataCfg testDataCfg, GroupTypesCfgEx groupTypesCfg)
         {
             Func<IEnumerable<Transaction>, IEnumerable<int>> fnUniqueIds = (transactions) => transactions.GenerateUniqueIds(transactions, (trans) => (int)trans.Id);
             Func<IEnumerable<Transaction>, IEnumerable<Transaction>> applyUniqueIds = (transactions) => transactions.Zip(fnUniqueIds(transactions), TransactionProcessor.ApplyUniqueId);
             var srcData = genSrcData(testDataCfg, groupTypesCfg, DateTime.Now, new Random());
-            return TransactionGenerator.GenTransactionData(srcData.Data, testDataCfg, groupTypesCfg, srcData.Type, applyUniqueIds).Results;
+            return srcData.Data.GenTransactionData(testDataCfg, groupTypesCfg, applyUniqueIds).Results;
         }
 
         public static bool NumericValueIsValid(this string numericValue)
@@ -44,7 +49,7 @@ namespace BudgetMgrServiceLib.Processors
             {
                 Double.Parse(numericValue);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 parseSucceeded = false;
             }

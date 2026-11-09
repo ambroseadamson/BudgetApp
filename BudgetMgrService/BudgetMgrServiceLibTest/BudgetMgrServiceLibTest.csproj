@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <IsPackable>false</IsPackable>
@@ -11,7 +11,6 @@
     <PackageReference Include="Optional" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.runner.visualstudio" />
-    <PackageReference Include="xunit.v3" Version="4.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BudgetMgrServiceLib\BudgetMgrServiceLib.csproj" />

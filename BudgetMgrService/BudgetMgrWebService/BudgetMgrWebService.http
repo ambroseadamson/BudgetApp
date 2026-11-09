@@ -1,0 +1,5 @@
+@BudgetMgrWebService_HostAddress = https://localhost:7261
+
+GET {{BudgetMgrWebService_HostAddress}}/api/summaryresult
+
+###

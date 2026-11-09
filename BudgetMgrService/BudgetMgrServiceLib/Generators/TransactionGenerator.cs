@@ -10,25 +10,17 @@ namespace BudgetMgrServiceLib.Generators
     public static class TransactionGenerator
     {
         public static TransactionResults GenTransactionData(this IEnumerable<string> transactionSrcData,
-                                                            TestDataCfg testDataCfg, GroupTypesCfgEx groupTypesCfg, string srcType,
+                                                            TestDataCfg testDataCfg, GroupTypesCfgEx groupTypesCfg,
                                                             Func<IEnumerable<Transaction>, IEnumerable<Transaction>> applyUniqueIds)
         {
 
             Func<int, IEnumerable<string>, string> extractVal = (n, entries) => entries.Skip(n).First();
 
-            Func<string, DateTime> toDateStamp = (val) => DateTime.Parse(val);
-
-            Func<IEnumerable<string>, CashReceipt> toCashReceipt = (entry) => CashReceipt.Of(toDateStamp(entry.First()), extractVal(1, entry).ToUpper(),
-                                                                                              Double.Parse(extractVal(2, entry)),
-                                                                                              Double.Parse(extractVal(3, entry)));
-
-            Func<CashReceipt, Transaction> toTransactionFromCR = (cashReceipt) => Transaction.Of(0, cashReceipt.DateStamp, "CASH RECEIPT", cashReceipt.Desc, cashReceipt.Total);
-
-            Func<IEnumerable<string>, IEnumerable<Transaction>> genCashReceipts = (entries) =>
+            Func<string, DateTime> toDateStamp = (val) =>
             {
-                return applyUniqueIds(entries.Select(entry => entry.Split(new char[] { ',' }))
-                              .Select(toCashReceipt)
-                              .Select(toTransactionFromCR));
+                DateTime dt;
+                var result = DateTime.TryParse(val, out dt);
+                return result ? dt :DateTime.MinValue;
             };
 
             Func<string, bool> isEmptyEntry = (entry) => entry.Trim().Length == 0;
@@ -44,8 +36,8 @@ namespace BudgetMgrServiceLib.Generators
             Func<IEnumerable<string>, Transaction> toTransactionFromE = (entry) =>
             {
                 return Transaction.Of(0, toDateStamp(entry.First()), extractVal(1, entry).ToUpper(),
-                                         extractVal(2, entry).ToUpper(), extractTransAmount(extractVal(3, entry),
-                                         extractVal(4, entry)));
+                                         extractVal(2, entry).ToUpper(), 
+                                         extractTransAmount(extractVal(3, entry).Replace('£', ' '),extractVal(4, entry).Replace('£', ' ')));
             };
 
             string[] debitCreditTypes = { "BANK CREDIT", "DIRECT DEBIT" };
@@ -79,13 +71,7 @@ namespace BudgetMgrServiceLib.Generators
 
 
 
-            // pattern match calling genCashReceipts() or genStatementData() on matching result
-            var results = srcType.Match()
-                                 .With(_srcType => _srcType.Contains("cashReceipts"), (_srcType) => genCashReceipts(transactionSrcData))
-                                 .With(_srcType => _srcType.Contains("Statement Download"), (_srcType) => genStatementData(transactionSrcData))
-                                 .Do()
-                                 .ToArray();
-
+            var results = genStatementData(transactionSrcData).ToArray();
             return TransactionResults.Of("transactions.json",
                                          results,
                                          results.GenDateFilterCfgURLParam(testDataCfg.DateFilter.UseDateFilter));

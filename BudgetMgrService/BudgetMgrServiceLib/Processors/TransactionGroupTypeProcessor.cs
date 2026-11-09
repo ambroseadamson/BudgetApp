@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BudgetMgrServiceLib.Models;
 using Optional;
-using Optional.Linq;
 
 namespace BudgetMgrServiceLib.Processors
 {
@@ -142,39 +140,55 @@ namespace BudgetMgrServiceLib.Processors
             };
         }
 
-        public static IEnumerable<string> ObtainNewTransNames(this IEnumerable<TransactionGroupCfg> newNameSrc)
+        public static IEnumerable<string> ObtainTransNames(this IEnumerable<TransactionGroupCfg> nameSrc)
         {
-            return newNameSrc.Select(src => src.Names.Select(name => name))
-                             .Flatten()
-                             .Distinct();
+            return nameSrc.Select(src => src.Names.Select(name => name))
+                          .Flatten()
+                          .Distinct();
         }
 
         public static IEnumerable<long> GenTransNamesToRemove(this IEnumerable<TransactionGroupCfg> removeSrc, GroupTypesCfgEx groupTypesCfg)
         {
-            var newTransNames = removeSrc.ObtainNewTransNames().ToArray();
-            return groupTypesCfg.TransNames.Where(transName => newTransNames.Any(name => name == transName.Name) == false)
+            var transNamesToRemove = removeSrc.ObtainTransNames().ToArray();
+            return groupTypesCfg.TransNames.Where(transName => transNamesToRemove.Any(name => name == transName.Name) == false)
                                 .Select(transName => transName.Id)
+                                .ToArray();
+        }
+
+        public static IEnumerable<TransName> GenTransNamesToAdd(this IEnumerable<TransactionGroupCfg> addSrc, GroupTypesCfgEx groupTypesCfg)
+        {
+            var transNamesToAdd = addSrc.ObtainTransNames()
+                                        .Where(name => groupTypesCfg.TransNames.Any(transName => name == transName.Name) == false)
+                                        .ToArray();
+
+            return groupTypesCfg.TransNames.GenerateUniqueIds(transNamesToAdd, (transName) => (int)transName.Id)
+                                .Zip(transNamesToAdd, (id, name) => name.ToTransName(id))
+                                .ToArray();
+        }
+
+        public static IEnumerable<TransactionGroupEx> ObtainTransGroups(this IEnumerable<TransactionGroupCfg> transGroupSrc, GroupTypesCfgEx groupTypesCfg)
+        {
+            return transGroupSrc.Select(transGroup => transGroup.To(groupTypesCfg.TransGroupTypes, transGroup.DefaultId()));
+        }
+
+        public static IEnumerable<TransactionGroupEx> GenTransGroupsToRemove(this IEnumerable<TransactionGroupCfg> removeSrc, GroupTypesCfgEx groupTypesCfg)
+        {
+            var transGroupsToRemove = removeSrc.ObtainTransGroups(groupTypesCfg);
+
+            return groupTypesCfg.TransGroups.GenerateUniqueIds(transGroupsToRemove, (transGroup) => (int)transGroup.Id)
+                                .Zip(transGroupsToRemove, (id, transGroup) => transGroup.Of(id))
                                 .ToArray();
         }
 
         public static IEnumerable<TransactionGroupEx> GenTransGroupsToAdd(this IEnumerable<TransactionGroupCfg> addSrc, GroupTypesCfgEx groupTypesCfg)
         {
-            var transGroupsToAdd = addSrc.Select(transGroup => transGroup.To(groupTypesCfg.TransGroupTypes, transGroup.DefaultId()));
+            var transGroupsToAdd = addSrc.ObtainTransGroups(groupTypesCfg)
+                                        .Where(group => groupTypesCfg.TransGroups.Any(transGroup => group.GroupName == transGroup.GroupName) == false)
+                                        .ToArray();
+
 
             return groupTypesCfg.TransGroups.GenerateUniqueIds(transGroupsToAdd, (transGroup) => (int)transGroup.Id)
                                 .Zip(transGroupsToAdd, (id, transGroup) => transGroup.Of(id))
-                                .ToArray();
-        }
-
-
-        public static IEnumerable<TransName> GenTransNamesToAdd(this IEnumerable<TransactionGroupCfg> addSrc, GroupTypesCfgEx groupTypesCfg)
-        {
-            var newTransNames = addSrc.ObtainNewTransNames()
-                                      .Where(name => groupTypesCfg.TransNames.Any(transName => name == transName.Name) == false)
-                                      .ToArray();
-
-            return groupTypesCfg.TransNames.GenerateUniqueIds(newTransNames, (transName) => (int)transName.Id)
-                                .Zip(newTransNames, (id, name) => name.ToTransName(id))
                                 .ToArray();
         }
 
@@ -240,8 +254,7 @@ namespace BudgetMgrServiceLib.Processors
 
         public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> UpdateGroupData(this GroupTypesCfgEx groupTypesCfg, IEnumerable<TransactionGroupCfg> groupsToUpdate, Option<IEnumerable<TransactionGroupEx>> transGroupsToAdd)
         {
-            var _updatedTransGroups = transGroupsToAdd.Match(some: groupsToAdd => groupTypesCfg.TransGroups.Concat(groupsToAdd).ToArray(),
-                                                             none: () => groupTypesCfg.TransGroups.ToArray());
+            var _updatedTransGroups = transGroupsToAdd.ValueOr(groupTypesCfg.TransGroups.ToArray());
 
             var transNamesToAdd = Option.Some<IEnumerable<TransName>>(groupsToUpdate.GenTransNamesToAdd(groupTypesCfg));
 
@@ -373,15 +386,47 @@ namespace BudgetMgrServiceLib.Processors
         }
 
 
-        public static IEnumerable<string> ToMiscNamesOfInterest(this IEnumerable<Transaction> transactions, string groupType, GroupTypesCfgEx groupTypesCfg)
+        public static IEnumerable<string> ToConfiguredNamesOfInterest(
+            this GroupTypesCfgEx groupTypesCfg,
+            string groupType)
         {
-            var namesOfInterest =  groupTypesCfg.ToTransNamesEx().Where(transName => transName.GroupType == groupType)
-                                                                 .Select(transName => transName.Names)
-                                                                 .Flatten();
+            return groupTypesCfg.ToTransNamesEx()
+                                .Where(transName => transName.GroupType == groupType)
+                                .Select(transName => transName.Names)
+                                .Flatten();
+        }
 
-            return transactions.Where(currTrans => namesOfInterest.Contains(currTrans.Description) == false)
-                               .Select(currTrans => currTrans.Description)
+        public static IEnumerable<string> ToDescriptions(
+            this IEnumerable<Transaction> transactions)
+        {
+            return transactions.Select(transaction => transaction.Description)
                                .Distinct();
+        }
+
+        public static IEnumerable<string> ExcludeDescriptions(
+            this IEnumerable<Transaction> transactions,
+            IEnumerable<string> descriptions)
+        {
+            return transactions.Where(transaction => descriptions.Contains(transaction.Description) == false)
+                               .Select(transaction => transaction.Description);
+        }
+
+        public static IEnumerable<string> ToMiscNamesOfInterest(
+            this IEnumerable<Transaction> transactions,
+            string groupType,
+            GroupTypesCfgEx groupTypesCfg)
+        {
+            return transactions.ExcludeDescriptions(groupTypesCfg.ToConfiguredNamesOfInterest(groupType))
+                               .Distinct();
+        }
+
+
+        public static IEnumerable<string> ToKnownNamesOfInterest(
+            this IEnumerable<Transaction> transactions,
+            string groupType,
+            GroupTypesCfgEx groupTypesCfg)
+        {
+            return transactions.ToDescriptions().Distinct();
         }
 
         public static IEnumerable<string> ToMiscNamesOfInterestFromCfg(this GroupTypesCfgEx groupTypesCfg)

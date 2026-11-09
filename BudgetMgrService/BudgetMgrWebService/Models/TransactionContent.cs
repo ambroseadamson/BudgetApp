@@ -1,18 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using BudgetMgrService_WebAPI.Models;
-using BudgetMgrService_WebAPI.Processors;
 using BudgetMgrServiceLib.Models;
 using BudgetMgrServiceLib.Processors;
+using BudgetMgrWebService.Processors;
 using Optional;
 
 public class TransactionContent
 {
-    public GroupTypesCfgEx GroupTypeCfg {set; get;}
-    public IEnumerable<Transaction> Transactions {set; get;}
+    public required GroupTypesCfgEx GroupTypeCfg {set; get;}
+    public required IEnumerable<Transaction> Transactions {set; get;}
 
-    public IEnumerable<string> IncomeGroupNames {set; get;}
+    public required IEnumerable<string> IncomeGroupNames {set; get;}
 
     public static TransactionContent Of(TransactionContext dbContext)
     {

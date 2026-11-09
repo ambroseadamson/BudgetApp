@@ -5,7 +5,6 @@ using BudgetMgrServiceLib.Models;
 using BudgetMgrServiceLib.Processors;
 using System;
 using BudgetMgrServiceLib.Generators;
-using System.IO;
 using Optional;
 
 // Extensions methods used in the tests:
@@ -225,15 +224,18 @@ namespace BudgetMgrServiceLibTest
             }
         }
 
-        // Add and update test by creating a set by generating a randomised set of names from half the set from the app configuration and 3 additional entries with randomised sets of names and compare results.
+        // Add and update test by creating a set by generating a randomised set of names from half the set
+        // from the app configuration and 3 additional entries with randomised sets of names and compare results.
         [Theory]
         [MemberData(nameof(ObtainAddedAndUpdatedGroupTypeSet))]
 
         public void Test4_AddAndUpdateWithModAppCfgEntriesToExistingSet(List<TransactionGroupCfg> currentSet, TransactionGroupCfg addedGroupType, TransactionGroupCfg updatedGroupType)
         {
-            //       Input Set = Name Groups from app cfg with randomised set of names from half the set from the app configuration and 3 additional entries with randomised sets of names
+            //       Input Set = Name Groups from app cfg with randomised set of names from half the set from the app configuration
+            //                   and 3 additional entries with randomised sets of names
             //       Current Set = Name Groups from app cfg as Group Types
-            //       Expected Set = Name Groups from app cfg as Group Types with randomised set of names from half the set from the app configuration and 3 additional entries with randomised sets of names
+            //       Expected Set = Name Groups from app cfg as Group Types with randomised set of names from half the set from the
+            //                      app configuration and 3 additional entries with randomised sets of names
 
             Assert.Contains(currentSet, (currentGroupType) => currentGroupType.GroupName == updatedGroupType.GroupName);
             Assert.True(updatedGroupType.Names.Count() <= 2);
