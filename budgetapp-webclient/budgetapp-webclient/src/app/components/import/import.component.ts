@@ -1,13 +1,7 @@
 import { Location } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-// Depending on whether rollup is used, moment needs to be imported differently.
-// Since Moment.js doesn't have a default export, we normally need to import using the `* as`
-// syntax. However, rollup creates a synthetic default module and we thus need to import it using
-// the `default as` syntax.
-import * as _moment from "moment";
-// tslint:disable-next-line:no-duplicate-imports
-import { default as _rollupMoment } from "moment";
+import * as moment from "moment";
 import { tap } from "rxjs/operators";
 import { ImportDataSource } from "../../datasources/import-data-source";
 import { Inputdata } from "../../models/inputdata";
@@ -15,8 +9,6 @@ import { TransactionSummaryData } from "../../models/transactiondetails";
 import { IsDataLoadedService } from "../../services/is-data-loaded.service";
 import { MinMaxDateService } from "../../services/min-max-date.service";
 import { TransactiondetailsService } from "../../services/transactiondetails.service";
-const moment = _rollupMoment || _moment;
-
 @Component({
   selector: "budgetapp-import",
   templateUrl: "./import.component.html",

@@ -6,13 +6,7 @@ import {
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE
 } from "@angular/material/core";
-// Depending on whether rollup is used, moment needs to be imported differently.
-// Since Moment.js doesn't have a default export, we normally need to import using the `* as`
-// syntax. However, rollup creates a synthetic default module and we thus need to import it using
-// the `default as` syntax.
-import * as _moment from "moment";
-// tslint:disable-next-line:no-duplicate-imports
-import { default as _rollupMoment } from "moment";
+import * as moment from "moment";
 import {
   DateFilter,
   TransactionSummaryEntry
@@ -21,8 +15,6 @@ import { ExpEntryCountService } from "../../services/exp-entry-count.service";
 import { IsDataLoadedService } from "../../services/is-data-loaded.service";
 import { MinMaxDateService } from "../../services/min-max-date.service";
 import { TransactiondetailsService } from "../../services/transactiondetails.service";
-
-const moment = _rollupMoment || _moment;
 
 // See the Moment.js docs for the meaning of these formats:
 // https://momentjs.com/docs/#/displaying/format/
