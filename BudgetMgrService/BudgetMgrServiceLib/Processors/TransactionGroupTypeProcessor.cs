@@ -238,8 +238,7 @@ namespace BudgetMgrServiceLib.Processors
 
         public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> UpdateGroupData(this GroupTypesCfgEx groupTypesCfg, IEnumerable<TransactionGroupCfg> groupsToUpdate, Option<IEnumerable<TransactionGroupEx>> transGroupsToAdd)
         {
-            var _updatedTransGroups = transGroupsToAdd.Match(some: groupsToAdd => groupTypesCfg.TransGroups.Concat(groupsToAdd).ToArray(),
-                                                             none: () => groupTypesCfg.TransGroups.ToArray());
+            var _updatedTransGroups = transGroupsToAdd.ValueOr(groupTypesCfg.TransGroups.ToArray());
 
             var transNamesToAdd = Option.Some<IEnumerable<TransName>>(groupsToUpdate.GenTransNamesToAdd(groupTypesCfg));
 

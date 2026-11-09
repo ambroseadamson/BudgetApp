@@ -53,9 +53,8 @@ namespace BudgetMgrWebService.Processors
             context.TransGroups.AddRange(groupTypesEx.TransGroups);
             context.NameRefs.AddRange(groupTypesEx.NameRefs);
 
-            // TODO: this is a temporary solution to seed the database with transactions.
-            // In the future, we will need to implement a more robust solution for seeding the database with transactions.
-            // This should be via the post SrcData endpoint, which will be called by the front end to seed the database with transactions.
+            // The follwing is a temporary solution to seed the database with transactions.
+            // This should be via the post SrcData endpoint moving forward, which will be called by the front end to seed the database with transactions.
             // Once that is implemented, we can move this code and the testdatasettings.json file usage to the unit testing in the test project for the BudgetMgrWebService project.
             //{
             //    var testDataCfg = AppCfgProcessor.ToTestDataCfg(contentFilePath);
@@ -83,29 +82,6 @@ namespace BudgetMgrWebService.Processors
             var groupTypesCfg = dbContext.ToGroupTypeCfgEx();
 
             return groupTypesCfg.UpdateGroupData(groupsToAdd, Option.Some(groupsToAdd.GenTransGroupsToAdd(groupTypesCfg)));
-        }
-
-        public static void UpdateGroupDataSource(this Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> updateSourceReferences,
-                                                 TransactionContext dbContext)
-        {
-            updateSourceReferences.Item1.TransGroupsToAdd.MatchSome(groupsToAdd => dbContext.TransGroups.AddRange(groupsToAdd));
-
-            updateSourceReferences.Item1.TransNamesToAdd.MatchSome(namesToAdd => dbContext.TransNames.AddRange(namesToAdd));
-
-            updateSourceReferences.Item1.NameRefsToRemove.MatchSome(nameRefIds =>
-            {
-                nameRefIds.ForEach(nameRefId =>
-                {
-                    var nameRefToRemove = dbContext.NameRefs.FirstOrDefault(_nameRef => _nameRef.Id == nameRefId);
-                    // TODO: replace this with an optional match to avoid null reference exception
-                    if (nameRefToRemove != null)
-                    {
-                        dbContext.NameRefs.Remove(nameRefToRemove);
-                    }
-                });
-            });
-
-            updateSourceReferences.Item1.NameRefsToAdd.MatchSome(refsToAdd => dbContext.NameRefs.AddRange(refsToAdd));
         }
 
         public static GroupTypesCfgEx ToGroupTypeCfgEx(this TransactionContext dbContext)
@@ -243,21 +219,21 @@ namespace BudgetMgrWebService.Processors
             return Task.FromResult(CreateTransactionSummary(content, transactions, groupType));
         }
 
-        //public static Task<IEnumerable<TransactionGroupCfg>> ToListAsync(this TransactionContext _context)
-        //{
-        //    var content = TransactionContent.Of(_context);
-        //    var _groups = content.GroupTypeCfg.ToTransNamesEx();
-        //    var miscGroup = new TransactionGroupCfg()
-        //    {
-        //        Id = _groups.GenerateUniqueId(cfg => (int)cfg.Id),
-        //        GroupName = "misc",
-        //        GroupType = "expense",
-        //        Names = content.Transactions.ToMiscTransNamesOfInterest(content)
-        //    }.AsCollection();
-        //    var transactionGroupCfgs = _groups.Concat(miscGroup).ToArray();
+        public static Task<ActionResult<IEnumerable<TransactionGroupCfg>>> ToTransactionGroupCfgsAsync(this TransactionContext _context)
+        {
+            var content = TransactionContent.Of(_context);
+            var _groups = content.GroupTypeCfg.ToTransNamesEx();
+            var miscGroup = new TransactionGroupCfg()
+            {
+                Id = _groups.GenerateUniqueId(cfg => (int)cfg.Id),
+                GroupName = "misc",
+                GroupType = "expense",
+                Names = content.Transactions.ToMiscTransNamesOfInterest(content)
+            }.AsCollection();
+            var transactionGroupCfgs = _groups.Concat(miscGroup).ToArray();
 
-        //    return Task.FromResult<IEnumerable<TransactionGroupCfg>>(transactionGroupCfgs);
-        //}
+            return Task.FromResult<ActionResult<IEnumerable<TransactionGroupCfg>>>(transactionGroupCfgs);
+        }
 
 
         public static Task<TransactionGroupCfg> FindTransactionGroupCfgAsync(this TransactionContext _context, UpdateTransactionName transactionName)
@@ -279,28 +255,38 @@ namespace BudgetMgrWebService.Processors
             return Task.FromResult<TransactionGroupCfg>(transactionGroupCfg);
         }
 
-        public static async Task<string> CommitChangesAsync(this TransactionContext _context, TransactionGroupCfg groupCfg)
+        public static void UpdateGroupDataSource(this Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> updateSourceReferences,
+                                                 TransactionContext dbContext)
         {
-            _context.TransactionGroupCfg.Add(groupCfg);
-            await _context.SaveChangesAsync();
+            updateSourceReferences.Item1.TransGroupsToAdd.MatchSome(groupsToAdd => dbContext.TransGroups.AddRange(groupsToAdd));
 
-            _context.WriteDataToFile(_context.ContentFilePath.First().Value, AppCfgProcessor.DefaultGroupTypeCfgFileName);
+            updateSourceReferences.Item1.TransNamesToAdd.MatchSome(namesToAdd => dbContext.TransNames.AddRange(namesToAdd));
 
-            return string.Join(",", _context.ToGroupTypeCfgEx().ToTransNamesEx().Select(group => group.GroupName));
+            updateSourceReferences.Item1.NameRefsToRemove.MatchSome(nameRefIds =>
+            {
+                nameRefIds.ForEach(nameRefId =>
+                {
+                    var nameRefToRemove = dbContext.NameRefs.FirstOrDefault(_nameRef => _nameRef.Id == nameRefId);
+                    // TODO: replace this with an optional match to avoid null reference exception
+                    if (nameRefToRemove != null)
+                    {
+                        dbContext.NameRefs.Remove(nameRefToRemove);
+                    }
+                });
+            });
+
+            updateSourceReferences.Item1.NameRefsToAdd.MatchSome(refsToAdd => dbContext.NameRefs.AddRange(refsToAdd));
         }
 
-        public static void UpdateTransactionGroupCfg(this TransactionContext _context, TransactionGroupCfg groupCfg)
+        public static void UpdateTransactionGroupCfg(this TransactionContext _context, IEnumerable<TransactionGroupCfg> updatedGroupCfgs)
         {
-            // update existing entries in the groupType Data set...
-            var groupsToUpdate = groupCfg.AsCollection().ToArray();
+            // persist the groupCfg (which contains the COMPLETE updated data set) to the database, and update the relevant group data source with the new groupCfg data.
+            // NOTE: Misc group type is not persisted to the database, as it used to reflect the transactions that are not part of the known group types,
+            // and is used to provide a summary of those transactions.
+            var _updatedGroupCfgs = updatedGroupCfgs.Where(g => g.GroupName != miscellaenousGroupType).ToArray();
 
-            var groupTypesCfg = _context.ToGroupTypeCfgEx();
-            groupTypesCfg.UpdateGroupDataWithDefault(groupsToUpdate).UpdateGroupDataSource(_context);
-        }
-
-        public static void RemoveTransactionGroupCfg(this TransactionContext _context, TransactionGroupCfg groupCfg)
-        {
-            UpdateTransactionGroupCfg(_context, groupCfg);
+            var srcGroupTypesCfgs = _context.ToGroupTypeCfgEx();
+            srcGroupTypesCfgs.UpdateGroupDataWithDefault(_updatedGroupCfgs).UpdateGroupDataSource(_context);
         }
 
     }

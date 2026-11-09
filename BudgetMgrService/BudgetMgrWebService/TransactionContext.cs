@@ -26,5 +26,5 @@ public class TransactionContext : DbContext
 
     public DbSet<SummaryResult> SummaryResult { get; set; } = default!;
 
-    public DbSet<BudgetMgrServiceLib.Models.TransactionGroupCfg> TransactionGroupCfg { get; set; } = default!;
+    public DbSet<TransactionGroupCfg> TransactionGroupCfg { get; set; } = default!;
 }

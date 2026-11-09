@@ -24,7 +24,7 @@ namespace BudgetMgrWebService.Controllers
         {
             var summary = await _context.FindTransactionSummaryAsync();
 
-            // TODO:  Revert to the following usage context connects to an actaul database    
+            // TODO:  Revert to the following usage context connects to an actual database    
             // var summary = await _context.TransactionSummary.FindAsync();
 
             if (summary == null)
@@ -41,7 +41,7 @@ namespace BudgetMgrWebService.Controllers
         {
             var summary = await _context.FindTransactionSummaryAsync(dateFilter.StartDate, dateFilter.EndDate);
 
-            // TODO:  Revert to the following usage context connects to an actaul database    
+            // TODO:  Revert to the following usage context connects to an actual database    
             // var summary = await _context.TransactionSummary.FindAsync(dateFilter.StartDate, dateFilter.EndDate);
 
             if (summary == null)
@@ -58,7 +58,7 @@ namespace BudgetMgrWebService.Controllers
         {
             var summary = await _context.FindTransactionSummaryAsync(dateFilterAndGroupType.GroupType, dateFilterAndGroupType.StartDate, dateFilterAndGroupType.EndDate);
 
-            // TODO:  Revert to the following usage context connects to an actaul database    
+            // TODO:  Revert to the following usage context connects to an actual database    
             // var summary = await _context.TransactionSummary.FindAsync(dateFilterAndGroupType.GroupType, dateFilterAndGroupType.StartDate, dateFilterAndGroupType.EndDate);
 
             if (summary == null)

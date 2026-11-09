@@ -1,13 +1,14 @@
+using BudgetMgrServiceLib.Models;
+using BudgetMgrServiceLib.Processors;
+using BudgetMgrWebService.Processors;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BudgetMgrServiceLib.Models;
-using BudgetMgrServiceLib.Processors;
-using BudgetMgrWebService.Processors;
 
 namespace BudgetMgrWebService.Controllers
 {
@@ -27,93 +28,36 @@ namespace BudgetMgrWebService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TransactionGroupCfg>>> GetTransactionGroupCfg()
         {
-            return await _context.TransactionGroupCfg.ToListAsync();
+            // NOTE: The following usage context connects to an in-memory database, which is used for testing purposes.
+            // The actual database connection is commented out below.
+            // This API method retrieves the complete data set of TransactionGroupCfgs in the datastore,
+            // and can be used by the client to update the group data source with the complete
+            return await _context.ToTransactionGroupCfgsAsync();
+
+            // TODO:  Revert to the following usage context connects to an actual database    
+            //return await _context.TransactionGroupCfg.ToListAsync();
         }
 
 
         // POST: api/TransactionGroupType
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TransactionGroupCfg>> Post([FromBody] TransactionGroupCfg groupCfg)
+        public async Task<ActionResult> Post([FromBody] TransactionGroupCfg[] groupCfgs)
         {
-            if (groupCfg == null)
+            // NOTE: The following usage context connects to an in-memory database, which is used for testing purposes.
+            // This API method updates the complete data set of TransactionGroupCfgs in the database with the data
+            // set recieved from the client.
+            if (groupCfgs == null)
             {
                 return BadRequest();
             }
 
-            _ = await _context.CommitChangesAsync(groupCfg);
-            return Ok();
-        }
-
-        // PUT: api/TransactionGroupCfg
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("TransactionGroupCfg")]
-        public async Task<IActionResult> PutTransactionGroupCfg([FromBody] UpdateTransactionName transactionName)
-        {
-
-            var transactionGroupCfg = await _context.FindTransactionGroupCfgAsync(transactionName);
-
-            // TODO:  Revert to the following usage context connects to an actaul database    
-            // var transactionGroupCfg = await _context.TransactionGroupCfg.FindAsync(transactionName);
-            if (transactionGroupCfg == null)
-            {
-                return NotFound();
-            }
-
-
-            _context.UpdateTransactionGroupCfg(transactionGroupCfg);
-
-            // TODO:  Revert to the following usage context connects to an actaul database    
-            //_context.TransactionGroupCfg.Update(transactionGroupCfg);
-            _context.Entry(transactionGroupCfg).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TransactionGroupCfgExists(transactionGroupCfg.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Ok();
-        }
-
-        // DELETE: api/TransactionGroupCfg
-        [HttpDelete("TransactionGroupCfg")]
-        public async Task<IActionResult> DeleteTransactionGroupCfg([FromBody] UpdateTransactionName transactionName)
-        {
-            var transactionGroupCfg = await _context.FindTransactionGroupCfgAsync(transactionName);
-
-            // TODO:  Revert to the following usage context connects to an actaul database    
-            // var transactionGroupCfg = await _context.TransactionGroupCfg.FindAsync(transactionName);
-            if (transactionGroupCfg == null)
-            {
-                return NotFound();
-            }
-
-
-            _context.RemoveTransactionGroupCfg(transactionGroupCfg);
-
-            // TODO:  Revert to the following usage context connects to an actaul database    
-            //_context.TransactionGroupCfg.Remove(transactionGroupCfg);
+            var content = TransactionContent.Of(_context);
+            _context.UpdateTransactionGroupCfg(groupCfgs);
 
             await _context.SaveChangesAsync();
 
             return Ok();
-        }
-
-
-        private bool TransactionGroupCfgExists(long id)
-        {
-            return _context.TransactionGroupCfg.Any(e => e.Id == id);
         }
     }
 }

@@ -22,8 +22,7 @@ namespace BudgetMgrWebService.Controllers
         // POST: api/SrcData
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<SummaryResult>> Post([FromServices] IOptions<TestDataCfg> testDataCfgAccessor,
-                                                            [FromBody] SrcData srcData)
+        public async Task<ActionResult<SummaryResult>> Post([FromServices] IOptions<TestDataCfg> testDataCfgAccessor, [FromBody] SrcData srcData)
         {
             // TODO: See testSrcData.json for the format of the data that is expected to be posted to this endpoint.
             // NOTE: SrcData data type will change to meet the requirements of the national bank statement data that will be posted to this endpoint.
