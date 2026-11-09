@@ -1,9 +1,9 @@
-import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { BehaviorSubject, Observable, of } from "rxjs";
-import { catchError, finalize } from "rxjs/operators";
-import { Transactiondetails } from "../models/transactiondetails";
-import { ExpEntryCountService } from "../services/exp-entry-count.service";
-import { TransactiondetailsService } from "../services/transactiondetails.service";
+import { CollectionViewer, DataSource } from '@angular/cdk/collections';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
+import { Transactiondetails } from '../models/transactiondetails';
+import { ExpEntryCountService } from '../services/exp-entry-count.service';
+import { TransactiondetailsService } from '../services/transactiondetails.service';
 
 export class TransactionSummary {
   dateStamp: string;
@@ -52,17 +52,17 @@ export class TransactionSummaryDataSource
     ): TransactionSummary[] => {
       const _transDetails = <Transactiondetails>transDetails;
 
-      if (type === "expenditure") {
+      if (type === 'expenditure') {
         this.expEntryCountService.changeExpEntryCount(
           _transDetails.expenditure.transactions.length
         );
       }
 
       const expData =
-        type === "income"
+        type === 'income'
           ? _transDetails.income.transactions
           : _transDetails.expenditure.transactions;
-      return expData.map(transaction => {
+      return expData.map((transaction) => {
         return {
           dateStamp: transaction.dateStamp,
           transType: transaction.transType,

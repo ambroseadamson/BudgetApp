@@ -1,25 +1,25 @@
-import { Location } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import * as moment from "moment";
-import { tap } from "rxjs/operators";
-import { ImportDataSource } from "../../datasources/import-data-source";
-import { Inputdata } from "../../models/inputdata";
-import { TransactionSummaryData } from "../../models/transactiondetails";
-import { IsDataLoadedService } from "../../services/is-data-loaded.service";
-import { MinMaxDateService } from "../../services/min-max-date.service";
-import { TransactiondetailsService } from "../../services/transactiondetails.service";
+import { Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
+import { tap } from 'rxjs/operators';
+import { ImportDataSource } from '../../datasources/import-data-source';
+import { Inputdata } from '../../models/inputdata';
+import { TransactionSummaryData } from '../../models/transactiondetails';
+import { IsDataLoadedService } from '../../services/is-data-loaded.service';
+import { MinMaxDateService } from '../../services/min-max-date.service';
+import { TransactiondetailsService } from '../../services/transactiondetails.service';
 @Component({
-  selector: "budgetapp-import",
-  templateUrl: "./import.component.html",
-  styleUrls: ["./import.component.css"]
+  selector: 'budgetapp-import',
+  templateUrl: './import.component.html',
+  styleUrls: ['./import.component.css']
 })
 export class ImportComponent implements OnInit {
-  displayedColumns = ["data"];
+  displayedColumns = ['data'];
   dataSource: ImportDataSource;
   inputData: Inputdata = {
-    type: "Unknown",
-    data: [""]
+    type: 'Unknown',
+    data: ['']
   };
   summaryData: TransactionSummaryData;
 
@@ -42,7 +42,7 @@ export class ImportComponent implements OnInit {
   }
 
   genDisplayRowsStrippedOfQuotes(rows: string[]): string[] {
-    return rows.map(row => row.replace(/['"]+/g, ""));
+    return rows.map(row => row.replace(/['']+/g, ''));
   }
 
   handleFileInput(files: FileList) {
@@ -53,7 +53,7 @@ export class ImportComponent implements OnInit {
 
     const obtainFileType = (fileName: string): string => {
       const fileTypes = fileName.match(/(cashReceipts|Statement Download)/g);
-      return fileTypes !== null ? fileTypes[0] : "";
+      return fileTypes !== null ? fileTypes[0] : '';
     };
 
     const parseContent = (content: any): void => {
@@ -62,8 +62,8 @@ export class ImportComponent implements OnInit {
 
       this.inputData = {
         type:
-          validFileDetected === true ? fileType : "Invalid File Type Detected",
-        data: validFileDetected === true ? content.split("\n") : [""]
+          validFileDetected === true ? fileType : 'Invalid File Type Detected',
+        data: validFileDetected === true ? content.split('\n') : ['']
       };
 
       if (validFileDetected === true) {
@@ -99,8 +99,8 @@ export class ImportComponent implements OnInit {
       //      console.log(err, err.loaded, err.loaded === 0, file);
       that.isDataLoadedService.changeIsDataLoaded(false);
       that.inputData = {
-        type: "Invalid File Type Detected",
-        data: [""]
+        type: 'Invalid File Type Detected',
+        data: ['']
       };
     };
 

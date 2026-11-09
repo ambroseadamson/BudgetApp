@@ -1,8 +1,8 @@
-import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { BehaviorSubject, Observable, of } from "rxjs";
-import { catchError, finalize } from "rxjs/operators";
-import { TransactionSummaryData } from "../models/transactiondetails";
-import { TransactiondetailsService } from "../services/transactiondetails.service";
+import { CollectionViewer, DataSource } from '@angular/cdk/collections';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
+import { TransactionSummaryData } from '../models/transactiondetails';
+import { TransactiondetailsService } from '../services/transactiondetails.service';
 
 export class TransactionSummaryEntryVal {
   name: string;
@@ -38,7 +38,7 @@ export class BalanceSummaryDataSource
       summary: any | TransactionSummaryData
     ): TransactionSummaryEntryVal[] => {
       const summaryEntries = (<TransactionSummaryData>summary).summaryData;
-      return summaryEntries.map(entry => {
+      return summaryEntries.map((entry) => {
         return {
           name: entry.name,
           pct: `${entry.pct}%`

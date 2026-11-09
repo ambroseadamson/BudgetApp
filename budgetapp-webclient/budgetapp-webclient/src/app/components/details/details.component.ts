@@ -1,32 +1,32 @@
-import { Component, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { MomentDateAdapter } from "@angular/material-moment-adapter";
+import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE
-} from "@angular/material/core";
-import * as moment from "moment";
+} from '@angular/material/core';
+import * as moment from 'moment';
 import {
   DateFilter,
   TransactionSummaryEntry
-} from "../../models/transactiondetails";
-import { ExpEntryCountService } from "../../services/exp-entry-count.service";
-import { IsDataLoadedService } from "../../services/is-data-loaded.service";
-import { MinMaxDateService } from "../../services/min-max-date.service";
-import { TransactiondetailsService } from "../../services/transactiondetails.service";
+} from '../../models/transactiondetails';
+import { ExpEntryCountService } from '../../services/exp-entry-count.service';
+import { IsDataLoadedService } from '../../services/is-data-loaded.service';
+import { MinMaxDateService } from '../../services/min-max-date.service';
+import { TransactiondetailsService } from '../../services/transactiondetails.service';
 
 // See the Moment.js docs for the meaning of these formats:
 // https://momentjs.com/docs/#/displaying/format/
 export const MY_FORMATS = {
   parse: {
-    dateInput: "DD/MMM/YYYY"
+    dateInput: 'DD/MMM/YYYY'
   },
   display: {
-    dateInput: "DD/MMM/YYYY",
-    monthYearLabel: "MMM/YYYY",
-    dateA11yLabel: "DD/MMM/YYYY",
-    monthYearA11yLabel: "MMMM/YYYY"
+    dateInput: 'DD/MMM/YYYY',
+    monthYearLabel: 'MMM/YYYY',
+    dateA11yLabel: 'DD/MMM/YYYY',
+    monthYearA11yLabel: 'MMMM/YYYY'
   }
 };
 
@@ -36,9 +36,9 @@ export interface DateRangeType {
 }
 
 @Component({
-  selector: "budgetapp-details",
-  templateUrl: "./details.component.html",
-  styleUrls: ["./details.component.css"],
+  selector: 'budgetapp-details',
+  templateUrl: './details.component.html',
+  styleUrls: ['./details.component.css'],
   providers: [
     // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
     // application's root module. We provide it at the component level here, due to limitations of
@@ -57,8 +57,8 @@ export class DetailsComponent implements OnInit {
   selectedGroup: TransactionSummaryEntry = null;
   dateFilter: DateFilter = null;
 
-  incSummaryType = "income";
-  expSummaryType = "expenditure";
+  incSummaryType = 'income';
+  expSummaryType = 'expenditure';
   expEntryCount = 0;
 
   fcStartDate: FormControl = null;
@@ -71,15 +71,15 @@ export class DetailsComponent implements OnInit {
   _isDataLoaded = false;
 
   dateRangeTypes: DateRangeType[] = [
-    { type: "Day", value: 1 },
-    { type: "2 Days", value: 2 },
-    { type: "3 Days", value: 3 },
-    { type: "4 Days", value: 4 },
-    { type: "5 Days", value: 5 },
-    { type: "6 Days", value: 6 },
-    { type: "Week", value: 7 },
-    { type: "Fortnight", value: 14 },
-    { type: "Month", value: 30 }
+    { type: 'Day', value: 1 },
+    { type: '2 Days', value: 2 },
+    { type: '3 Days', value: 3 },
+    { type: '4 Days', value: 4 },
+    { type: '5 Days', value: 5 },
+    { type: '6 Days', value: 6 },
+    { type: 'Week', value: 7 },
+    { type: 'Fortnight', value: 14 },
+    { type: 'Month', value: 30 }
   ];
 
   constructor(
@@ -123,7 +123,7 @@ export class DetailsComponent implements OnInit {
     const selectedDateRange: DateRangeType = this.fcDateTypeRange.value;
 
     this.dateFilter.endDate = moment(this.fcStartDate.value)
-      .add(selectedDateRange.value, "days")
+      .add(selectedDateRange.value, 'days')
       .toISOString();
   }
 

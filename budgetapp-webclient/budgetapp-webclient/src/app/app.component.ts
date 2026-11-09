@@ -1,13 +1,13 @@
-import { Component } from "@angular/core";
-import { IsDataLoadedService } from "./services/is-data-loaded.service";
+import { Component } from '@angular/core';
+import { IsDataLoadedService } from './services/is-data-loaded.service';
 
 @Component({
-  selector: "budgetapp-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"]
+  selector: 'budgetapp-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = "Budget Manager";
+  title = 'Budget Manager';
   dark = false;
   isDataLoaded = false;
 

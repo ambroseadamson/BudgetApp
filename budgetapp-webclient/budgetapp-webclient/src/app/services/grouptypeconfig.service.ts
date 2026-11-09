@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { Grouptypeconfig } from "../models/grouptypeconfig";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Grouptypeconfig } from '../models/grouptypeconfig';
 
 export class UpdateTransactionName {
   id: number;
@@ -11,7 +11,7 @@ export class UpdateTransactionName {
 
 @Injectable()
 export class GrouptypeconfigService {
-  serverPort = "5000";
+  serverPort = '5000';
   // GET
   // POST
   groupTypesURL = `http://localhost:${
@@ -35,8 +35,8 @@ export class GrouptypeconfigService {
   ): Observable<UpdateTransactionName> {
     const cudOptions = {
       headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        Accept: "application/json"
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
       })
     };
 
@@ -54,8 +54,8 @@ export class GrouptypeconfigService {
   ): Observable<UpdateTransactionName> {
     const cudOptions = {
       headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        Accept: "application/json"
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
       }),
       body: { id: `${group.id}`, name: `${transactionName}` }
     };
@@ -82,7 +82,7 @@ export class GrouptypeconfigService {
     return this.httpClient.get<Grouptypeconfig[]>(URL).pipe(
       map(cfgs => {
         return cfgs.filter(cfg => {
-          return cfg.groupType === "expense";
+          return cfg.groupType === 'expense';
         });
       }),
       map(cfgs => {

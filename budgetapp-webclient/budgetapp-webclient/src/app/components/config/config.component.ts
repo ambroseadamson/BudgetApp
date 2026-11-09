@@ -1,42 +1,42 @@
-import { SelectionModel } from "@angular/cdk/collections";
-import { Location } from "@angular/common";
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { MatListOption } from "@angular/material/list";
-import { ActivatedRoute } from "@angular/router";
-import { Grouptypeconfig } from "../../models/grouptypeconfig";
-import { GrouptypeconfigService } from "../../services/grouptypeconfig.service";
+import { SelectionModel } from '@angular/cdk/collections';
+import { Location } from '@angular/common';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatListOption } from '@angular/material/list';
+import { ActivatedRoute } from '@angular/router';
+import { Grouptypeconfig } from '../../models/grouptypeconfig';
+import { GrouptypeconfigService } from '../../services/grouptypeconfig.service';
 
 @Component({
-  selector: "budgetapp-config",
-  templateUrl: "./config.component.html",
-  styleUrls: ["./config.component.css"]
+  selector: 'budgetapp-config',
+  templateUrl: './config.component.html',
+  styleUrls: ['./config.component.css']
 })
 export class ConfigComponent implements OnInit {
-  @ViewChild("miscItems", { static: true })
+  @ViewChild('miscItems', { static: true })
   miscItemList;
-  @ViewChild("items", { static: true })
+  @ViewChild('items', { static: true })
   itemList;
 
-  configType = "";
-  miscConfigType = "misc";
-  groupNames = [""];
+  configType = '';
+  miscConfigType = 'misc';
+  groupNames = [''];
 
   groupOfInterest: Grouptypeconfig = {
     id: -1,
-    groupName: "",
-    groupType: "",
-    names: [""]
+    groupName: '',
+    groupType: '',
+    names: ['']
   };
 
   miscGroup: Grouptypeconfig = {
     id: -1,
-    groupName: "",
-    groupType: "",
-    names: [""]
+    groupName: '',
+    groupType: '',
+    names: ['']
   };
 
-  selectedTransactionName = ""; // TODO: Refactor to use transactionName from groupType instead
-  selectedMiscTransactionName = ""; // TODO: Refactor to use transactionName from groupType instead
+  selectedTransactionName = ''; // TODO: Refactor to use transactionName from groupType instead
+  selectedMiscTransactionName = ''; // TODO: Refactor to use transactionName from groupType instead
 
   constructor(
     private groupTypeCfgService: GrouptypeconfigService,

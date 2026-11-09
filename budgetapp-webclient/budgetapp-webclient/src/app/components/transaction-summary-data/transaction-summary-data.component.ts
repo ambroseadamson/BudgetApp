@@ -4,22 +4,22 @@ import {
   OnChanges,
   OnInit,
   SimpleChange
-} from "@angular/core";
-import { TransactionSummaryDataSource } from "../../datasources/transaction-summary-data-source";
-import { TransactionSummaryTotalDataSource } from "../../datasources/transaction-summary-total-data-source";
-import { ExpEntryCountService } from "../../services/exp-entry-count.service";
-import { TransactiondetailsService } from "../../services/transactiondetails.service";
+} from '@angular/core';
+import { TransactionSummaryDataSource } from '../../datasources/transaction-summary-data-source';
+import { TransactionSummaryTotalDataSource } from '../../datasources/transaction-summary-total-data-source';
+import { ExpEntryCountService } from '../../services/exp-entry-count.service';
+import { TransactiondetailsService } from '../../services/transactiondetails.service';
 
 @Component({
-  selector: "budgetapp-transaction-summary-data",
-  templateUrl: "./transaction-summary-data.component.html",
-  styleUrls: ["./transaction-summary-data.component.css"]
+  selector: 'budgetapp-transaction-summary-data',
+  templateUrl: './transaction-summary-data.component.html',
+  styleUrls: ['./transaction-summary-data.component.css']
 })
 export class TransactionSummaryDataComponent implements OnInit, OnChanges {
-  displayedColumnsData = ["date", "type", "description", "amount"];
+  displayedColumnsData = ['date', 'type', 'description', 'amount'];
   dataSourceData: TransactionSummaryDataSource;
 
-  displayedColumnsTotal = ["total"];
+  displayedColumnsTotal = ['total'];
   dataSourceTotal: TransactionSummaryTotalDataSource;
 
   @Input()
@@ -56,13 +56,13 @@ export class TransactionSummaryDataComponent implements OnInit, OnChanges {
     let hasDateRangeChanged = false;
     for (let propName in changes) {
       const changedProp = changes[propName];
-      if (propName === "detailsType") {
+      if (propName === 'detailsType') {
         this.detailsType = changedProp.currentValue;
         hasDetailsTypeChanged = true;
-      } else if (propName === "startDate") {
+      } else if (propName === 'startDate') {
         this.startDate = changedProp.currentValue;
         hasDateRangeChanged = true;
-      } else if (propName === "endDate") {
+      } else if (propName === 'endDate') {
         this.endDate = changedProp.currentValue;
         hasDateRangeChanged = true;
       }
