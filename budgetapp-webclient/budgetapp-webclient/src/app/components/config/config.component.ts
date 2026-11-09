@@ -1,7 +1,7 @@
 import { SelectionModel } from "@angular/cdk/collections";
 import { Location } from "@angular/common";
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { MatListOption } from "@angular/material";
+import { MatListOption } from "@angular/material/list";
 import { ActivatedRoute } from "@angular/router";
 import { Grouptypeconfig } from "../../models/grouptypeconfig";
 import { GrouptypeconfigService } from "../../services/grouptypeconfig.service";
