@@ -12,9 +12,9 @@ import { GrouptypeconfigService } from "../../services/grouptypeconfig.service";
   styleUrls: ["./config.component.css"]
 })
 export class ConfigComponent implements OnInit {
-  @ViewChild("miscItems")
+  @ViewChild("miscItems", { static: true })
   miscItemList;
-  @ViewChild("items")
+  @ViewChild("items", { static: true })
   itemList;
 
   configType = "";
