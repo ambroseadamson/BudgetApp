@@ -36,6 +36,7 @@ export interface DateRangeType {
 }
 
 @Component({
+  standalone: false,
   selector: 'budgetapp-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.css'],

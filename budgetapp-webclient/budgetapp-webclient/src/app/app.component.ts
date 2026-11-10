@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IsDataLoadedService } from './services/is-data-loaded.service';
 
 @Component({
+  standalone: false,
   selector: 'budgetapp-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

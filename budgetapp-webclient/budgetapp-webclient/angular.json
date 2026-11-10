@@ -52,18 +52,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "budgetapp-webclient:build"
+            "buildTarget": "budgetapp-webclient:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "budgetapp-webclient:build:production"
+              "buildTarget": "budgetapp-webclient:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "budgetapp-webclient:build"
+            "buildTarget": "budgetapp-webclient:build"
           }
         },
         "test": {

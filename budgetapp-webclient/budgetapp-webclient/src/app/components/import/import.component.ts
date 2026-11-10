@@ -10,6 +10,7 @@ import { IsDataLoadedService } from '../../services/is-data-loaded.service';
 import { MinMaxDateService } from '../../services/min-max-date.service';
 import { TransactiondetailsService } from '../../services/transactiondetails.service';
 @Component({
+  standalone: false,
   selector: 'budgetapp-import',
   templateUrl: './import.component.html',
   styleUrls: ['./import.component.css']

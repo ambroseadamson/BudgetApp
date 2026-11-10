@@ -7,6 +7,7 @@ import { Grouptypeconfig } from '../../models/grouptypeconfig';
 import { GrouptypeconfigService } from '../../services/grouptypeconfig.service';
 
 @Component({
+  standalone: false,
   selector: 'budgetapp-config',
   templateUrl: './config.component.html',
   styleUrls: ['./config.component.css']

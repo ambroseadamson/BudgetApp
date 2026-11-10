@@ -11,6 +11,7 @@ import { ExpEntryCountService } from '../../services/exp-entry-count.service';
 import { TransactiondetailsService } from '../../services/transactiondetails.service';
 
 @Component({
+  standalone: false,
   selector: 'budgetapp-transaction-summary-data',
   templateUrl: './transaction-summary-data.component.html',
   styleUrls: ['./transaction-summary-data.component.css']
