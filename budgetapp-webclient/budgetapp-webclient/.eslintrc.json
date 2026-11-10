@@ -8,6 +8,10 @@
       "files": [
         "*.ts"
       ],
+      "parser": "@typescript-eslint/parser",
+      "plugins": [
+        "@typescript-eslint"
+      ],
       "parserOptions": {
         "project": [
           "tsconfig.json",
@@ -16,11 +20,11 @@
         "createDefaultProgram": true
       },
       "extends": [
-        "plugin:@angular-eslint/ng-cli-compat",
-        "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
+        "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        "@angular-eslint/prefer-inject": "off",
         "@angular-eslint/component-selector": [
           "error",
           {
