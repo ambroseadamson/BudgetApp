@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TransactionSummaryDataComponent } from './transaction-summary-data.component';
 
@@ -6,7 +6,7 @@ describe('TransactionSummaryDataComponent', () => {
   let component: TransactionSummaryDataComponent;
   let fixture: ComponentFixture<TransactionSummaryDataComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TransactionSummaryDataComponent ]
     })
