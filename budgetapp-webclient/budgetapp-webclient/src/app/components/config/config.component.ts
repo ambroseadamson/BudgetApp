@@ -1,22 +1,30 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Location } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatListOption } from '@angular/material/list';
+import { Component, OnInit, inject, viewChild } from '@angular/core';
+import { MatListOption, MatNavList, MatListItem, MatSelectionList } from '@angular/material/list';
 import { ActivatedRoute } from '@angular/router';
 import { Grouptypeconfig } from '../../models/grouptypeconfig';
 import { GrouptypeconfigService } from '../../services/grouptypeconfig.service';
+import { MatSidenavContainer, MatSidenav } from '@angular/material/sidenav';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { Dir } from '@angular/cdk/bidi';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 @Component({
-  standalone: false,
-  selector: 'budgetapp-config',
-  templateUrl: './config.component.html',
-  styleUrls: ['./config.component.css']
+    selector: 'budgetapp-config',
+    templateUrl: './config.component.html',
+    styleUrls: ['./config.component.css'],
+    imports: [MatSidenavContainer, MatSidenav, MatNavList, MatListItem, MatToolbar, MatIconButton, MatIcon, Dir, FlexModule, MatSelectionList, MatListOption]
 })
 export class ConfigComponent implements OnInit {
-  @ViewChild('miscItems', { static: true })
-  miscItemList;
-  @ViewChild('items', { static: true })
-  itemList;
+  private groupTypeCfgService = inject(GrouptypeconfigService);
+  private route = inject(ActivatedRoute);
+  private location = inject(Location);
+
+  readonly miscItemList = viewChild.required<MatSelectionList>('miscItems');
+  readonly itemList = viewChild.required<MatSelectionList>('items');
 
   configType = '';
   miscConfigType = 'misc';
@@ -37,17 +45,16 @@ export class ConfigComponent implements OnInit {
   };
 
   selectedTransactionName = ''; // TODO: Refactor to use transactionName from groupType instead
-  selectedMiscTransactionName = ''; // TODO: Refactor to use transactionName from groupType instead
+  selectedMiscTransactionName = '';
 
-  constructor(
-    private groupTypeCfgService: GrouptypeconfigService,
-    private route: ActivatedRoute,
-    private location: Location
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]); // TODO: Refactor to use transactionName from groupType instead
+
+  constructor() {}
 
   ngOnInit() {
-    this.itemList.selectedOptions = new SelectionModel<MatListOption>(false);
-    this.miscItemList.selectedOptions = new SelectionModel<MatListOption>(
+    this.itemList().selectedOptions = new SelectionModel<MatListOption>(false);
+    this.miscItemList().selectedOptions = new SelectionModel<MatListOption>(
       false
     );
     this.groupTypeCfgService.getGroupTypeNames().subscribe(_groupNames => {

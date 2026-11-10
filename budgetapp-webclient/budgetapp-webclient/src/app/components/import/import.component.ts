@@ -1,7 +1,7 @@
-import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Location, AsyncPipe } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import * as moment from 'moment';
+import moment from 'moment';
 import { tap } from 'rxjs/operators';
 import { ImportDataSource } from '../../datasources/import-data-source';
 import { Inputdata } from '../../models/inputdata';
@@ -9,13 +9,21 @@ import { TransactionSummaryData } from '../../models/transactiondetails';
 import { IsDataLoadedService } from '../../services/is-data-loaded.service';
 import { MinMaxDateService } from '../../services/min-max-date.service';
 import { TransactiondetailsService } from '../../services/transactiondetails.service';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
 @Component({
-  standalone: false,
-  selector: 'budgetapp-import',
-  templateUrl: './import.component.html',
-  styleUrls: ['./import.component.css']
+    selector: 'budgetapp-import',
+    templateUrl: './import.component.html',
+    styleUrls: ['./import.component.css'],
+    imports: [MatProgressSpinner, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe]
 })
 export class ImportComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private location = inject(Location);
+  private transactiondetailsService = inject(TransactiondetailsService);
+  private minMaxDateService = inject(MinMaxDateService);
+  private isDataLoadedService = inject(IsDataLoadedService);
+
   displayedColumns = ['data'];
   dataSource: ImportDataSource;
   inputData: Inputdata = {
@@ -24,13 +32,10 @@ export class ImportComponent implements OnInit {
   };
   summaryData: TransactionSummaryData;
 
-  constructor(
-    private route: ActivatedRoute,
-    private location: Location,
-    private transactiondetailsService: TransactiondetailsService,
-    private minMaxDateService: MinMaxDateService,
-    private isDataLoadedService: IsDataLoadedService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit() {
     this.dataSource = new ImportDataSource();

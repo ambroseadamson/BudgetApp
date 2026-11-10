@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE
 } from '@angular/material/core';
-import * as moment from 'moment';
+import moment from 'moment';
 import {
   DateFilter,
   TransactionSummaryEntry
@@ -15,6 +15,18 @@ import { ExpEntryCountService } from '../../services/exp-entry-count.service';
 import { IsDataLoadedService } from '../../services/is-data-loaded.service';
 import { MinMaxDateService } from '../../services/min-max-date.service';
 import { TransactiondetailsService } from '../../services/transactiondetails.service';
+import { PercentPipe, DatePipe } from '@angular/common';
+import { MatSidenavContainer, MatSidenav } from '@angular/material/sidenav';
+import { MatNavList, MatListItem } from '@angular/material/list';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { Dir } from '@angular/cdk/bidi';
+import { FlexModule } from '@angular/flex-layout/flex';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { TransactionSummaryDataComponent } from '../transaction-summary-data/transaction-summary-data.component';
 
 // See the Moment.js docs for the meaning of these formats:
 // https://momentjs.com/docs/#/displaying/format/
@@ -36,24 +48,28 @@ export interface DateRangeType {
 }
 
 @Component({
-  standalone: false,
-  selector: 'budgetapp-details',
-  templateUrl: './details.component.html',
-  styleUrls: ['./details.component.css'],
-  providers: [
-    // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
-    // application's root module. We provide it at the component level here, due to limitations of
-    // our example generation script.
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE]
-    },
-
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }
-  ]
+    selector: 'budgetapp-details',
+    templateUrl: './details.component.html',
+    styleUrls: ['./details.component.css'],
+    providers: [
+        // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
+        // application's root module. We provide it at the component level here, due to limitations of
+        // our example generation script.
+        {
+            provide: DateAdapter,
+            useClass: MomentDateAdapter,
+            deps: [MAT_DATE_LOCALE]
+        },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }
+    ],
+    imports: [MatSidenavContainer, MatSidenav, MatNavList, MatListItem, MatToolbar, MatIconButton, MatIcon, Dir, FlexModule, MatFormField, MatInput, MatDatepickerInput, FormsModule, ReactiveFormsModule, MatDatepickerToggle, MatSuffix, MatDatepicker, MatSelect, MatOption, TransactionSummaryDataComponent, PercentPipe, DatePipe]
 })
 export class DetailsComponent implements OnInit {
+  private transactionDetailsService = inject(TransactiondetailsService);
+  private expEntryCountService = inject(ExpEntryCountService);
+  private minMaxDateService = inject(MinMaxDateService);
+  private isDataLoadedService = inject(IsDataLoadedService);
+
   groups: TransactionSummaryEntry[] = [];
   selectedGroup: TransactionSummaryEntry = null;
   dateFilter: DateFilter = null;
@@ -83,12 +99,10 @@ export class DetailsComponent implements OnInit {
     { type: 'Month', value: 30 }
   ];
 
-  constructor(
-    private transactionDetailsService: TransactiondetailsService,
-    private expEntryCountService: ExpEntryCountService,
-    private minMaxDateService: MinMaxDateService,
-    private isDataLoadedService: IsDataLoadedService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit() {
     this.transactionDetailsService

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Grouptypeconfig } from '../models/grouptypeconfig';
@@ -53,6 +53,8 @@ const toUpdateTransactionName = (
   providedIn: 'root'
 })
 export class MockGrouptypeconfigService {
+  private httpClient = inject(HttpClient);
+
   serverPort = '4200';
   // GET
   // POST
@@ -69,7 +71,10 @@ export class MockGrouptypeconfigService {
     this.serverPort
   }/api/TransactionGroupType/TransactionName`;
 
-  constructor(private httpClient: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   addTransactionName(
     group: Grouptypeconfig,

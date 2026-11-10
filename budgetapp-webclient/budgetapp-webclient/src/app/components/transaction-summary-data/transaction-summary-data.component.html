@@ -1,8 +1,10 @@
 <div class="details-container mat-elevation-z8">
   <div class="details-header">
-    <div class="spinner-container" *ngIf="dataSourceData.loading$ | async">
-      <mat-spinner></mat-spinner>
-    </div>
+    @if (dataSourceData.loading$ | async) {
+      <div class="spinner-container">
+        <mat-spinner />
+      </div>
+    }
 
     <mat-table #table [dataSource]="dataSourceData">
 
@@ -30,16 +32,18 @@
         <mat-cell *matCellDef="let transactionSummary"> {{transactionSummary.amount | currency:'GBP'}} </mat-cell>
       </ng-container>
 
-      <mat-header-row *matHeaderRowDef="displayedColumnsData"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumnsData;"></mat-row>
+      <mat-header-row *matHeaderRowDef="displayedColumnsData" />
+      <mat-row *matRowDef="let row; columns: displayedColumnsData;" />
     </mat-table>
   </div>
 </div>
 <div class="details-container mat-elevation-z8">
   <div class="details-header">
-    <div class="spinner-container" *ngIf="dataSourceTotal.loading$ | async">
-      <mat-spinner></mat-spinner>
-    </div>
+    @if (dataSourceTotal.loading$ | async) {
+      <div class="spinner-container">
+        <mat-spinner />
+      </div>
+    }
 
     <mat-table #table [dataSource]="dataSourceTotal">
 
@@ -49,8 +53,8 @@
         <mat-cell *matCellDef="let total"> {{total | currency:'GBP'}} </mat-cell>
       </ng-container>
 
-      <mat-header-row *matHeaderRowDef="displayedColumnsTotal"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumnsTotal;"></mat-row>
+      <mat-header-row *matHeaderRowDef="displayedColumnsTotal" />
+      <mat-row *matRowDef="let row; columns: displayedColumnsTotal;" />
     </mat-table>
   </div>
 </div>

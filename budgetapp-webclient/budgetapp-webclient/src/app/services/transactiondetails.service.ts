@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { Inputdata } from '../models/inputdata';
@@ -10,6 +10,8 @@ import {
 
 @Injectable()
 export class TransactiondetailsService {
+  private httpClient = inject(HttpClient);
+
   //  serverPort = '4200';
   serverPort = '5000';
 
@@ -20,7 +22,10 @@ export class TransactiondetailsService {
   transactionsByGroupTypeRoute = 'TransactionsByGroupType';
   summaryByDateRangeRoute = 'SummaryByDateRange';
 
-  constructor(private httpClient: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getTransactionDetails(
     detailsType: string,

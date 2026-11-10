@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Inputdata } from '../models/inputdata';
 import {
@@ -11,6 +11,8 @@ import {
   providedIn: 'root'
 })
 export class MockTransactiondetailsService {
+  private httpClient = inject(HttpClient);
+
   serverPort = '4200';
 
   // POST
@@ -20,7 +22,10 @@ export class MockTransactiondetailsService {
   transactionsByGroupTypeRoute = 'TransactionsByGroupType';
   summaryByDateRangeRoute = 'SummaryByDateRange';
 
-  constructor(private httpClient: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getTransactionDetails(
     detailsType: string,
