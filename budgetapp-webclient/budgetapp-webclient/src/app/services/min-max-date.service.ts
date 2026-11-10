@@ -1,5 +1,5 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 export class MinMaxDate {
   minDate: Date;
@@ -7,7 +7,7 @@ export class MinMaxDate {
 }
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class MinMaxDateService {
   private dataSource = new BehaviorSubject({

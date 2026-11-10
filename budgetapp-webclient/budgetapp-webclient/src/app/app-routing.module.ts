@@ -1,12 +1,12 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { ConfigComponent } from "./components/config/config.component";
-import { DetailsComponent } from "./components/details/details.component";
-import { ImportComponent } from "./components/import/import.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+
+
 const routes: Routes = [
-  { path: "import", component: ImportComponent },
-  { path: "details", component: DetailsComponent },
-  { path: "config", component: ConfigComponent }
+  { path: 'import', loadComponent: () => import('./components/import/import.component').then(m => m.ImportComponent) },
+  { path: 'details', loadComponent: () => import('./components/details/details.component').then(m => m.DetailsComponent) },
+  { path: 'config', loadComponent: () => import('./components/config/config.component').then(m => m.ConfigComponent) }
 ];
 
 @NgModule({

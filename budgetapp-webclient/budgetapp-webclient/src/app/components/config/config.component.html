@@ -1,9 +1,11 @@
 <mat-sidenav-container class="demo-root">
   <mat-sidenav #start>
     <mat-nav-list>
-      <a *ngFor="let groupName of groupNames" mat-list-item (click)="onSelectGroup(groupName)">
-        {{groupName.toUpperCase()}}
-      </a>
+      @for (groupName of groupNames; track groupName) {
+        <a mat-list-item (click)="onSelectGroup(groupName)">
+          {{groupName.toUpperCase()}}
+        </a>
+      }
     </mat-nav-list>
   </mat-sidenav>
   <div>
@@ -19,9 +21,11 @@
             <div class="details-header">
               <h1>{{groupOfInterest.groupName.toUpperCase()}}</h1>
               <mat-selection-list #items>
-                <mat-list-option *ngFor="let transactionName of groupOfInterest.names" (click)="onSelectGroupItem(transactionName)">
-                  {{transactionName}}
-                </mat-list-option>
+                @for (transactionName of groupOfInterest.names; track transactionName) {
+                  <mat-list-option (click)="onSelectGroupItem(transactionName)">
+                    {{transactionName}}
+                  </mat-list-option>
+                }
               </mat-selection-list>
             </div>
           </div>
@@ -45,9 +49,11 @@
             <div class="details-header">
               <h1>{{miscGroup.groupName.toUpperCase()}}</h1>
               <mat-selection-list #miscItems>
-                <mat-list-option *ngFor="let transactionName of miscGroup.names" (click)="onSelectMiscGroupItem(transactionName)">
-                  {{transactionName}}
-                </mat-list-option>
+                @for (transactionName of miscGroup.names; track transactionName) {
+                  <mat-list-option (click)="onSelectMiscGroupItem(transactionName)">
+                    {{transactionName}}
+                  </mat-list-option>
+                }
               </mat-selection-list>
             </div>
           </div>

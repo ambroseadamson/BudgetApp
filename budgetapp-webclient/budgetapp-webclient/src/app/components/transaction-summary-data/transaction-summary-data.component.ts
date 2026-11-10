@@ -1,42 +1,39 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChange
-} from "@angular/core";
-import { TransactionSummaryDataSource } from "../../datasources/transaction-summary-data-source";
-import { TransactionSummaryTotalDataSource } from "../../datasources/transaction-summary-total-data-source";
-import { ExpEntryCountService } from "../../services/exp-entry-count.service";
-import { TransactiondetailsService } from "../../services/transactiondetails.service";
+import { Component, OnChanges, OnInit, SimpleChange, inject, input } from '@angular/core';
+import { TransactionSummaryDataSource } from '../../datasources/transaction-summary-data-source';
+import { TransactionSummaryTotalDataSource } from '../../datasources/transaction-summary-total-data-source';
+import { ExpEntryCountService } from '../../services/exp-entry-count.service';
+import { TransactiondetailsService } from '../../services/transactiondetails.service';
+import { AsyncPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
 
 @Component({
-  selector: "budgetapp-transaction-summary-data",
-  templateUrl: "./transaction-summary-data.component.html",
-  styleUrls: ["./transaction-summary-data.component.css"]
+    selector: 'budgetapp-transaction-summary-data',
+    templateUrl: './transaction-summary-data.component.html',
+    styleUrls: ['./transaction-summary-data.component.css'],
+    imports: [MatProgressSpinner, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, AsyncPipe, CurrencyPipe, DatePipe]
 })
 export class TransactionSummaryDataComponent implements OnInit, OnChanges {
-  displayedColumnsData = ["date", "type", "description", "amount"];
+  private transactionDetailsService = inject(TransactiondetailsService);
+  private expEntryCountService = inject(ExpEntryCountService);
+
+  displayedColumnsData = ['date', 'type', 'description', 'amount'];
   dataSourceData: TransactionSummaryDataSource;
 
-  displayedColumnsTotal = ["total"];
+  displayedColumnsTotal = ['total'];
   dataSourceTotal: TransactionSummaryTotalDataSource;
 
-  @Input()
-  summaryType: string;
-  @Input()
-  detailsType: string;
-  @Input()
-  startDate: string;
-  @Input()
-  endDate: string;
+  readonly summaryType = input<string>(undefined);
+  readonly detailsType = input<string>(undefined);
+  readonly startDate = input<string>(undefined);
+  readonly endDate = input<string>(undefined);
 
   isInitialised = false;
 
-  constructor(
-    private transactionDetailsService: TransactiondetailsService,
-    private expEntryCountService: ExpEntryCountService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit() {
     this.dataSourceData = new TransactionSummaryDataSource(
@@ -52,23 +49,12 @@ export class TransactionSummaryDataComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: { [propKey: string]: SimpleChange }): void {
-    let hasDetailsTypeChanged = false;
-    let hasDateRangeChanged = false;
-    for (let propName in changes) {
-      const changedProp = changes[propName];
-      if (propName === "detailsType") {
-        this.detailsType = changedProp.currentValue;
-        hasDetailsTypeChanged = true;
-      } else if (propName === "startDate") {
-        this.startDate = changedProp.currentValue;
-        hasDateRangeChanged = true;
-      } else if (propName === "endDate") {
-        this.endDate = changedProp.currentValue;
-        hasDateRangeChanged = true;
-      }
-      if (hasDateRangeChanged || hasDetailsTypeChanged) {
-        this.onRefresh();
-      }
+    if (
+      'detailsType' in changes ||
+      'startDate' in changes ||
+      'endDate' in changes
+    ) {
+      this.onRefresh();
     }
   }
 
@@ -77,18 +63,22 @@ export class TransactionSummaryDataComponent implements OnInit, OnChanges {
       return;
     }
 
+    const detailsType = this.detailsType();
+    const summaryType = this.summaryType();
+    const startDate = this.startDate();
+    const endDate = this.endDate();
     this.dataSourceData.genTransactionSummaries(
-      this.detailsType,
-      this.summaryType,
-      this.startDate,
-      this.endDate
+      detailsType,
+      summaryType,
+      startDate,
+      endDate
     );
 
     this.dataSourceTotal.genTransactionSummaryTotals(
-      this.detailsType,
-      this.summaryType,
-      this.startDate,
-      this.endDate
+      detailsType,
+      summaryType,
+      startDate,
+      endDate
     );
   }
 }

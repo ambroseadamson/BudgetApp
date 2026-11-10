@@ -1,26 +1,31 @@
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { concatMap } from "rxjs/operators";
-import { Inputdata } from "../models/inputdata";
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
+import { Inputdata } from '../models/inputdata';
 import {
   Transactiondetails,
   TransactionSummaryData
-} from "../models/transactiondetails";
+} from '../models/transactiondetails';
 
 @Injectable()
 export class TransactiondetailsService {
-  //  serverPort = "4200";
-  serverPort = "5000";
+  private httpClient = inject(HttpClient);
+
+  //  serverPort = '4200';
+  serverPort = '5000';
 
   // POST
   // GET
   summaryURL = `http://localhost:${this.serverPort}/api/TransactionSummary`;
 
-  transactionsByGroupTypeRoute = "TransactionsByGroupType";
-  summaryByDateRangeRoute = "SummaryByDateRange";
+  transactionsByGroupTypeRoute = 'TransactionsByGroupType';
+  summaryByDateRangeRoute = 'SummaryByDateRange';
 
-  constructor(private httpClient: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getTransactionDetails(
     detailsType: string,
@@ -33,9 +38,9 @@ export class TransactiondetailsService {
 
     const options = {
       params: new HttpParams()
-        .set("grouptype", detailsType)
-        .set("startdate", startDate)
-        .set("enddate", endDate)
+        .set('grouptype', detailsType)
+        .set('startdate', startDate)
+        .set('enddate', endDate)
     };
 
     // const summaryByTypeURL = `${this.summaryURL}/${detailsType}.json`;
@@ -53,9 +58,9 @@ export class TransactiondetailsService {
 
     const options = {
       params: new HttpParams()
-        .set("grouptype", detailsType)
-        .set("startdate", startDate)
-        .set("enddate", endDate)
+        .set('grouptype', detailsType)
+        .set('startdate', startDate)
+        .set('enddate', endDate)
     };
 
     // const summaryByDateRangeURL = `${this.summaryURL}.json`;
@@ -74,8 +79,8 @@ export class TransactiondetailsService {
   importData(data: Inputdata): Observable<TransactionSummaryData> {
     const httpOptions = {
       headers: new HttpHeaders()
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
     };
 
     const url = `${this.summaryURL}`;

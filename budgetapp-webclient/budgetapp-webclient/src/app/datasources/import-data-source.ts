@@ -1,8 +1,6 @@
-import { CollectionViewer, DataSource } from "@angular/cdk/collections";
-import { Observable } from "rxjs/Observable";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import { catchError, finalize, map } from "rxjs/operators";
-import { of } from "rxjs/observable/of";
+import { CollectionViewer, DataSource } from '@angular/cdk/collections';
+import { Observable, BehaviorSubject ,  of } from 'rxjs';
+import { catchError, finalize, map } from 'rxjs/operators';
 
 export class ImportDataSource implements DataSource<string> {
   private importDataSubject = new BehaviorSubject<string[]>([]);

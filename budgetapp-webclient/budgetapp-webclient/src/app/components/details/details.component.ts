@@ -1,40 +1,44 @@
-import { Component, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { MomentDateAdapter } from "@angular/material-moment-adapter";
+import { Component, OnInit, inject } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
   MAT_DATE_LOCALE
-} from "@angular/material/core";
-// Depending on whether rollup is used, moment needs to be imported differently.
-// Since Moment.js doesn't have a default export, we normally need to import using the `* as`
-// syntax. However, rollup creates a synthetic default module and we thus need to import it using
-// the `default as` syntax.
-import * as _moment from "moment";
-// tslint:disable-next-line:no-duplicate-imports
-import { default as _rollupMoment } from "moment";
+} from '@angular/material/core';
+import moment from 'moment';
 import {
   DateFilter,
   TransactionSummaryEntry
-} from "../../models/transactiondetails";
-import { ExpEntryCountService } from "../../services/exp-entry-count.service";
-import { IsDataLoadedService } from "../../services/is-data-loaded.service";
-import { MinMaxDateService } from "../../services/min-max-date.service";
-import { TransactiondetailsService } from "../../services/transactiondetails.service";
-
-const moment = _rollupMoment || _moment;
+} from '../../models/transactiondetails';
+import { ExpEntryCountService } from '../../services/exp-entry-count.service';
+import { IsDataLoadedService } from '../../services/is-data-loaded.service';
+import { MinMaxDateService } from '../../services/min-max-date.service';
+import { TransactiondetailsService } from '../../services/transactiondetails.service';
+import { PercentPipe, DatePipe } from '@angular/common';
+import { MatSidenavContainer, MatSidenav } from '@angular/material/sidenav';
+import { MatNavList, MatListItem } from '@angular/material/list';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { Dir } from '@angular/cdk/bidi';
+import { FlexModule } from '@angular/flex-layout/flex';
+import { MatFormField, MatInput, MatSuffix } from '@angular/material/input';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatSelect, MatOption } from '@angular/material/select';
+import { TransactionSummaryDataComponent } from '../transaction-summary-data/transaction-summary-data.component';
 
 // See the Moment.js docs for the meaning of these formats:
 // https://momentjs.com/docs/#/displaying/format/
 export const MY_FORMATS = {
   parse: {
-    dateInput: "DD/MMM/YYYY"
+    dateInput: 'DD/MMM/YYYY'
   },
   display: {
-    dateInput: "DD/MMM/YYYY",
-    monthYearLabel: "MMM/YYYY",
-    dateA11yLabel: "DD/MMM/YYYY",
-    monthYearA11yLabel: "MMMM/YYYY"
+    dateInput: 'DD/MMM/YYYY',
+    monthYearLabel: 'MMM/YYYY',
+    dateA11yLabel: 'DD/MMM/YYYY',
+    monthYearA11yLabel: 'MMMM/YYYY'
   }
 };
 
@@ -44,29 +48,34 @@ export interface DateRangeType {
 }
 
 @Component({
-  selector: "budgetapp-details",
-  templateUrl: "./details.component.html",
-  styleUrls: ["./details.component.css"],
-  providers: [
-    // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
-    // application's root module. We provide it at the component level here, due to limitations of
-    // our example generation script.
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE]
-    },
-
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }
-  ]
+    selector: 'budgetapp-details',
+    templateUrl: './details.component.html',
+    styleUrls: ['./details.component.css'],
+    providers: [
+        // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
+        // application's root module. We provide it at the component level here, due to limitations of
+        // our example generation script.
+        {
+            provide: DateAdapter,
+            useClass: MomentDateAdapter,
+            deps: [MAT_DATE_LOCALE]
+        },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }
+    ],
+    imports: [MatSidenavContainer, MatSidenav, MatNavList, MatListItem, MatToolbar, MatIconButton, MatIcon, Dir, FlexModule, MatFormField, MatInput, MatDatepickerInput, FormsModule, ReactiveFormsModule, MatDatepickerToggle, MatSuffix, MatDatepicker, MatSelect, MatOption, TransactionSummaryDataComponent, PercentPipe, DatePipe]
 })
 export class DetailsComponent implements OnInit {
+  private transactionDetailsService = inject(TransactiondetailsService);
+  private expEntryCountService = inject(ExpEntryCountService);
+  private minMaxDateService = inject(MinMaxDateService);
+  private isDataLoadedService = inject(IsDataLoadedService);
+
   groups: TransactionSummaryEntry[] = [];
   selectedGroup: TransactionSummaryEntry = null;
   dateFilter: DateFilter = null;
 
-  incSummaryType = "income";
-  expSummaryType = "expenditure";
+  incSummaryType = 'income';
+  expSummaryType = 'expenditure';
   expEntryCount = 0;
 
   fcStartDate: FormControl = null;
@@ -79,23 +88,21 @@ export class DetailsComponent implements OnInit {
   _isDataLoaded = false;
 
   dateRangeTypes: DateRangeType[] = [
-    { type: "Day", value: 1 },
-    { type: "2 Days", value: 2 },
-    { type: "3 Days", value: 3 },
-    { type: "4 Days", value: 4 },
-    { type: "5 Days", value: 5 },
-    { type: "6 Days", value: 6 },
-    { type: "Week", value: 7 },
-    { type: "Fortnight", value: 14 },
-    { type: "Month", value: 30 }
+    { type: 'Day', value: 1 },
+    { type: '2 Days', value: 2 },
+    { type: '3 Days', value: 3 },
+    { type: '4 Days', value: 4 },
+    { type: '5 Days', value: 5 },
+    { type: '6 Days', value: 6 },
+    { type: 'Week', value: 7 },
+    { type: 'Fortnight', value: 14 },
+    { type: 'Month', value: 30 }
   ];
 
-  constructor(
-    private transactionDetailsService: TransactiondetailsService,
-    private expEntryCountService: ExpEntryCountService,
-    private minMaxDateService: MinMaxDateService,
-    private isDataLoadedService: IsDataLoadedService
-  ) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit() {
     this.transactionDetailsService
@@ -131,7 +138,7 @@ export class DetailsComponent implements OnInit {
     const selectedDateRange: DateRangeType = this.fcDateTypeRange.value;
 
     this.dateFilter.endDate = moment(this.fcStartDate.value)
-      .add(selectedDateRange.value, "days")
+      .add(selectedDateRange.value, 'days')
       .toISOString();
   }
 

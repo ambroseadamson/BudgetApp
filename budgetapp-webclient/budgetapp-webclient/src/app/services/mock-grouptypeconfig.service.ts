@@ -1,9 +1,9 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Observable";
-import { map } from "rxjs/operators";
-import { Grouptypeconfig } from "../models/grouptypeconfig";
-import { UpdateTransactionName } from "./grouptypeconfig.service";
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Grouptypeconfig } from '../models/grouptypeconfig';
+import { UpdateTransactionName } from './grouptypeconfig.service';
 
 const onlyUnique = (value, index, self) => self.indexOf(value) === index;
 
@@ -12,8 +12,8 @@ const syncItemBuffers = (
   _lhsItems: string[],
   _rhsItems: string[]
 ) => <T>(source$: Observable<Grouptypeconfig>) => {
-  const lhsItems = detailsType !== "misc" ? _lhsItems : _rhsItems;
-  const rhsItems = detailsType !== "misc" ? _rhsItems : _lhsItems;
+  const lhsItems = detailsType !== 'misc' ? _lhsItems : _rhsItems;
+  const rhsItems = detailsType !== 'misc' ? _rhsItems : _lhsItems;
   return source$.pipe(
     map(cfg => {
       return {
@@ -50,10 +50,12 @@ const toUpdateTransactionName = (
 // };
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class MockGrouptypeconfigService {
-  serverPort = "4200";
+  private httpClient = inject(HttpClient);
+
+  serverPort = '4200';
   // GET
   // POST
   groupTypesURL = `http://localhost:${
@@ -69,7 +71,10 @@ export class MockGrouptypeconfigService {
     this.serverPort
   }/api/TransactionGroupType/TransactionName`;
 
-  constructor(private httpClient: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   addTransactionName(
     group: Grouptypeconfig,
@@ -114,7 +119,7 @@ export class MockGrouptypeconfigService {
     return this.httpClient.get<Grouptypeconfig[]>(URL).pipe(
       map(cfgs => {
         return cfgs.filter(cfg => {
-          return cfg.groupType === "expense";
+          return cfg.groupType === 'expense';
         });
       }),
       map(cfgs => {
