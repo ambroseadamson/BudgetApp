@@ -123,7 +123,6 @@ The application will consist of two views:
 
 This gives a summary of the budget,  and transaction details based upon the requested transactions from the statements for a given types of transactions
 
-* Browse Control to browse for statement files  
 * Import button that triggers the Import request for transactions  
 * Date range displaying the range of transaction data requested for processing 
 * Total income from the transaction data processed   
@@ -131,6 +130,10 @@ This gives a summary of the budget,  and transaction details based upon the requ
 * Balance from the transaction data processed   
 * Pie chart to summarise the income vs expenditure from the transaction data processed
 * List of the transactions processed
+
+A prototype example view is shown below:
+<img width="900" height="580" alt="image" src="https://github.com/user-attachments/assets/b862d0c3-b98c-4975-83f9-ec5f51e49e1e" />
+
 
 ### Configuration view 
 
