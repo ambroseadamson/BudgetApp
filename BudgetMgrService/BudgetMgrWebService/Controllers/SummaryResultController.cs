@@ -57,10 +57,6 @@ namespace BudgetMgrWebService.Controllers
         {
 
             var summaryResult = await _context.FindSummaryResultAsync(dateFilter.StartDate, dateFilter.EndDate, dateFilter.GroupType);
-
-            // TODO:  Revert to the following usage context connects to an actual database    
-            // var summaryResult = await _context.SummaryResult.FindAsync(startDate, endDate, gropuType);
-
             if (summaryResult == null)
             {
                 return NotFound();

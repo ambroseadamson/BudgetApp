@@ -13,10 +13,7 @@ namespace BudgetMgrServiceLib.Generators
 
         public static SrcData GenStatementData(this TestDataCfg testDataCfg, GroupTypesCfgEx groupTypesCfg, DateTime currentDate, Random rnd)
         {
-            var fileNamePrefix = "Statement Download-";
             var parseDateFmt = "dd MMM yyyy";
-            var fileNameDateFmt = "dd-MMM-yyyy";
-            var srcTestDataType = "Statement Download";
 
             var debitTypesOfInterest = groupTypesCfg.ToDebitTypesOfInterestEx().Where(debitType => debitType != "CASH RECEIPT");
 
@@ -26,10 +23,37 @@ namespace BudgetMgrServiceLib.Generators
             Func<string> genRndDebitName = () => rnd.RandomElement(groupTypesCfg.ToDebitNamesOfInterestWithDefault());
             Func<double> genRndCurrencyVal = () => testDataCfg.ToTransAmount(rnd.ToRandomSrcVal(1, 200), rnd.ToRandomSrcVal(0, 99));
 
-            var applyDateStamp = PropertyLens<Transaction, DateTime>.Of(currTrans => currTrans.DateStamp, (currTrans, dateStamp) => currTrans.DateStamp = dateStamp);
-            var applyTransType = PropertyLens<Transaction, string>.Of(currTrans => currTrans.TransType, (currTrans, transType) => currTrans.TransType = transType);
-            var applyDebitName = PropertyLens<Transaction, string>.Of(currTrans => currTrans.Description, (currTrans, debitName) => currTrans.Description = debitName);
-            var applyAmount = PropertyLens<Transaction, double>.Of(currTrans => currTrans.Amount, (currTrans, amount) => currTrans.Amount = amount);
+            var applyDateStamp = PropertyLens<Transaction, DateTime, Transaction>.Of(
+                currTrans => currTrans.DateStamp, 
+                (currTrans, dateStamp) => { 
+                    currTrans = currTrans with { DateStamp = dateStamp };
+                    return currTrans;
+                }
+            );
+            
+            var applyTransType = PropertyLens<Transaction, string, Transaction>.Of(
+                currTrans => currTrans.TransType, 
+                (currTrans, transType) => {
+                    currTrans = currTrans with { TransType = transType };
+                    return currTrans;
+                }
+            );
+
+            var applyDebitName = PropertyLens<Transaction, string, Transaction>.Of(
+                currTrans => currTrans.Description,
+                (currTrans, debitName) => {
+                    currTrans = currTrans with { Description = debitName };
+                    return currTrans;
+                }
+            );
+            
+            var applyAmount = PropertyLens<Transaction, double, Transaction>.Of(
+                currTrans => currTrans.Amount,
+                (currTrans, amount) => {
+                    currTrans = currTrans with { Amount = amount };
+                    return currTrans;
+                }
+            );
 
             var srcValueFns = new List<Func<Transaction, Transaction>> {
                 (currTrans) => currTrans.Map(applyDateStamp,genRndDateStamp()),              // DateStamp                
@@ -42,13 +66,13 @@ namespace BudgetMgrServiceLib.Generators
             {
                 var transaction = transactions.First();
                 return new List<Transaction>() {
-                    Transaction.Of(0, transaction.DateStamp, groupTypesCfg.ToTransTypesEx().First(),
+                    new Transaction(0, transaction.DateStamp, groupTypesCfg.ToTransTypesEx().First(),
                                     groupTypesCfg.ToCreditNamesOfInterestWithDefault().First(),
                                     transactions.Select(trans => trans.Amount).Sum())
                 };
             };
 
-            Func<int, IEnumerable<Transaction>> toTransactions = (noOfTrans) => Enumerable.Range(0, noOfTrans).Select(index => srcValueFns.ToTransaction(Transaction.Of(0, DateTime.Now, "", "", 0.0)));
+            Func<int, IEnumerable<Transaction>> toTransactions = (noOfTrans) => Enumerable.Range(0, noOfTrans).Select(index => srcValueFns.ToTransaction(new Transaction(0, DateTime.Now, "", "", 0.0)));
 
             string ToTransactionValString<T>(T val) => string.Format("\"{0}\"", val);
 
@@ -82,7 +106,7 @@ namespace BudgetMgrServiceLib.Generators
 
             Func<Transaction, TestDataCfg, Transaction> genSrcMiscTransaction = (transaction, _testDataCfg) =>
             {
-                return Transaction.Of(0,
+                return new Transaction(0,
                                       transaction.DateStamp,
                                       transaction.TransType,
                                       transaction.Description,
@@ -91,7 +115,7 @@ namespace BudgetMgrServiceLib.Generators
 
             Func<Transaction, string, double, Transaction> genMiscTransaction = (transaction, miscTransactionName, miscTransactionValue) =>
             {
-                return Transaction.Of(0,
+                return new Transaction(0,
                                       transaction.DateStamp,
                                       transaction.TransType,
                                       miscTransactionName,
@@ -113,7 +137,7 @@ namespace BudgetMgrServiceLib.Generators
             };
 
             // a collection of Transaction values, prepended with a header and rendered as CSV Rows.... 
-            return SrcData.Of(transactionHeader.Concat(ToTransactionStrings(ToTransactionSet(_transactions))));
+            return new SrcData(transactionHeader.Concat(ToTransactionStrings(ToTransactionSet(_transactions))));
         }
 
 

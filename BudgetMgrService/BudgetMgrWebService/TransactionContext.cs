@@ -24,7 +24,5 @@ public class TransactionContext : DbContext
 
     public DbSet<TransactionNameEx> NameRefs { set; get; }
 
-    public DbSet<SummaryResult> SummaryResult { get; set; } = default!;
-
     public DbSet<TransactionGroupCfg> TransactionGroupCfg { get; set; } = default!;
 }

@@ -74,10 +74,12 @@ namespace BudgetMgrServiceLibTest
                                    .ToSummarySrcData(expGroupType.GroupName);
             };
 
-            incomeDetails.Total = expenditureGroupTypes.Concat(new List<TransactionGroupCfg>() { totalExpenditureGroup })
-                                                       .Select(expenseGroupType => genSummarySrcData(expenseGroupType))
-                                                       .Select(expenseSummary => expenseSummary.Total)
-                                                       .Max() * 2;
+            incomeDetails = incomeDetails with {
+                Total = expenditureGroupTypes.Concat(new List<TransactionGroupCfg>() { totalExpenditureGroup })
+                                                     .Select(expenseGroupType => genSummarySrcData(expenseGroupType))
+                                                     .Select(expenseSummary => expenseSummary.Total)
+                                                     .Max() * 2
+            };
 
             Func<IEnumerable<TransactionGroupCfg>, int, object> genSummaryData = (_expenditureGroupTypes, i) =>
             {
@@ -98,15 +100,18 @@ namespace BudgetMgrServiceLibTest
             Func<TransactionGroupCfg, SummarySrcData> genSummarySrcData = (expGroupType) =>
             {
                 var expenditureDetails = transactions.ToCreditDetails(expGroupType.Names);
-                return SummarySrcData.Of(expGroupType.GroupName,
+                return new SummarySrcData(expGroupType.GroupName,
                                          expenditureDetails.Total,
                                          incomeDetails.ToCreditBalance(expenditureDetails),
                                          incomeDetails.ToExpenseSummaryPct(expenditureDetails));
             };
 
-            incomeDetails.Total = expenditureGroupTypes.Select(expenseGroupType => genSummarySrcData(expenseGroupType))
-                                                       .Select(expenseSummary => expenseSummary.Total)
-                                                       .Min() - 10;
+
+            incomeDetails = incomeDetails with { 
+                Total = expenditureGroupTypes.Select(expenseGroupType => genSummarySrcData(expenseGroupType))
+                                             .Select(expenseSummary => expenseSummary.Total)
+                                             .Min() - 10 
+            };
 
             Func<IEnumerable<TransactionGroupCfg>, int, object> genSummaryData = (_expenditureGroupTypes, i) =>
             {

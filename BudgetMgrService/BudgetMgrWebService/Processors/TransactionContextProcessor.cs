@@ -1,6 +1,7 @@
 using BudgetMgrServiceLib.Generators;
 using BudgetMgrServiceLib.Models;
 using BudgetMgrServiceLib.Processors;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -16,7 +17,7 @@ namespace BudgetMgrWebService.Processors
         private static readonly string expenseGroupType = "expense";
 
 
-        public static Transaction ApplyUniqueId(Transaction transaction, int _Id) => Transaction.Of(_Id, transaction.DateStamp, transaction.TransType, transaction.Description, transaction.Amount);
+        public static Transaction ApplyUniqueId(Transaction transaction, int _Id) => new Transaction(_Id, transaction.DateStamp, transaction.TransType, transaction.Description, transaction.Amount);
 
         public static IEnumerable<Transaction> ApplyUniqueIds(this TransactionContext context, IEnumerable<Transaction> transactions)
         {
@@ -27,11 +28,7 @@ namespace BudgetMgrWebService.Processors
         public static FilePath ToFilePathDB(this string filePath, TransactionContext context)
         {
             var id = context.ContentFilePath.Count() + 1;
-            return new FilePath()
-            {
-                Id = id,
-                Value = filePath
-            };
+            return new FilePath(id,filePath);
         }
 
         public static void SeedWithData(this TransactionContext context, string contentFilePath)
@@ -93,16 +90,16 @@ namespace BudgetMgrWebService.Processors
 
         public static GroupTypesCfgEx ToGroupTypeCfgEx(this TransactionContext dbContext)
         {
-            return new GroupTypesCfgEx()
-            {
-                CreditTypesOfInterest = dbContext.CreditTypesOfInterest.ToArray(),
-                DebitTypesOfInterest = dbContext.DebitTypesOfInterest.ToArray(),
-                TransNames = dbContext.TransNames.Select(transName => transName.Of(transName.Name.ToUpper())).ToArray(),
-                TransTypes = dbContext.TransTypes.ToArray(),
-                TransGroupTypes = dbContext.TransGroupTypes.ToArray(),
-                TransGroups = dbContext.TransGroups.ToArray(),
-                NameRefs = dbContext.NameRefs.ToArray()
-            };
+            var fnTransNameToUpper = (TransName transName) => transName with { Name = transName.Name.ToUpper() };
+            return new GroupTypesCfgEx(
+                dbContext.CreditTypesOfInterest.ToArray(),
+                dbContext.DebitTypesOfInterest.ToArray(),
+                dbContext.TransNames.Select(fnTransNameToUpper).ToArray(),
+                dbContext.TransTypes.ToArray(),
+                dbContext.TransGroupTypes.ToArray(),
+                dbContext.TransGroups.ToArray(),
+                dbContext.NameRefs.ToArray()
+            );
         }
 
         public static IEnumerable<Transaction> RemoveDuplicates(this IEnumerable<Transaction> _srcData, DbSet<Transaction> ctxTransactions)
@@ -230,36 +227,15 @@ namespace BudgetMgrWebService.Processors
         {
             var content = TransactionContent.Of(_context);
             var _groups = content.GroupTypeCfg.ToTransNamesEx();
-            var miscGroup = new TransactionGroupCfg()
-            {
-                Id = _groups.GenerateUniqueId(cfg => (int)cfg.Id),
-                GroupName = "misc",
-                GroupType = "expense",
-                Names = content.Transactions.ToMiscTransNamesOfInterest(content)
-            }.AsCollection();
+            var miscGroup = new TransactionGroupCfg(
+                _groups.GenerateUniqueId(cfg => (int)cfg.Id),
+                "misc",
+                "expense",
+                content.Transactions.ToMiscTransNamesOfInterest(content)
+            ).AsCollection();
             var transactionGroupCfgs = _groups.Concat(miscGroup).ToArray();
 
             return Task.FromResult<ActionResult<IEnumerable<TransactionGroupCfg>>>(transactionGroupCfgs);
-        }
-
-
-        public static Task<TransactionGroupCfg> FindTransactionGroupCfgAsync(this TransactionContext _context, UpdateTransactionName transactionName)
-        {
-            var groupOfInterest = _context.ToGroupTypeCfgEx()
-                              .ToTransNamesEx()
-                              .FirstOrDefault(group => group.Id == transactionName.Id);
-
-            var transactionGroupCfg = (groupOfInterest == null)
-                                        ? null
-                                        : new TransactionGroupCfg()
-                                        {
-                                            Id = groupOfInterest.Id,
-                                            GroupName = groupOfInterest.GroupName,
-                                            GroupType = groupOfInterest.GroupType,
-                                            Names = groupOfInterest.Names
-                                        };
-
-            return Task.FromResult<TransactionGroupCfg>(transactionGroupCfg);
         }
 
         public static void UpdateGroupDataSource(this Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> updateSourceReferences,
@@ -287,19 +263,25 @@ namespace BudgetMgrWebService.Processors
 
         public static IEnumerable<TransactionGroupCfg> CollateAddedGroupCfgs(this IEnumerable<TransactionGroupCfg> updatedGroupCfgs)
         {
-            // NOTE: Misc group type is not persisted to the database, as it used to reflect the transactions that are not part of the known group types,
+            // NOTE: Misc group type is not persisted to the database,
+            //       as it used to reflect the transactions that are not part of the known group types,
             //       and is used to provide a summary of those transactions.
             // TODO: Also at the momment, you cannot remove a group type from the database,
             //       as this is not fully implemented at this time.
+
+            if (updatedGroupCfgs.Any(g => g.GroupName == miscellaenousGroupType) == true)
+            {
+                return updatedGroupCfgs;
+            }
 
             var addedTransGroupStartIndex = updatedGroupCfgs.Where(g => g.GroupName == miscellaenousGroupType).FirstOrDefault()?.Id - 1;
             var _updatedGroupCfgs = updatedGroupCfgs.Where(g => g.GroupName != miscellaenousGroupType).ToArray();
 
             return _updatedGroupCfgs.Select(g => {
-                if (g.Id == g.DefaultId())
+                if (g.Id == g.DefaultId() && (addedTransGroupStartIndex != null))
                 {
                     addedTransGroupStartIndex = addedTransGroupStartIndex + 1;
-                    return g.Of(addedTransGroupStartIndex.Value);
+                    return g with { Id = addedTransGroupStartIndex.Value };
                 }
                 return g;
             }).ToArray();
@@ -308,11 +290,11 @@ namespace BudgetMgrWebService.Processors
         public static void UpdateTransactionGroupCfg(this TransactionContext _context, IEnumerable<TransactionGroupCfg> updatedGroupCfgs)
         {
             // persist the groupCfg (which contains the COMPLETE updated data set) to the database, and update the relevant group data source with the new groupCfg data.
+            // TODO: Also at the momment, you cannot remove a group type from the database,
+            //       as this is not fully implemented at this time.
             var srcGroupTypesCfgs = _context.ToGroupTypeCfgEx();
             srcGroupTypesCfgs.AddGroupData(updatedGroupCfgs.CollateAddedGroupCfgs()).UpdateGroupDataSource(_context);
         }
-
     }
-
 }
 

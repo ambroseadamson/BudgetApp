@@ -6,7 +6,7 @@ namespace BudgetMgrServiceLib.Processors
     {
         public static SummarySrcData ToSummarySrcData(this TransactionSummary summaryData, string expenditureGroupType)
         {
-            return SummarySrcData.Of(expenditureGroupType, summaryData.Expenditure.Total, summaryData.Balance, summaryData.ExpSummaryPct);
+            return new SummarySrcData(expenditureGroupType, summaryData.Expenditure.Total, summaryData.Balance, summaryData.ExpSummaryPct);
         }
 
     }

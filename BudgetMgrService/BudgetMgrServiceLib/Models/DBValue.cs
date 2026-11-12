@@ -4,55 +4,45 @@ using System.Linq;
 
 namespace BudgetMgrServiceLib.Models
 {
-    public class CreditTypeRef
-    {
-        public long Id { get; set; }
-        public long TransTypeFK { set; get; }
-    }
+    public record CreditTypeRef(
+        long Id,
+        long TransTypeFK
+    );
 
-    public class DebitTypeRef
-    {
-        public long Id { get; set; }
-        public long TransTypeFK { set; get; }
-    }
+    public record DebitTypeRef(
+        long Id,
+        long TransTypeFK
+    );
 
 
-    public class TransName
-    {
-        public long Id { get; set; }
-        public string Name { set; get; }
-    }
+    public record TransName(
+        long Id,
+        string Name
+    );
 
-    public class TransType
-    {
-        public long Id { get; set; }
-        public string Type { set; get; }
-    }
+    public record TransType(
+        long Id,
+        string Type
+    );
 
-    public class TransGroupType
-    {
-        public long Id { get; set; }
-        public string Type { set; get; }
-    }
+    public record TransGroupType(
+        long Id,
+        string Type
+    );
 
-    public class FilePath
-    {
-        public long Id { get; set; }
-        public string Value { set; get; }
-    }
+    public record FilePath(
+        long Id,
+        string Value
+    );
 
-    public class GroupTypesCfgEx
-    {
-        public IEnumerable<CreditTypeRef> CreditTypesOfInterest { set; get; }
-        public IEnumerable<DebitTypeRef> DebitTypesOfInterest { set; get; }
-        public IEnumerable<TransName> TransNames { set; get; }
-        public IEnumerable<TransType> TransTypes { set; get; }
-
-        public IEnumerable<TransGroupType> TransGroupTypes { set; get; }
-
-        public IEnumerable<TransactionGroupEx> TransGroups { set; get; }
-
-        public IEnumerable<TransactionNameEx> NameRefs { set; get; }
-    }
+    public record GroupTypesCfgEx(
+        IEnumerable<CreditTypeRef> CreditTypesOfInterest,
+        IEnumerable<DebitTypeRef> DebitTypesOfInterest,
+        IEnumerable<TransName> TransNames,
+        IEnumerable<TransType> TransTypes,
+        IEnumerable<TransGroupType> TransGroupTypes,
+        IEnumerable<TransactionGroupEx> TransGroups,
+        IEnumerable<TransactionNameEx> NameRefs
+    );
 
 }

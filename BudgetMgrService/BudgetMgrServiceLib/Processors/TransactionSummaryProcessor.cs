@@ -16,7 +16,7 @@ namespace BudgetMgrServiceLib.Processors
 
             var summaryPct = incomeDetails.ToExpenseSummaryPct(expenditureDetails);
 
-            return TransactionSummary.Of(incomeDetails, expenditureDetails, balance, summaryPct);
+            return new TransactionSummary(incomeDetails, expenditureDetails, balance, summaryPct);
         }
     }
 }

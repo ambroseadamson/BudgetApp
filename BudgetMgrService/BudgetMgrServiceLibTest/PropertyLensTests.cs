@@ -30,16 +30,43 @@ namespace BudgetMgrServiceLibTest
         public static IEnumerable<Transaction> ToMiscTransactions(IEnumerable<Transaction> transactions)
         {
             Func<Transaction, string> genTransType = (currTrans) => $"*{currTrans.TransType}*";
-            Func<Transaction, string> genDebitName = (currTrans) => $"*{currTrans.Description}*";
+            Func<Transaction, string> genDebitName = (currTrans) => $"*{currTrans.Description}*"; 
 
-            var applyDateStamp = PropertyLens<Transaction, DateTime>.Of(currTrans => currTrans.DateStamp, (currTrans, dateStamp) => currTrans.DateStamp = dateStamp);
-            var applyTransType = PropertyLens<Transaction, string>.Of(currTrans => currTrans.TransType, (currTrans, transType) => currTrans.TransType = transType);
-            var applyDebitName = PropertyLens<Transaction, string>.Of(currTrans => currTrans.Description, (currTrans, debitName) => currTrans.Description = debitName);
-            var applyAmount = PropertyLens<Transaction, double>.Of(currTrans => currTrans.Amount, (currTrans, amount) => currTrans.Amount = amount);
+            var applyDateStamp = PropertyLens<Transaction, DateTime, Transaction>.Of(
+                currTrans => currTrans.DateStamp, 
+                (currTrans, dateStamp) => { 
+                    currTrans = currTrans with { DateStamp = dateStamp };
+                    return currTrans;
+                }
+            );
+
+            var applyTransType = PropertyLens<Transaction, string, Transaction>.Of(
+                currTrans => currTrans.TransType,
+                (currTrans, transType) => {
+                    currTrans = currTrans with { TransType = transType };
+                    return currTrans;
+                }
+            );
+            
+            var applyDebitName = PropertyLens<Transaction, string, Transaction>.Of(
+                currTrans => currTrans.Description,
+                (currTrans, debitName) => {
+                    currTrans = currTrans with { Description = debitName };
+                    return currTrans;
+                }
+            );
+            
+            var applyAmount = PropertyLens<Transaction, double, Transaction >.Of(
+                currTrans => currTrans.Amount,
+                (currTrans, amount) => { 
+                    currTrans = currTrans with { Amount = amount }; 
+                    return currTrans; 
+                }
+            );
 
             var srcValueFns = new List<Func<Transaction, Transaction>> {
-                (currTrans) => currTrans.Map(applyTransType,genTransType(currTrans)),     // TransType
-                (currTrans) => currTrans.Map(applyDebitName,genDebitName(currTrans))     // DebitName
+                (currTrans) => currTrans.Map(applyTransType,genTransType(currTrans)),
+                (currTrans) => currTrans.Map(applyDebitName, genDebitName(currTrans))
             };
 
             Func<Transaction, bool> isTransactionOfInterest = (currTrans) =>
@@ -71,10 +98,17 @@ namespace BudgetMgrServiceLibTest
         {
             Func<Transaction, string> deMiscifyTransName = (_currTrans) => _currTrans.Description.Replace('*', ' ').Trim();
 
-            var applyDebitName = PropertyLens<Transaction, string>.Of(_currTrans => _currTrans.Description, (__currTrans, debitName) => __currTrans.Description = debitName);
+            var applyDebitName =  PropertyLens<Transaction, string, Transaction >.Of(
+                _currTrans => _currTrans.Description,
+                (_currTrans, debitName) =>
+                {
+                    _currTrans = _currTrans with { Description = debitName };
+                    return _currTrans;
+                }
+            );
 
             var srcValueFns = new List<Func<Transaction, Transaction>> {
-                (_currTrans) => _currTrans.Map(applyDebitName,deMiscifyTransName(currTrans))     // DebitName
+                (_currTrans) => _currTrans.Map(applyDebitName, deMiscifyTransName(currTrans))     // DebitName
             };
 
 
