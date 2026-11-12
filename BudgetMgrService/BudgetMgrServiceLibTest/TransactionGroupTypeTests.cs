@@ -47,10 +47,38 @@ namespace BudgetMgrServiceLibTest
             Func<Transaction, string> genTransType = (currTrans) => $"*{currTrans.TransType}*";
             Func<Transaction, string> genDebitName = (currTrans) => $"*{currTrans.Description}*";
 
-            var applyDateStamp = PropertyLens<Transaction, DateTime>.Of(currTrans => currTrans.DateStamp, (currTrans, dateStamp) => currTrans.DateStamp = dateStamp);
-            var applyTransType = PropertyLens<Transaction, string>.Of(currTrans => currTrans.TransType, (currTrans, transType) => currTrans.TransType = transType);
-            var applyDebitName = PropertyLens<Transaction, string>.Of(currTrans => currTrans.Description, (currTrans, debitName) => currTrans.Description = debitName);
-            var applyAmount = PropertyLens<Transaction, double>.Of(currTrans => currTrans.Amount, (currTrans, amount) => currTrans.Amount = amount);
+            var applyDateStamp = PropertyLens<Transaction, DateTime, Transaction>.Of(
+                currTrans => currTrans.DateStamp, 
+                (currTrans, dateStamp) =>
+                {
+                    currTrans = currTrans with { DateStamp = dateStamp };
+                    return currTrans;
+                }
+            );
+            
+            var applyTransType = PropertyLens<Transaction, string, Transaction>.Of(
+                currTrans => currTrans.TransType, 
+                (currTrans, transType) => {
+                    currTrans = currTrans with { TransType = transType };
+                    return currTrans;
+                }
+            );
+            
+            var applyDebitName = PropertyLens<Transaction, string, Transaction>.Of(
+                currTrans => currTrans.Description,
+                (currTrans, debitName) => {
+                    currTrans = currTrans with { Description = debitName };
+                    return currTrans;
+                }
+            );
+            
+            var applyAmount = PropertyLens<Transaction, double, Transaction>.Of(
+                currTrans => currTrans.Amount,
+                (currTrans, amount) => {
+                    currTrans = currTrans with { Amount = amount };
+                    return currTrans;
+                }
+            );
 
             var srcValueFns = new List<Func<Transaction, Transaction>> {
                 (currTrans) => currTrans.Map(applyTransType,genTransType(currTrans)),     // TransType
@@ -188,13 +216,7 @@ namespace BudgetMgrServiceLibTest
 
             Func<long, TransactionGroupCfg, IEnumerable<string>, Option<string>, TransactionGroupCfg> fnToAddedGroup = (id, inputGroupType, updatedNames, groupName) =>
             {
-                return new TransactionGroupCfg()
-                {
-                    Id = id,
-                    GroupType = inputGroupType.GroupType,
-                    GroupName = groupName.ValueOr(inputGroupType.GroupName),
-                    Names = updatedNames.ToArray()
-                };
+                return new TransactionGroupCfg(id, groupName.ValueOr(inputGroupType.GroupName), inputGroupType.GroupType, updatedNames.ToArray());
             };
 
             var outputAddedSet = groupTypesCfg.ToTransNamesEx()
@@ -303,17 +325,15 @@ namespace BudgetMgrServiceLibTest
                                         .ToArray();
                 };
 
-                return new GroupTypesCfgEx()
-                {
-                    CreditTypesOfInterest = groupTypesCfg.CreditTypesOfInterest.ToArray(),
-                    DebitTypesOfInterest = groupTypesCfg.DebitTypesOfInterest.ToArray(),
-                    TransTypes = groupTypesCfg.TransTypes.ToArray(),
-                    TransGroupTypes = groupTypesCfg.TransGroupTypes.ToArray(),
-                    TransGroups = groupTypesCfg.TransGroups.ToArray(),
-
-                    TransNames = genMiscNames().ToArray(),
-                    NameRefs = groupTypesCfg.NameRefs.ToArray()
-                };
+                return new GroupTypesCfgEx(
+                    groupTypesCfg.CreditTypesOfInterest.ToArray(),
+                    groupTypesCfg.DebitTypesOfInterest.ToArray(),
+                    genMiscNames().ToArray(),
+                    groupTypesCfg.TransTypes.ToArray(),
+                    groupTypesCfg.TransGroupTypes.ToArray(),
+                    groupTypesCfg.TransGroups.ToArray(),
+                    groupTypesCfg.NameRefs.ToArray()
+                );
             };
 
             var miscNames = genModifiedCfgData().ToMiscNamesOfInterestFromCfg()

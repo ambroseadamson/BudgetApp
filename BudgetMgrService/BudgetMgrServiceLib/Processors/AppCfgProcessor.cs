@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using BudgetMgrServiceLib.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.IO;
-using BudgetMgrServiceLib.Models;
 
 namespace BudgetMgrServiceLib.Processors
 {
@@ -47,17 +47,17 @@ namespace BudgetMgrServiceLib.Processors
 
         public static GroupTypesCfgEx ToGroupTypesCfgEx(string cfgFilePath = "")
         {
+            var fnTransNameToUpper = (TransName transName) => transName with { Name = transName.Name.ToUpper() };
             var cfgData = ToCfgData<GroupTypesCfgEx>(DefaultGroupTypeCfgFileName, "GroupTypesCfgEx", cfgFilePath);
-            return new GroupTypesCfgEx()
-            {
-                CreditTypesOfInterest = cfgData.CreditTypesOfInterest.ToArray(),
-                DebitTypesOfInterest = cfgData.DebitTypesOfInterest.ToArray(),
-                TransNames = cfgData.TransNames.Select(transName => transName.Of(transName.Name.ToUpper())).ToArray(),
-                TransTypes = cfgData.TransTypes.ToArray(),
-                TransGroupTypes = cfgData.TransGroupTypes.ToArray(),
-                TransGroups = cfgData.TransGroups.ToArray(),
-                NameRefs = cfgData.NameRefs.ToArray()
-            };
+            return new GroupTypesCfgEx(
+                cfgData.CreditTypesOfInterest.ToArray(),
+                cfgData.DebitTypesOfInterest.ToArray(),
+                cfgData.TransNames.Select(fnTransNameToUpper).ToArray(),
+                cfgData.TransTypes.ToArray(),
+                cfgData.TransGroupTypes.ToArray(),
+                cfgData.TransGroups.ToArray(),
+                cfgData.NameRefs.ToArray()
+            );
         }
     }
 }

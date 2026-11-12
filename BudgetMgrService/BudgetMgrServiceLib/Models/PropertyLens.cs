@@ -14,13 +14,13 @@ namespace BudgetMgrServiceLib.Models
         }
     }
 
-    public class PropertySetter<TObj, TProp>
+    public class PropertySetter<TObj, TProp, TResult>
     {
-        public Action<TObj, TProp> Set { get; private set; }
+        public Func<TObj, TProp, TResult> Set { get; private set; }
 
-        public static PropertySetter<TObj, TProp> Of(Action<TObj, TProp> setter)
+        public static PropertySetter<TObj, TProp, TResult> Of(Func<TObj, TProp, TResult> setter)
         {
-            return new PropertySetter<TObj, TProp>()
+            return new PropertySetter<TObj, TProp, TResult>()
             {
                 Set = setter,
             };
@@ -28,17 +28,17 @@ namespace BudgetMgrServiceLib.Models
 
     }
 
-    public class PropertyLens<TObj, TProp>
+    public class PropertyLens<TObj, TProp, TResult>
     {
-        public PropertySetter<TObj, TProp> Setter { get; private set; }
+        public PropertySetter<TObj, TProp, TResult> Setter { get; private set; }
         public PropertyGetter<TObj, TProp> Getter { get; private set; }
 
-        public static PropertyLens<TObj, TProp> Of(Func<TObj, TProp> getter,
-                                                   Action<TObj, TProp> setter)
+        public static PropertyLens<TObj, TProp, TResult> Of(Func<TObj, TProp> getter,
+                                                             Func<TObj, TProp, TResult> setter)
         {
-            return new PropertyLens<TObj, TProp>()
+            return new PropertyLens<TObj, TProp, TResult>()
             {
-                Setter = PropertySetter<TObj, TProp>.Of(setter),
+                Setter = PropertySetter<TObj, TProp, TResult>.Of(setter),
                 Getter = PropertyGetter<TObj, TProp>.Of(getter)
             };
         }

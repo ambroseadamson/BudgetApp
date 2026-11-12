@@ -28,7 +28,7 @@ public class SummaryResult
       
             var _expenditureGroupNames = (_groupType == groupType) ? miscTransNamesOfInterest : content.GroupTypeCfg.ToExpenseGroup(_groupType).Names.ToArray();
 
-            return TransactionSummaryEntry.Of(_groupType, allTransactions.GenTransactionSummaryData(content.IncomeGroupNames, _expenditureGroupNames));
+            return new TransactionSummaryEntry(0, _groupType, allTransactions.GenTransactionSummaryData(content.IncomeGroupNames, _expenditureGroupNames).ExpSummaryPct);
         };
 
         Func<string, TransactionCreditDetails> fnGenIncomeData = (_groupType) =>

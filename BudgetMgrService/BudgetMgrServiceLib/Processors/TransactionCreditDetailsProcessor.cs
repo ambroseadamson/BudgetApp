@@ -9,7 +9,7 @@ namespace BudgetMgrServiceLib.Processors
                                                                           IEnumerable<string> groupTypes)
         {
             var _transactions = transactions.Where(currTrans => currTrans.IsTransactionOfInterest(groupTypes));
-            return TransactionCreditDetails.Of(_transactions, _transactions.Sum(currTrans => currTrans.Amount));
+            return new TransactionCreditDetails(0, _transactions, _transactions.Sum(currTrans => currTrans.Amount));
         }
 
         public static double ToCreditBalance(this TransactionCreditDetails income, TransactionCreditDetails expense) => income.Total - expense.Total;

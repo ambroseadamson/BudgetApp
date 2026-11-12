@@ -35,7 +35,7 @@ namespace BudgetMgrServiceLib.Generators
 
             Func<IEnumerable<string>, Transaction> toTransactionFromE = (entry) =>
             {
-                return Transaction.Of(0, toDateStamp(entry.First()), extractVal(1, entry).ToUpper(),
+                return new Transaction(0, toDateStamp(entry.First()), extractVal(1, entry).ToUpper(),
                                          extractVal(2, entry).ToUpper(), 
                                          extractTransAmount(extractVal(3, entry).Replace('£', ' '),extractVal(4, entry).Replace('£', ' ')));
             };
@@ -54,7 +54,7 @@ namespace BudgetMgrServiceLib.Generators
                 var descRequiresFixing = isDebitCreditType(transaction.Description);
                 var type = typeRequiresFixing ? getDebitCreditType(transaction) : transaction.TransType;
                 var desc = descRequiresFixing ? getDebitCreditDescription(transaction) : transaction.Description;
-                return Transaction.Of(transaction.Id, transaction.DateStamp, type, desc, transaction.Amount);
+                return new Transaction(transaction.Id, transaction.DateStamp, type, desc, transaction.Amount);
             };
 
             Func<IEnumerable<string>, IEnumerable<Transaction>> genStatementData = (entries) =>
@@ -72,9 +72,7 @@ namespace BudgetMgrServiceLib.Generators
 
 
             var results = genStatementData(transactionSrcData).ToArray();
-            return TransactionResults.Of("transactions.json",
-                                         results,
-                                         results.GenDateFilterCfgURLParam(testDataCfg.DateFilter.UseDateFilter));
+            return new TransactionResults("transactions.json", results, results.GenDateFilterCfgURLParam(testDataCfg.DateFilter.UseDateFilter));
         }
     }
 }

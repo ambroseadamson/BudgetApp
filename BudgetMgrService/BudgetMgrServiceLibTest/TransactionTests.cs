@@ -145,7 +145,7 @@ namespace BudgetMgrServiceLibTest
         {
             var _transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesCfg);
 
-            var dateFilter = DateFilterCfg.Of(_transactions.First().DateStamp.AddDays(10), _transactions.Last().DateStamp, true);
+            var dateFilter = new DateFilterCfg(_transactions.First().DateStamp.AddDays(10), _transactions.Last().DateStamp, true);
 
             var transactions = _transactions.ByDateRange(groupTypesCfg, dateFilter).ToArray();
 
