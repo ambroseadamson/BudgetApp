@@ -1,10 +1,14 @@
 ﻿{
   "TestDataCfg": {
-    "NumberOfTransactions": 10,
+    "NumberOfTransactions": 20,
     "MiscTransactionNames": [
       "zqm",
       "qmz",
-      "mqz"
+      "mqz",
+      "work",
+      "SAINSBURYS S/MKTS",
+      "TV LICENCE MBP",
+      "HOME INSURANCE"
     ],
     "MiscTransactionValue": 10.00,
     "Months": [

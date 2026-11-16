@@ -39,15 +39,15 @@
         "TransNames": [
             {
                 "Id": 1,
-                "Name": "CORDIC"
+                "Name": "WORK"
             },
             {
                 "Id": 2,
-                "Name": "SAINSBURYS S/MKTS PETERBOROUGH GB"
+                "Name": "SAINSBURYS S/MKTS GB"
             },
             {
                 "Id": 3,
-                "Name": "SAINSBURYS S/MKT PETERBOROUGH GB"
+                "Name": "SAINSBURYS S/MKT DEU"
             },
             {
                 "Id": 4,
@@ -59,91 +59,91 @@
             },
             {
                 "Id": 6,
-                "Name": "BRITISH GAS SERV"
+                "Name": "NONMAE GAS SERV"
             },
             {
                 "Id": 7,
-                "Name": "CHURCHILL INSURANCE"
+                "Name": "HOMIE INSURANCE"
             },
             {
                 "Id": 8,
-                "Name": "PETERBOROUGHCC"
+                "Name": "COUNCIL TAX"
             },
-            {
-                "Id": 9,
-                "Name": "BRGAS-ENERGY"
-            },
+          {
+            "Id": 9,
+            "Name": "NONMAE GAS - ENERGY"
+          },
             {
                 "Id": 10,
-                "Name": "GOCARDLESS LTD"
+                "Name": "NOCARDPLUS LTD"
             },
             {
                 "Id": 11,
-                "Name": "ANGLIAN WATER"
+                "Name": "WATER COMPANY"
             },
             {
                 "Id": 12,
-                "Name": "VIRGIN MEDIA PYMTS"
+                "Name": "CABLE TV"
             },
             {
                 "Id": 13,
-                "Name": "WHICH 01992822800 GB"
+                "Name": "MAGAZINE SUBSCRIPTION"
             },
             {
                 "Id": 14,
-                "Name": "NEST MANAGEMENT"
+                "Name": "PENSION"
             },
             {
                 "Id": 15,
-                "Name": "SKYE LOANS LTD"
+                "Name": "LOAN"
             },
             {
                 "Id": 16,
-                "Name": "HALIFAX"
+                "Name": "MORTGAGE"
             },
             {
                 "Id": 17,
-                "Name": "STEPCHANGE"
+                "Name": "CHARITY"
             },
             {
                 "Id": 18,
-                "Name": "FAMILY EQUITY PLAN"
+                "Name": "BONDS"
             },
             {
                 "Id": 19,
-                "Name": "MRS D M ADAMSON"
+                "Name": "HAVE NONAME"
             },
             {
                 "Id": 20,
-                "Name": "E-SAVINGS"
+                "Name": "SAVINGS"
             },
             {
                 "Id": 21,
-                "Name": "QVC LIVERPOOL GB"
+                "Name": "INTERNET SHOPPING"
             },
             {
                 "Id": 22,
-                "Name": "AMAZON UK MARKETPLACE"
+                "Name": "JUNGLE DEU"
             },
-            {
-                "Id": 23,
-                "Name": "AMAZON UK RETAIL"
-            },
-            {
-                "Id": 24,
-                "Name": "AMAZON SVCS EUROPE"
-            },
+          {
+            "Id": 23,
+            "Name": "JUNGLE FR"
+          },
+          {
+            "Id": 24,
+            "Name": "JUNGLE SVCS POR"
+          },
             {
                 "Id": 25,
-                "Name": "WWW.QVCUK.COM"
+                "Name": "WWW.SOMESHOP.COM"
             },
             {
                 "Id": 26,
-                "Name": "AMAZON UK RETAIL-NEW"
+                "Name": "JUNGLE FR RETAIL"
             },
             {
                 "Id": 27,
-                "Name": "AMAZON SVCS EUROPE-NEW"
+                "Name": "JUNGLE SVCS EUROPE-NEW"
             }
         ],
         "TransTypes": [
@@ -218,7 +218,7 @@
             },
             {
                 "Id": 6,
-                "GroupName": "tvshopping",
+                "GroupName": "shopping",
                 "GroupTypeFK": 2
             }
         ],
