@@ -6,14 +6,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ec891842-48a5-42f0-a362-27d2684e92ce" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/app.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/app.component.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/components/config/config.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/components/config/config.component.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/components/details/details.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/components/details/details.component.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/components/import/import.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/components/import/import.component.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/components/transaction-summary-data/transaction-summary-data.component.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/app/components/transaction-summary-data/transaction-summary-data.component.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../budgetapp-webclient/budgetapp-webclient/src/test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.BudgetMgrService/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.BudgetMgrService/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,9 +16,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="3LtQOUlVIfna13RklNFrAfNDITu" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -40,9 +33,10 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "10-upgrade-the-web-client-to-the-latest-version-of-angular",
+    "git-widget-placeholder": "26-refactor-the-transactioncontextprocessor-class",
     "nodejs_package_manager_path": "npm",
-    "rider.unittesting.toolwindow.stripe.button.shown": "true"
+    "rider.unittesting.toolwindow.stripe.button.shown": "true",
+    "settings.editor.selected.configurable": "SolutionBuilderGeneralOptionsPage"
   }
 }]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.BudgetMgrWebService: http">
