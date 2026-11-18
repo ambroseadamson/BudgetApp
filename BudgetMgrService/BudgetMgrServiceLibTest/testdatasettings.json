@@ -1,8 +1,46 @@
 ﻿{
   "TestDataCfg": {
     "NumberOfTransactions": 10,
-    "MiscTransactionNames": ["ZQM", "QMZ", "MQZ"],
-    "MiscTransactionValue": 10.0,
+    "MiscTransactionNames": [
+      "MISC TRANSACTION 1",
+      "MISC TRANSACTION 2",
+      "MISC TRANSACTION 3"
+    ],
+    "TransTypes": [
+      {
+        "Id": 1,
+        "Type": "BANK CREDIT"
+      },
+      {
+        "Id": 2,
+        "Type": "DIRECT DEBIT"
+      },
+      {
+        "Id": 3,
+        "Type": "ATM WITHDRAWAL"
+      },
+      {
+        "Id": 4,
+        "Type": "CASH RECEIPT"
+      },
+      {
+        "Id": 5,
+        "Type": "VISA PURCHASE"
+      },
+      {
+        "Id": 6,
+        "Type": "STANDING ORDER"
+      },
+      {
+        "Id": 7,
+        "Type": "UNPAID TRANSACTION FEE"
+      },
+      {
+        "Id": 8,
+        "Type": ""
+      }
+    ],
+    "MiscTransactionValue": 10.00,
     "Months": [
       "Jan",
       "Feb",
@@ -17,11 +55,17 @@
       "Nov",
       "Dec"
     ],
-    "Years": ["2024", "2025"],
-    "CharsToRemove": ["\"", "�"],
+    "Years": [
+      "2015",
+      "2016"
+    ],
+    "CharsToRemove": [
+      "\"",
+      "�"
+    ],
     "DateFilter": {
-      "StartDate": "2026-02-01T00:00:00",
-      "EndDate": "2026-02-20T00:00:00",
+      "StartDate": "2017-02-01T00:00:00",
+      "EndDate": "2017-02-20T00:00:00",
       "UseDateFilter": "false"
     }
   }
