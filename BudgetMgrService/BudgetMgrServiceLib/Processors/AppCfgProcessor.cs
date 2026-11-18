@@ -26,7 +26,8 @@ namespace BudgetMgrServiceLib.Processors
         public static void JsonDataToFile(this IEnumerable<string> jsonData, string cfgFileName, string cfgFilePath = "")
         {
             Func<string> genAppCfgFilePath = () => (cfgFilePath.Count() == 0) ? $"{Directory.GetCurrentDirectory()}\\..\\..\\.." : cfgFilePath;
-            File.WriteAllLines($"{genAppCfgFilePath()}\\{cfgFileName}.json", jsonData);
+            var jsonFilePath = $"{genAppCfgFilePath()}\\{cfgFileName}.json";
+            File.WriteAllLines(jsonFilePath, jsonData);
         }
 
         public static IEnumerable<string> GroupTypesCfgExToJsonData(this GroupTypesCfgEx groupTypeCfg) => (new { GroupTypesCfgEx = groupTypeCfg }).ToJson();
@@ -40,7 +41,8 @@ namespace BudgetMgrServiceLib.Processors
         public static T ToCfgData<T>(string cfgFileName, string cfgSectionName, string cfgFilePath = "")
         {
             Func<string> genAppCfgFilePath = () => (cfgFilePath.Count() == 0) ? $"{Directory.GetCurrentDirectory()}\\..\\..\\.." : cfgFilePath;
-            return File.ReadAllText($"{genAppCfgFilePath()}\\{cfgFileName}.json").FromJson<T>(cfgSectionName);
+            var jsonFilePath = $"{genAppCfgFilePath()}\\{cfgFileName}.json";
+            return File.ReadAllText(jsonFilePath).FromJson<T>(cfgSectionName);
         }
 
         public static TestDataCfg ToTestDataCfg(string cfgFilePath = "") => ToCfgData<TestDataCfg>("testdatasettings", "TestDataCfg", cfgFilePath);
