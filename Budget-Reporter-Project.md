@@ -133,8 +133,7 @@ This gives a summary of the budget,  and transaction details based upon the requ
 
 A prototype example view is shown below:
 
-<img width="1006" height="575" alt="image" src="https://github.com/user-attachments/assets/88122818-1700-4b0a-81ce-6262094c915b" />
-
+<img width="1034" height="623" alt="image" src="https://github.com/user-attachments/assets/4093de95-eb4c-420f-a72b-ec1b6fc5ffcd" />
 
 ### Configuration view 
 
