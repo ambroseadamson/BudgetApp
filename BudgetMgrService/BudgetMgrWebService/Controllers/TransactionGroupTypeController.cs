@@ -16,11 +16,11 @@ namespace BudgetMgrWebService.Controllers
     [ApiController]
     public class TransactionGroupTypeController : ControllerBase
     {
-        private readonly TransactionContext _context;
+        private readonly DataStore dataStore;
 
-        public TransactionGroupTypeController(TransactionContext context)
+        public TransactionGroupTypeController(DataStore dataStore)
         {
-            _context = context;
+            this.dataStore = dataStore;
         }
 
 
@@ -28,23 +28,23 @@ namespace BudgetMgrWebService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TransactionGroupCfg>>> GetTransactionGroupCfg()
         {
-            // NOTE: The following usage context connects to an in-memory database, which is used for testing purposes.
+            // NOTE: The following usage dataStore connects to an in-memory database, which is used for testing purposes.
             // The actual database connection is commented out below.
             // This API method retrieves the complete data set of TransactionGroupCfgs in the datastore,
             // and can be used by the client to update the group data source with the complete
-            return await _context.ToTransactionGroupCfgsAsync();
+            return await dataStore.ToTransactionGroupCfgsAsync();
 
-            // TODO:  Revert to the following usage context connects to an actual database    
-            //return await _context.TransactionGroupCfg.ToListAsync();
+            // TODO:  Revert to the following usage dataStore connects to an actual database    
+            //return await dataStore.TransactionGroupCfg.ToListAsync();
         }
 
 
         // POST: api/TransactionGroupType
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] TransactionGroupCfg[] groupCfgs)
+        public async Task<ActionResult<IEnumerable<TransactionGroupCfg>>> Post([FromBody] TransactionGroupCfg[] groupCfgs)
         {
-            // NOTE: The following usage context connects to an in-memory database, which is used for testing purposes.
+            // NOTE: The following usage dataStore connects to an in-memory database, which is used for testing purposes.
             // This API method updates the complete data set of TransactionGroupCfgs in the database with the data
             // set recieved from the client.
             if (groupCfgs == null)
@@ -52,10 +52,14 @@ namespace BudgetMgrWebService.Controllers
                 return BadRequest();
             }
 
-            var content = TransactionContent.Of(_context);
-            _context.UpdateTransactionGroupCfg(groupCfgs);
+            if (groupCfgs.Count() == 0)
+            {
+                return NoContent();
+            }
 
-            await _context.SaveChangesAsync();
+            dataStore.UpdateTransactionGroupCfg(groupCfgs);
+
+            await dataStore.SaveChangesAsync();
 
             return Ok();
         }

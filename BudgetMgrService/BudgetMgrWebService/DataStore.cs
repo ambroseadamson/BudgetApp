@@ -1,11 +1,11 @@
 using BudgetMgrServiceLib.Models;
 using Microsoft.EntityFrameworkCore;
 
-public class TransactionContext : DbContext
+public class DataStore : DbContext
 {
 
 
-    public TransactionContext(DbContextOptions<TransactionContext> options) : base(options)
+    public DataStore(DbContextOptions<DataStore> options) : base(options)
     {
     }
 

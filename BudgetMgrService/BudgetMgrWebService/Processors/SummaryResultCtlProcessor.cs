@@ -1,4 +1,5 @@
 ﻿using BudgetMgrServiceLib.Models;
+using BudgetMgrServiceLib.Processors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetMgrWebService.Processors
@@ -8,7 +9,6 @@ namespace BudgetMgrWebService.Processors
         // TODO: expose the following group types via the web service API, so that the front end
         // can obtain the relevant transactions based upon those types from the back end.
 
-        private static readonly string expenseGroupType = "expense";
         public static IEnumerable<Transaction> ExcludeIncomeTransactions(
             this IEnumerable<Transaction> transactions,
             IEnumerable<string> incomeGroupNames)
@@ -25,25 +25,25 @@ namespace BudgetMgrWebService.Processors
 
             return materializedTransactions.Length == 0
                 ? new NotFoundResult()
-                : SummaryResult.Of(content, materializedTransactions, groupType);
+                : content.CreateSummaryResult(materializedTransactions, groupType);
         }
 
-        public static Task<ActionResult<SummaryResult>> ToSummaryResultAsync(this TransactionContext _context, string? groupType = null)
+        public static Task<ActionResult<SummaryResult>> ToSummaryResultAsync(this DataStore _dataStore, string? groupType = null)
         {
-            var content = TransactionContent.Of(_context);
-            return Task.FromResult(CreateSummaryResult(content, content.Transactions, groupType ?? expenseGroupType)); ;
+            var content = _dataStore.CreateTransactionContnent();
+            return Task.FromResult(CreateSummaryResult(content, content.Transactions, groupType ?? TransactionGroupTypeProcessor.ExpenseTransGroupType)); ;
         }
 
-        public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this TransactionContext _context, string startDate, string endDate)
+        public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this DataStore _dataStore, string startDate, string endDate)
         {
-            var content = TransactionContent.Of(_context);
+            var content = _dataStore.CreateTransactionContnent();
             var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
-            return Task.FromResult(CreateSummaryResult(content, transactions, expenseGroupType));
+            return Task.FromResult(CreateSummaryResult(content, transactions, TransactionGroupTypeProcessor.ExpenseTransGroupType));
         }
 
-        public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this TransactionContext _context, string startDate, string endDate, string groupType)
+        public static Task<ActionResult<SummaryResult>> FindSummaryResultAsync(this DataStore _dataStore, string startDate, string endDate, string groupType)
         {
-            var content = TransactionContent.Of(_context);
+            var content = _dataStore.CreateTransactionContnent();
             var transactions = content.Transactions.FilterByDateRange(startDate, endDate);
 
             return Task.FromResult(CreateSummaryResult(content, transactions, groupType));

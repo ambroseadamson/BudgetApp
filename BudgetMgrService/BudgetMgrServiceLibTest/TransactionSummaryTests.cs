@@ -45,7 +45,7 @@ namespace BudgetMgrServiceLibTest
 
         public static IEnumerable<object[]> ObtainSummarySrcContent()
         {
-            var expenditureGroupTypes = groupTypesCfg.ToTransNamesEx().Where(group => group.GroupType == "expense").ToArray();
+            var expenditureGroupTypes = groupTypesCfg.ToTransNamesEx().Where(group => group.GroupType == TransactionGroupTypeProcessor.ExpenseTransGroupType).ToArray();
             Func<TransactionGroupCfg, SummarySrcData> genSummarySrcData = (expGroupType) =>
             {
                 return transactions.GenTransactionSummaryData(totalIncomeGroup.Names, expGroupType.Names)
@@ -67,7 +67,7 @@ namespace BudgetMgrServiceLibTest
         {
             var incomeDetails = transactions.ToCreditDetails(totalIncomeGroup.Names);
 
-            var expenditureGroupTypes = groupTypesCfg.ToTransNamesEx().Where(group => group.GroupType == "expense").ToArray();
+            var expenditureGroupTypes = groupTypesCfg.ToTransNamesEx().Where(group => group.GroupType == TransactionGroupTypeProcessor.ExpenseTransGroupType).ToArray();
             Func<TransactionGroupCfg, SummarySrcData> genSummarySrcData = (expGroupType) =>
             {
                 return transactions.GenTransactionSummaryData(totalIncomeGroup.Names, expGroupType.Names)
@@ -96,7 +96,7 @@ namespace BudgetMgrServiceLibTest
         {
             var incomeDetails = transactions.ToCreditDetails(totalIncomeGroup.Names);
 
-            var expenditureGroupTypes = groupTypesCfg.ToTransNamesEx().Where(group => group.GroupType == "expense").ToArray();
+            var expenditureGroupTypes = groupTypesCfg.ToTransNamesEx().Where(group => group.GroupType == TransactionGroupTypeProcessor.ExpenseTransGroupType).ToArray();
             Func<TransactionGroupCfg, SummarySrcData> genSummarySrcData = (expGroupType) =>
             {
                 var expenditureDetails = transactions.ToCreditDetails(expGroupType.Names);

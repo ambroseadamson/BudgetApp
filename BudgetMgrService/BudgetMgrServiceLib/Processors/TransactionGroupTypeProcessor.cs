@@ -10,7 +10,48 @@ namespace BudgetMgrServiceLib.Processors
     {
         public static long DefaultId(this TransactionGroupCfg group) => -1;
 
-        public static string MiscTransGroupType = "misc";
+        public static readonly string MiscTransGroupType = "misc";
+        public static readonly string IncomeTransGroupType = "income";
+        public static readonly string ExpenseTransGroupType = "expense";
+
+        public static readonly TransGroupType[] DefaultTransGroupTypes = [
+            new TransGroupType(1, IncomeTransGroupType),
+            new TransGroupType(2, ExpenseTransGroupType)
+        ];
+
+        public static readonly string BankCreditTransType = "BANK CREDIT";
+        public static readonly string DirectDebitTransType = "DIRECT DEBIT";
+        public static readonly string AtmWithdrawalTransType = "ATM WITHDRAWAL";
+        public static readonly string CashReceiptTransType = "CASH RECEIPT";
+        public static readonly string VisaPurchaseTransType = "VISA PURCHASE";
+        public static readonly string StandingOrderTransType = "STANDING ORDER";
+        public static readonly string UnPaidTransactionFeeTransType = "UNPAID TRANSACTION FEE";
+        public static readonly string UnknownTransType = "";
+
+        public static readonly TransType[] DefaultTransTypes = [
+            new TransType(1, BankCreditTransType),
+            new TransType(2, DirectDebitTransType),
+            new TransType(3, AtmWithdrawalTransType),
+            new TransType(4, CashReceiptTransType),
+            new TransType(5, VisaPurchaseTransType),
+            new TransType(6, StandingOrderTransType),
+            new TransType(7, UnPaidTransactionFeeTransType),
+            new TransType(8, UnknownTransType)
+        ];
+
+        public static readonly CreditTypeRef[] DefaultCreditTypeRefs = [
+            new CreditTypeRef(1, 1)
+        ];
+
+        public static readonly DebitTypeRef[] DefaultDebitTypeRefs = [
+            new DebitTypeRef(1, 2),
+            new DebitTypeRef(2, 3),
+            new DebitTypeRef(3, 4),
+            new DebitTypeRef(4, 5),
+            new DebitTypeRef(5, 6),
+            new DebitTypeRef(6, 7),
+            new DebitTypeRef(7, 8)
+        ];
 
         private static Option<IEnumerable<TransactionGroupEx>> DefaultTransGroup = Option.None<IEnumerable<TransactionGroupEx>>();
 
@@ -87,7 +128,7 @@ namespace BudgetMgrServiceLib.Processors
                                 .ToArray();
         }
 
-        public static IEnumerable<TransactionGroupEx> ObtainTransGroups(this IEnumerable<TransactionGroupCfg> transGroupSrc, GroupTypesCfgEx groupTypesCfg)
+        public static IEnumerable<TransactionGroupEx> ObtainTransGroups(this IEnumerable<TransactionGroupCfg> transGroupSrc, GroupTypesCfgEx groupTypesCfg = null)
         {
             return transGroupSrc.Select(transGroup => new TransactionGroupEx(
                 transGroup.DefaultId(),
@@ -108,8 +149,8 @@ namespace BudgetMgrServiceLib.Processors
         public static IEnumerable<TransactionGroupEx> GenTransGroupsToAdd(this IEnumerable<TransactionGroupCfg> addSrc, GroupTypesCfgEx groupTypesCfg)
         {
             var transGroupsToAdd = addSrc.ObtainTransGroups(groupTypesCfg)
-                                        .Where(group => groupTypesCfg.TransGroups.Any(transGroup => group.GroupName == transGroup.GroupName) == false)
-                                        .ToArray();
+                                         .Where(group => groupTypesCfg.TransGroups.Any(transGroup => group.GroupName == transGroup.GroupName) == false)
+                                         .ToArray();
 
 
             return groupTypesCfg.TransGroups.GenerateUniqueIds(transGroupsToAdd, (transGroup) => (int)transGroup.Id)
@@ -192,16 +233,23 @@ namespace BudgetMgrServiceLib.Processors
             var updatedNameRefs = groupTypesCfg.NameRefs.Where(nameRef => unwrappedRefsToRemove.Any(_nameRefId => _nameRefId == nameRef.Id) == false)
                                                         .Concat(unwrappedRefsToAdd)
                                                         .ToArray();
-
             return Tuple.Create(CreateUpdateSourceReferences(transNamesToAdd, nameRefsToRemove, nameRefsToAdd, transGroupsToAdd),
                                 CreateUpdatedGroupSources(updatedTransNames.Map(transNames => transNames.AsEnumerable()), updatedNameRefs, _updatedTransGroups));
         }
+
+        public static bool IsEmpty(this GroupTypesCfgEx groupTypesCfg)
+        {
+            return ((groupTypesCfg.CreditTypesOfInterest.Count() == 0) &&
+                    (groupTypesCfg.DebitTypesOfInterest.Count() == 0) &&
+                    (groupTypesCfg.TransGroupTypes.Count() == 0) &&
+                    (groupTypesCfg.TransTypes.Count() == 0));
+        }
+
 
         public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> AddGroupData(this GroupTypesCfgEx groupTypesCfg, IEnumerable<TransactionGroupCfg> groupsToAdd)
         {
             return groupTypesCfg.UpdateGroupData(groupsToAdd, Option.Some(groupsToAdd.GenTransGroupsToAdd(groupTypesCfg)));
         }
-
 
         public static TransactionGroupCfg ToUpdatedGroupWithDefault(this TransactionGroupCfg inputGroupType, IEnumerable<string> updatedNames)
         {
@@ -221,7 +269,7 @@ namespace BudgetMgrServiceLib.Processors
         public static TransactionGroupCfg ToTotalIncomeGroup(this GroupTypesCfgEx groupTypesCfg, Option<IEnumerable<Transaction>> transactions)
         {
             var _transactions = transactions.ValueOr(Enumerable.Empty<Transaction>());
-            return _transactions.ToTotalNameGroup("credits", "income", groupTypesCfg);
+            return _transactions.ToTotalNameGroup("credits", IncomeTransGroupType, groupTypesCfg);
         }
 
         public static IEnumerable<string> ToCreditNamesOfInterestWithDefault(this GroupTypesCfgEx groupTypesCfg) => groupTypesCfg.ToCreditNamesOfInterest(DefaultTransactionSet);
@@ -241,14 +289,14 @@ namespace BudgetMgrServiceLib.Processors
         public static TransactionGroupCfg ToTotalExpenseGroup(this GroupTypesCfgEx groupTypesCfg, Option<IEnumerable<Transaction>> transactions)
         {
             var _transactions = transactions.ValueOr(Enumerable.Empty<Transaction>());
-            return _transactions.ToTotalNameGroup("debits", "expense", groupTypesCfg);
+            return _transactions.ToTotalNameGroup("debits", ExpenseTransGroupType, groupTypesCfg);
         }
 
         public static TransactionGroupCfg ToExpenseGroup(this GroupTypesCfgEx groupTypesCfg, string groupName) => groupTypesCfg.ToTransNamesEx().First(group => group.GroupName == groupName);
 
         public static IEnumerable<TransactionName> ToTransNamesOfInterest(this GroupTypesCfgEx groupTypesCfg)
         {
-            Func<string, IEnumerable<string>> genStartId = (groupType) => (groupType == "income") ? Enumerable.Empty<string>() : groupTypesCfg.ToCreditNamesOfInterestWithDefault();
+            Func<string, IEnumerable<string>> genStartId = (groupType) => (groupType == IncomeTransGroupType) ? Enumerable.Empty<string>() : groupTypesCfg.ToCreditNamesOfInterestWithDefault();
             Func<string, IEnumerable<string>, IEnumerable<TransactionName>> toNamesOfInterest = (type, namesOfInterest) =>
             {
                 var _id = 0;
@@ -256,8 +304,8 @@ namespace BudgetMgrServiceLib.Processors
                                        .Zip(namesOfInterest, (id, nameOfInterest) => new TransactionName(id, type, nameOfInterest));
             };
 
-            return toNamesOfInterest("income", groupTypesCfg.ToCreditNamesOfInterestWithDefault())
-                                                            .Concat(toNamesOfInterest("expense", groupTypesCfg.ToDebitNamesOfInterestWithDefault()));
+            return toNamesOfInterest(IncomeTransGroupType, groupTypesCfg.ToCreditNamesOfInterestWithDefault())
+                                                            .Concat(toNamesOfInterest(ExpenseTransGroupType, groupTypesCfg.ToDebitNamesOfInterestWithDefault()));
         }
 
         public static IEnumerable<String> FromTransNamesOfInterest(this IEnumerable<TransactionName> namesOfInterest, string groupType)
@@ -268,7 +316,7 @@ namespace BudgetMgrServiceLib.Processors
 
         public static IEnumerable<TransactionType> ToTransTypesOfInterest(this GroupTypesCfgEx groupTypesCfg)
         {
-            Func<string, IEnumerable<string>> genStartId = (groupType) => (groupType == "income") ? (new List<string>() { "income" }) : groupTypesCfg.ToCreditTypesOfInterestEx();
+            Func<string, IEnumerable<string>> genStartId = (groupType) => (groupType == IncomeTransGroupType) ? (new List<string>() { IncomeTransGroupType }) : groupTypesCfg.ToCreditTypesOfInterestEx();
             Func<string, IEnumerable<string>, IEnumerable<TransactionType>> toTypesOfInterest = (type, typesOfInterest) =>
             {
                 var _id = 0;
@@ -276,7 +324,7 @@ namespace BudgetMgrServiceLib.Processors
                                        .Zip(typesOfInterest, (id, typeOfInterest) => new TransactionType(id, type, typeOfInterest));
             };
 
-            return toTypesOfInterest("income", groupTypesCfg.ToCreditTypesOfInterestEx()).Concat(toTypesOfInterest("expense", groupTypesCfg.ToDebitTypesOfInterestEx()));
+            return toTypesOfInterest(IncomeTransGroupType, groupTypesCfg.ToCreditTypesOfInterestEx()).Concat(toTypesOfInterest(ExpenseTransGroupType, groupTypesCfg.ToDebitTypesOfInterestEx()));
         }
 
         public static IEnumerable<String> FromTransTypesOfInterest(this IEnumerable<TransactionType> typesOfInterest, string groupType)
@@ -362,7 +410,7 @@ namespace BudgetMgrServiceLib.Processors
         }
         public static IEnumerable<string> ToNamesOfInterest(this IEnumerable<Transaction> transactions, string groupType, GroupTypesCfgEx groupTypesCfg)
         {
-            var typesOfInterest = (groupType == "income") ? groupTypesCfg.ToCreditTypesOfInterestEx() : groupTypesCfg.ToDebitTypesOfInterestEx();
+            var typesOfInterest = (groupType == IncomeTransGroupType) ? groupTypesCfg.ToCreditTypesOfInterestEx() : groupTypesCfg.ToDebitTypesOfInterestEx();
 
             Func<IEnumerable<string>> namesFromTransactions = () => transactions.Where(currTrans => typesOfInterest.Any(typeOfInterest => typeOfInterest == currTrans.TransType))
                                                                                 .Select(currTrans => currTrans.Description)

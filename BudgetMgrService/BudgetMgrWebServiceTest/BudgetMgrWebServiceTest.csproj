@@ -9,6 +9,7 @@
 
   <ItemGroup>
 	<PackageReference Include="FluentAssertions" />
+	<PackageReference Include="Microsoft.Extensions.Options" />
 	<PackageReference Include="Microsoft.NET.Test.Sdk" />
 	<PackageReference Include="Moq" />
     <PackageReference Include="xunit" />
@@ -18,5 +19,12 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BudgetMgrServiceLib\BudgetMgrServiceLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\BudgetMgrWebService\BudgetMgrWebService.csproj" />
+  </ItemGroup>
+
 
 </Project>
