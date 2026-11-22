@@ -16,6 +16,13 @@ namespace BudgetMgrWebService.Processors
             IEnumerable<Transaction> transactions,
             string groupType)
         {
+            if ((groupType != TransactionGroupTypeProcessor.IncomeTransGroupType) &&
+                (groupType != TransactionGroupTypeProcessor.ExpenseTransGroupType) &&
+                (groupType != TransactionGroupTypeProcessor.MiscTransGroupType))
+            {
+                return new BadRequestResult();
+            }
+
             var materializedTransactions = transactions.ToArray();
             if (materializedTransactions.Length == 0)
             {

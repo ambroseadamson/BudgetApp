@@ -140,7 +140,40 @@ namespace BudgetMgrWebServiceTest
         [Fact]
         public async Task Test6_Posting_Valid_Data_With_Added_Transaction_Names_Reports_Datastore_With_Updated_Transaction_Names()
         {
+            // Arrange
+            var dataStore = createEmptyDataStore();
+            dataStore.SaveChanges();
 
+            var controller = new TransactionGroupTypeController(dataStore);
+
+            //// Act
+            var cfgData = genCfgData().ToArray();
+
+
+            var additionalNames = Enumerable.Range(1, 3).Select(Id => $"ADDITIONAL LOAN {Id}");
+            cfgData = cfgData.Select(group =>
+            {
+                if (group.GroupName == "loans")
+                {
+                    group = group with { Names = group.Names.Concat(additionalNames).ToArray() };
+                }
+                return group;
+            }).ToArray();
+
+            var result = await controller.Post(cfgData);
+
+            //// Assert
+            var okResult = Assert.IsType<OkResult>(result.Result);
+            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
+
+            var groupCfgResult = await controller.GetTransactionGroupCfg();
+
+            Assert.NotNull(groupCfgResult.Value);
+            Assert.NotEmpty(groupCfgResult.Value);
+            Assert.True(groupCfgResult.Value.Count() > 1);
+
+            var loansGroup = groupCfgResult.Value.First(group => (group.GroupName == "loans"));
+            Assert.Contains(loansGroup.Names, name => additionalNames.Contains(name));
         }
 
 
@@ -148,14 +181,91 @@ namespace BudgetMgrWebServiceTest
         [Fact]
         public async Task Test7_Posting_Valid_Data_With_Modified_Transaction_Names_Reports_Datastore_With_Modified_Transaction_Names()
         {
+            // Arrange
+            var dataStore = createEmptyDataStore();
+            dataStore.SaveChanges();
 
+            var controller = new TransactionGroupTypeController(dataStore);
+
+            //// Act
+            var cfgData = genCfgData().ToArray();
+
+
+            var modifiedlNames = new string[] { };
+            cfgData = cfgData.Select(group =>
+            {
+                if (group.GroupName == "loans")
+                {
+                    var index = 1;
+                    modifiedlNames = group.Names.Select(name =>
+                    {
+                        if (index <= 3)
+                        {
+                            name = $"{name}{index}";
+                        }
+                        index++;
+                        return name;
+                    }).ToArray();
+                    group = group with { Names = modifiedlNames };
+                }
+                return group;
+            }).ToArray();
+
+            var result = await controller.Post(cfgData);
+
+            //// Assert
+            var okResult = Assert.IsType<OkResult>(result.Result);
+            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
+
+            var groupCfgResult = await controller.GetTransactionGroupCfg();
+
+            Assert.NotNull(groupCfgResult.Value);
+            Assert.NotEmpty(groupCfgResult.Value);
+            Assert.True(groupCfgResult.Value.Count() > 1);
+
+            var loansGroup = groupCfgResult.Value.First(group => (group.GroupName == "loans"));
+            Assert.Equal(loansGroup.Names, modifiedlNames);
         }
 
         //Posting valid data with removed transaction names resulting in a datastore with the relevant transaction names removed
         [Fact]
         public async Task Test8_Posting_Valid_Data_With_Removed_Transaction_Names_Reports_Datastore_With_Relevant_Transaction_Names_Removed()
         {
+            // Arrange
+            var dataStore = createEmptyDataStore();
+            dataStore.SaveChanges();
 
+            var controller = new TransactionGroupTypeController(dataStore);
+
+            //// Act
+            var cfgData = genCfgData().ToArray();
+
+
+            var removedNames = new string[] { };
+            cfgData = cfgData.Select(group =>
+            {
+                if (group.GroupName == "loans")
+                {
+                    removedNames = group.Names.Take(3).ToArray();
+                    group = group with { Names = group.Names.Skip(3).ToArray() };
+                }
+                return group;
+            }).ToArray();
+
+            var result = await controller.Post(cfgData);
+
+            //// Assert
+            var okResult = Assert.IsType<OkResult>(result.Result);
+            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
+
+            var groupCfgResult = await controller.GetTransactionGroupCfg();
+
+            Assert.NotNull(groupCfgResult.Value);
+            Assert.NotEmpty(groupCfgResult.Value);
+            Assert.True(groupCfgResult.Value.Count() > 1);
+
+            var loansGroup = groupCfgResult.Value.First(group => (group.GroupName == "loans"));
+            Assert.DoesNotContain(loansGroup.Names, removedNames.AsCollection());
         }
 
         //Posting valid data with added transaction groups resulting in a datastore with the updated transaction groups
