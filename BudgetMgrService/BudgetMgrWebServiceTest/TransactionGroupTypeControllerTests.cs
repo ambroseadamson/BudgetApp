@@ -1,17 +1,27 @@
-﻿using BudgetMgrServiceLib.Generators;
-using BudgetMgrServiceLib.Models;
+﻿using BudgetMgrServiceLib.Models;
 using BudgetMgrServiceLib.Processors;
 using BudgetMgrWebService.Controllers;
 using BudgetMgrWebService.Processors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System;
-using Xunit;
 
 namespace BudgetMgrWebServiceTest
 {
+    public sealed class TransactionGroupCfgComparer : IEqualityComparer<TransactionGroupCfg>
+    {
+        public bool Equals(TransactionGroupCfg x, TransactionGroupCfg y)
+        {
+            // NOTE: The following has been commented to fully expose the failure to remove groups from the configuration
+            return ((x.GroupName == y.GroupName) && 
+                    (x.GroupType == y.GroupType) // && 
+                    //(x.Names.SequenceEqual(y.Names))
+                    );
+        }
+
+        public int GetHashCode(TransactionGroupCfg obj) => HashCode.Combine(obj.GroupName, obj.GroupType, obj.Names);
+    }
+
     public class TransactionGroupTypeControllerTests
     {
         public static readonly TestDataCfg testDataCfg = AppCfgProcessor.ToTestDataCfg();
@@ -272,13 +282,73 @@ namespace BudgetMgrWebServiceTest
         [Fact]
         public async Task Test9_Posting_Valid_Data_With_Added_Transaction_Groups_Reports_Datastore_With_Updated_Transaction_Groups()
         {
+            // Arrange
+            var dataStore = createEmptyDataStore();
+            dataStore.SaveChanges();
 
+            var controller = new TransactionGroupTypeController(dataStore);
+
+            //// Act
+            var cfgData = genCfgData().ToArray();
+
+            var addedGroup = new [] {
+                new TransactionGroupCfg(TransactionGroupTypeProcessor.DefaultId,
+                                        "AddedGroupName",
+                                        TransactionGroupTypeProcessor.ExpenseTransGroupType,
+                                        [
+                                            "EXPENSE ITEM 1",
+                                            "EXPENSE ITEM 2"
+                                            ])
+            };
+            cfgData = cfgData.Concat(addedGroup).ToArray();
+
+            var result = await controller.Post(cfgData);
+
+            //// Assert
+            var okResult = Assert.IsType<OkResult>(result.Result);
+            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
+
+            var groupCfgResult = await controller.GetTransactionGroupCfg();
+
+            Assert.NotNull(groupCfgResult.Value);
+            Assert.NotEmpty(groupCfgResult.Value);
+            Assert.True(groupCfgResult.Value.Count() > 1);
+
+            var comparer = new TransactionGroupCfgComparer();
+            Assert.Contains(addedGroup.First(), groupCfgResult.Value, comparer);
         }
 
         //Posting valid data with removed transaction groups resulting in a datastore with the relevant transaction names groups
         [Fact]
         public async Task Test10_Posting_Valid_Data_With_Removed_Transaction_Groups_Reports_Datastore_With_Relevant_Transaction_Groups_Removed()
         {
+            // Arrange
+            var dataStore = createEmptyDataStore();
+            dataStore.SaveChanges();
+
+            var controller = new TransactionGroupTypeController(dataStore);
+
+            //// Act
+            var cfgData = genCfgData().ToArray();
+
+            var groupToRemove = cfgData.First(group => group.GroupName == "loans");
+            groupToRemove = groupToRemove with { Id = TransactionGroupTypeProcessor.RemovedGroupId };
+            cfgData = cfgData.Select(group => (group.GroupName != "loans") ? group : groupToRemove).ToArray();
+
+            var result = await controller.Post(cfgData);
+
+            //// Assert
+            var okResult = Assert.IsType<OkResult>(result.Result);
+            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
+
+            var groupCfgResult = await controller.GetTransactionGroupCfg();
+
+            Assert.NotNull(groupCfgResult.Value);
+            Assert.NotEmpty(groupCfgResult.Value);
+            Assert.True(groupCfgResult.Value.Count() > 1);
+
+            var comparer = new TransactionGroupCfgComparer();
+            Assert.DoesNotContain(groupToRemove, groupCfgResult.Value, comparer);
 
         }
 

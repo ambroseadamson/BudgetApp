@@ -8,7 +8,8 @@ namespace BudgetMgrServiceLib.Processors
 {
     public static class TransactionGroupTypeProcessor
     {
-        public static long DefaultId(this TransactionGroupCfg group) => -1;
+        public readonly static long DefaultId = -1;
+        public readonly static long RemovedGroupId = -2;
 
         public static readonly string MiscTransGroupType = "misc";
         public static readonly string IncomeTransGroupType = "income";
@@ -131,7 +132,7 @@ namespace BudgetMgrServiceLib.Processors
         public static IEnumerable<TransactionGroupEx> ObtainTransGroups(this IEnumerable<TransactionGroupCfg> transGroupSrc, GroupTypesCfgEx groupTypesCfg = null)
         {
             return transGroupSrc.Select(transGroup => new TransactionGroupEx(
-                transGroup.DefaultId(),
+                TransactionGroupTypeProcessor.DefaultId,
                 transGroup.GroupName,
                 groupTypesCfg.TransGroupTypes.First(groupType => groupType.Type == transGroup.GroupType).Id
             ));

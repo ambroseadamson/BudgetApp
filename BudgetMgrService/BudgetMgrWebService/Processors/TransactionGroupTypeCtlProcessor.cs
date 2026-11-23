@@ -118,7 +118,7 @@ namespace BudgetMgrWebService.Processors
             var _updatedGroupCfgs = updatedGroupCfgs.Where(g => g.GroupName != TransactionGroupTypeProcessor.MiscTransGroupType).ToArray();
 
             return _updatedGroupCfgs.Select(g => {
-                if (g.Id == g.DefaultId() && (addedTransGroupStartIndex != null))
+                if (g.Id == TransactionGroupTypeProcessor.DefaultId && (addedTransGroupStartIndex != null))
                 {
                     addedTransGroupStartIndex = addedTransGroupStartIndex + 1;
                     return g with { Id = addedTransGroupStartIndex.Value };
