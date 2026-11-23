@@ -1,23 +1,14 @@
-﻿using BudgetMgrServiceLib.Generators;
-using BudgetMgrServiceLib.Models;
+﻿using BudgetMgrServiceLib.Models;
 using BudgetMgrServiceLib.Processors;
 using BudgetMgrWebService.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Transactions;
-using Xunit;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BudgetMgrWebServiceTest
 {
     public class TransactionSummaryControllerTests
     {
-        public static readonly TestDataCfg testDataCfg = AppCfgProcessor.ToTestDataCfg();
-        public static readonly GroupTypesCfgEx groupTypesCfg = AppCfgProcessor.ToGroupTypesCfgEx();
-        public static Func<TestDataCfg, GroupTypesCfgEx, DateTime, Random, SrcData> genSrcData = StatementGenerator.GenStatementData;
-
         private DataStore createDataStore()
         {
             var options = new DbContextOptionsBuilder<DataStore>()
@@ -25,13 +16,13 @@ namespace BudgetMgrWebServiceTest
                 .Options;
 
             var dataStore = new DataStore(options);
-            dataStore.CreditTypesOfInterest.AddRange(groupTypesCfg.CreditTypesOfInterest);
-            dataStore.DebitTypesOfInterest.AddRange(groupTypesCfg.DebitTypesOfInterest);
-            dataStore.TransNames.AddRange(groupTypesCfg.TransNames);
-            dataStore.TransTypes.AddRange(groupTypesCfg.TransTypes);
-            dataStore.TransGroupTypes.AddRange(groupTypesCfg.TransGroupTypes);
-            dataStore.TransGroups.AddRange(groupTypesCfg.TransGroups);
-            dataStore.NameRefs.AddRange(groupTypesCfg.NameRefs);
+            dataStore.CreditTypesOfInterest.AddRange(TestCfgDataSet.groupTypesCfg.CreditTypesOfInterest);
+            dataStore.DebitTypesOfInterest.AddRange(TestCfgDataSet.groupTypesCfg.DebitTypesOfInterest);
+            dataStore.TransNames.AddRange(TestCfgDataSet.groupTypesCfg.TransNames);
+            dataStore.TransTypes.AddRange(TestCfgDataSet.groupTypesCfg.TransTypes);
+            dataStore.TransGroupTypes.AddRange(TestCfgDataSet.groupTypesCfg.TransGroupTypes);
+            dataStore.TransGroups.AddRange(TestCfgDataSet.groupTypesCfg.TransGroups);
+            dataStore.NameRefs.AddRange(TestCfgDataSet.groupTypesCfg.NameRefs);
             return dataStore;
         }
 
@@ -59,12 +50,8 @@ namespace BudgetMgrWebServiceTest
         public async Task Test2_Get_Data_Store_Of_Transactions_Reports_Summary_Based_Upon_Transactions_In_Data_Store()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<DataStore>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
             var dataStore = createDataStore();
-            var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesCfg).ToArray();
+            var transactions = TestCfgDataSet.fixedTransactions;
             dataStore.Transactions.AddRange(transactions);
             dataStore.SaveChanges();
 
@@ -86,13 +73,8 @@ namespace BudgetMgrWebServiceTest
         public async Task Test3_Get_With_Date_Range_Outside_Of_Transactions_Reports_Not_Found_Error()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<DataStore>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
             var dataStore = createDataStore();
-
-            var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesCfg).ToArray();
+            var transactions = TestCfgDataSet.fixedTransactions;
             dataStore.Transactions.AddRange(transactions);
             dataStore.SaveChanges();
 
@@ -114,13 +96,8 @@ namespace BudgetMgrWebServiceTest
         public async Task Test4_Get_With_Date_Range_Within_Transactions_Reports_Summary_Based_Upon_Transactions_In_Data_Store()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<DataStore>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
             var dataStore = createDataStore();
-
-            var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesCfg).ToArray();
+            var transactions = TestCfgDataSet.fixedTransactions;
             dataStore.Transactions.AddRange(transactions);
             dataStore.SaveChanges();
 
@@ -145,13 +122,8 @@ namespace BudgetMgrWebServiceTest
         public async Task Test5_Get_With_Date_Range_Outside_Of_Range_And_Invalid_Transaction_Group_Type_Reports_Bad_Request_Error()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<DataStore>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
             var dataStore = createDataStore();
-
-            var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesCfg).ToArray();
+            var transactions = TestCfgDataSet.fixedTransactions;
             dataStore.Transactions.AddRange(transactions);
             dataStore.SaveChanges();
 
@@ -173,13 +145,8 @@ namespace BudgetMgrWebServiceTest
         public async Task Test6_Get_With_Date_Range_Outside_Of_Range_And_Valid_Transaction_Group_Type_Reports_Not_Found_Error()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<DataStore>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
             var dataStore = createDataStore();
-
-            var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesCfg).ToArray();
+            var transactions = TestCfgDataSet.fixedTransactions;
             dataStore.Transactions.AddRange(transactions);
             dataStore.SaveChanges();
 
@@ -201,13 +168,8 @@ namespace BudgetMgrWebServiceTest
         public async Task Test7_Get_With_Date_Range_Within_Range_And_Valid_Transaction_Group_Type_Reports_Summary_Based_Upon_Transactions_In_Data_Store()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<DataStore>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
             var dataStore = createDataStore();
-
-            var transactions = SrcTestDataProcessor.ObtainTransactionData(genSrcData, testDataCfg, groupTypesCfg).ToArray();
+            var transactions = TestCfgDataSet.fixedTransactions;
             dataStore.Transactions.AddRange(transactions);
             dataStore.SaveChanges();
 

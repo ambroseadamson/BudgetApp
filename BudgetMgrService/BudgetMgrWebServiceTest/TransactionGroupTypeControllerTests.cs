@@ -1,7 +1,6 @@
 ﻿using BudgetMgrServiceLib.Models;
 using BudgetMgrServiceLib.Processors;
 using BudgetMgrWebService.Controllers;
-using BudgetMgrWebService.Processors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,35 +23,28 @@ namespace BudgetMgrWebServiceTest
 
     public class TransactionGroupTypeControllerTests
     {
-        public static readonly TestDataCfg testDataCfg = AppCfgProcessor.ToTestDataCfg();
-        public static readonly GroupTypesCfgEx groupTypesCfg = AppCfgProcessor.ToGroupTypesCfgEx();
         private DataStore createEmptyDataStore()
         {
             var options = new DbContextOptionsBuilder<DataStore>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
+                              .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                              .Options;
             return new DataStore(options);
         }
 
         private DataStore createDataStore()
         {
             var dataStore = createEmptyDataStore();
-            dataStore.CreditTypesOfInterest.AddRange(groupTypesCfg.CreditTypesOfInterest);
-            dataStore.DebitTypesOfInterest.AddRange(groupTypesCfg.DebitTypesOfInterest);
-            dataStore.TransNames.AddRange(groupTypesCfg.TransNames);
-            dataStore.TransTypes.AddRange(groupTypesCfg.TransTypes);
-            dataStore.TransGroupTypes.AddRange(groupTypesCfg.TransGroupTypes);
-            dataStore.TransGroups.AddRange(groupTypesCfg.TransGroups);
-            dataStore.NameRefs.AddRange(groupTypesCfg.NameRefs);
+            dataStore.CreditTypesOfInterest.AddRange(TestCfgDataSet.groupTypesCfg.CreditTypesOfInterest);
+            dataStore.DebitTypesOfInterest.AddRange(TestCfgDataSet.groupTypesCfg.DebitTypesOfInterest);
+            dataStore.TransNames.AddRange(TestCfgDataSet.groupTypesCfg.TransNames);
+            dataStore.TransTypes.AddRange(TestCfgDataSet.groupTypesCfg.TransTypes);
+            dataStore.TransGroupTypes.AddRange(TestCfgDataSet.groupTypesCfg.TransGroupTypes);
+            dataStore.TransGroups.AddRange(TestCfgDataSet.groupTypesCfg.TransGroups);
+            dataStore.NameRefs.AddRange(TestCfgDataSet.groupTypesCfg.NameRefs);
             return dataStore;
         }
 
-        private IEnumerable<TransactionGroupCfg> genCfgData()
-        {
-            var dummyDataStore = createDataStore();
-            dummyDataStore.SaveChanges();
-            return dummyDataStore.ToTransactionGroupCfgs(false);
-        }
+        private IEnumerable<TransactionGroupCfg> obtainFixedCfgData() => TestCfgDataSet.fixedCfgData.Select(group => group with { Names = group.Names.ToArray() });
 
         //Get data store of no data reports an error(Not Found)
         [Fact]
@@ -138,7 +130,7 @@ namespace BudgetMgrWebServiceTest
             var controller = new TransactionGroupTypeController(dataStore);
 
             //// Act
-            var cfgData = genCfgData().ToArray();
+            var cfgData = obtainFixedCfgData().ToArray();
             var result = await controller.Post(cfgData);
 
             //// Assert
@@ -157,7 +149,7 @@ namespace BudgetMgrWebServiceTest
             var controller = new TransactionGroupTypeController(dataStore);
 
             //// Act
-            var cfgData = genCfgData().ToArray();
+            var cfgData = obtainFixedCfgData().ToArray();
 
 
             var additionalNames = Enumerable.Range(1, 3).Select(Id => $"ADDITIONAL LOAN {Id}");
@@ -198,7 +190,7 @@ namespace BudgetMgrWebServiceTest
             var controller = new TransactionGroupTypeController(dataStore);
 
             //// Act
-            var cfgData = genCfgData().ToArray();
+            var cfgData = obtainFixedCfgData().ToArray();
 
 
             var modifiedlNames = new string[] { };
@@ -234,7 +226,7 @@ namespace BudgetMgrWebServiceTest
             Assert.True(groupCfgResult.Value.Count() > 1);
 
             var loansGroup = groupCfgResult.Value.First(group => (group.GroupName == "loans"));
-            Assert.Equal(loansGroup.Names, modifiedlNames);
+            Assert.Equal(modifiedlNames.Order(), loansGroup.Names.Order());
         }
 
         //Posting valid data with removed transaction names resulting in a datastore with the relevant transaction names removed
@@ -248,7 +240,7 @@ namespace BudgetMgrWebServiceTest
             var controller = new TransactionGroupTypeController(dataStore);
 
             //// Act
-            var cfgData = genCfgData().ToArray();
+            var cfgData = obtainFixedCfgData().ToArray();
 
 
             var removedNames = new string[] { };
@@ -289,7 +281,7 @@ namespace BudgetMgrWebServiceTest
             var controller = new TransactionGroupTypeController(dataStore);
 
             //// Act
-            var cfgData = genCfgData().ToArray();
+            var cfgData = obtainFixedCfgData().ToArray();
 
             var addedGroup = new [] {
                 new TransactionGroupCfg(TransactionGroupTypeProcessor.DefaultId,
@@ -314,8 +306,9 @@ namespace BudgetMgrWebServiceTest
             Assert.NotEmpty(groupCfgResult.Value);
             Assert.True(groupCfgResult.Value.Count() > 1);
 
-            var comparer = new TransactionGroupCfgComparer();
-            Assert.Contains(addedGroup.First(), groupCfgResult.Value, comparer);
+            var addedGroupResult = groupCfgResult.Value.First(group => group.GroupName == "AddedGroupName");
+            Assert.Equal(addedGroup.First().GroupType, addedGroupResult.GroupType);
+            Assert.Equal(addedGroup.First().Names.Order(), addedGroupResult.Names.Order());
         }
 
         //Posting valid data with removed transaction groups resulting in a datastore with the relevant transaction names groups
@@ -329,7 +322,7 @@ namespace BudgetMgrWebServiceTest
             var controller = new TransactionGroupTypeController(dataStore);
 
             //// Act
-            var cfgData = genCfgData().ToArray();
+            var cfgData = obtainFixedCfgData().ToArray();
 
             var groupToRemove = cfgData.First(group => group.GroupName == "loans");
             groupToRemove = groupToRemove with { Id = TransactionGroupTypeProcessor.RemovedGroupId };
