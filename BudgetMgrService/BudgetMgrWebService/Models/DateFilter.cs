@@ -2,7 +2,6 @@ using BudgetMgrServiceLib.Models;
 
 public class DateFilter
 {
-    public int Id { get; set; }
     public DateTime StartDate { set; get; }
     public DateTime EndDate { get; set; }
 }

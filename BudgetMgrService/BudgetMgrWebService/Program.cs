@@ -1,7 +1,9 @@
 using BudgetMgrServiceLib.Models;
+using BudgetMgrWebService;
 using BudgetMgrWebService.Processors;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
+using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,21 @@ builder.Services.Configure<TestDataCfg>(builder.Configuration.GetSection("TestDa
 builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddTransient<BearerSecuritySchemeTransformer>();
+builder.Services.AddOpenApi("v1", options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+    options.AddDocumentTransformer((doc, _, _) =>
+    {
+        doc.Info = new OpenApiInfo
+        {
+            Title = "Budget Mgr Web API",
+            Version = "1.0",
+            Description = "Budget Calculation API.",
+        };
+        return Task.CompletedTask;
+    });
+});
 
 builder.Services.AddOptions();
 builder.Services.AddDbContext<DataStore>(opt => opt.UseInMemoryDatabase("transactions"));
@@ -41,11 +57,11 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.UseSwaggerUi(options =>
-    {
-        options.DocumentPath = "/openapi/v1.json";
-    });
+    // Serves /openapi/v1.json
+    app.MapOpenApi("/openapi/v1.json");
+
+    // Serves Scalar UI at /scalar
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
@@ -54,4 +70,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
