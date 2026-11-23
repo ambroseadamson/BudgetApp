@@ -22,21 +22,6 @@ namespace BudgetMgrWebService.Processors
             transactions.ExcludeIncomeTransactions(content.IncomeGroupNames)
                         .ToKnownNamesOfInterest(TransactionGroupTypeProcessor.ExpenseTransGroupType, content.GroupTypeCfg);
 
-
-        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> AddGroupData(this DataStore dbContext, IEnumerable<TransactionGroupCfg> groupsToAdd)
-        {
-            var groupTypesCfg = dbContext.ToGroupTypeCfgEx();
-
-            return groupTypesCfg.UpdateGroupData(groupsToAdd, Option.Some(groupsToAdd.GenTransGroupsToAdd(groupTypesCfg)));
-        }
-
-        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> RemoveGroupData(this DataStore dbContext, IEnumerable<TransactionGroupCfg> groupsToRemove)
-        {
-            var groupTypesCfg = dbContext.ToGroupTypeCfgEx();
-
-            return groupTypesCfg.UpdateGroupData(groupsToRemove, Option.Some(groupsToRemove.GenTransGroupsToRemove(groupTypesCfg)));
-        }
-
         public static GroupTypesCfgEx ToGroupTypeCfgEx(this DataStore dbContext)
         {
             var fnTransNameToUpper = (TransName transName) => transName with { Name = transName.Name.ToUpper() };
@@ -148,7 +133,7 @@ namespace BudgetMgrWebService.Processors
             {
                 srcGroupTypesCfgs = dataStore.InitialiseTransactionGroupCfg(collatedGroupCfgs);
             }
-            srcGroupTypesCfgs.AddGroupData(collatedGroupCfgs).UpdateGroupDataSource(dataStore);
+            srcGroupTypesCfgs.SyncGroupData(collatedGroupCfgs).UpdateGroupDataSource(dataStore);
         }
     }
 }
