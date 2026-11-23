@@ -12,6 +12,8 @@ namespace BudgetMgrServiceLib.Processors
 
         public static string ToDateURLParam(this DateTime dateStamp) => $"{dateStamp.Day}-{dateStamp.Month}-{dateStamp.Year}";
 
+        public static string ToDateStampString(this DateTime dateStamp) => dateStamp.ToString("s");//$"{dateStamp.Year}-{dateStamp.Month.ToString("D").Length + 1}-{dateStamp.Day.ToString("D").Length + 1}T{dateStamp.Hour.ToString("D").Length + 1}:{dateStamp.Minute.ToString("D").Length + 1}:{dateStamp.Second.ToString("D").Length + 1}Z";
+
         public static DateTime FromDateURLParam(this string urlParam) => DateTime.Parse(urlParam);
 
         public static string ToBoolURLParam(this bool param) => (param == true) ? "true" : "false";

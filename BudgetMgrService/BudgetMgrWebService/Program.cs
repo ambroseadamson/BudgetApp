@@ -21,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddOptions();
-builder.Services.AddDbContext<TransactionContext>(opt => opt.UseInMemoryDatabase("transactions"));
+builder.Services.AddDbContext<DataStore>(opt => opt.UseInMemoryDatabase("transactions"));
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
@@ -34,8 +34,8 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<TransactionContext>();
-    context.SeedWithData(app.Environment.ContentRootPath);
+    var dataStore = scope.ServiceProvider.GetRequiredService<DataStore>();
+    dataStore.SeedWithData(app.Environment.ContentRootPath);
 }
 
 // Configure the HTTP request pipeline.

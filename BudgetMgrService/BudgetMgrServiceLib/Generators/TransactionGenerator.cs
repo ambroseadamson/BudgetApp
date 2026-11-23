@@ -71,6 +71,11 @@ namespace BudgetMgrServiceLib.Generators
 
 
             var results = genStatementData(transactionSrcData).ToArray();
+            if (results.Count() == 0)
+            {
+                // TODO: replace hard coded strings with constants
+                return new TransactionResults("transactions.json", [], "No Data Available");
+            }
             return new TransactionResults("transactions.json", results, results.GenDateFilterCfgURLParam(testDataCfg.DateFilter.UseDateFilter));
         }
     }

@@ -10,37 +10,34 @@ namespace BudgetMgrWebService.Processors
         // TODO: expose the following group types via the web service API, so that the front end
         // can obtain the relevant transactions based upon those types from the back end.
 
-        private static readonly string miscellaenousGroupType = "misc";
-        private static readonly string expenseGroupType = "expense";
-
         public static IEnumerable<string> ToMiscTransNamesOfInterest(
             this IEnumerable<Transaction> transactions,
             TransactionContent content) =>
             transactions.ExcludeIncomeTransactions(content.IncomeGroupNames)
-                        .ToMiscNamesOfInterest(expenseGroupType, content.GroupTypeCfg);
+                        .ToMiscNamesOfInterest(TransactionGroupTypeProcessor.ExpenseTransGroupType, content.GroupTypeCfg);
 
         public static IEnumerable<string> ToKnownTransNamesOfInterest(
             this IEnumerable<Transaction> transactions,
             TransactionContent content) =>
             transactions.ExcludeIncomeTransactions(content.IncomeGroupNames)
-                        .ToKnownNamesOfInterest(expenseGroupType, content.GroupTypeCfg);
+                        .ToKnownNamesOfInterest(TransactionGroupTypeProcessor.ExpenseTransGroupType, content.GroupTypeCfg);
 
 
-        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> AddGroupData(this TransactionContext dbContext, IEnumerable<TransactionGroupCfg> groupsToAdd)
+        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> AddGroupData(this DataStore dbContext, IEnumerable<TransactionGroupCfg> groupsToAdd)
         {
             var groupTypesCfg = dbContext.ToGroupTypeCfgEx();
 
             return groupTypesCfg.UpdateGroupData(groupsToAdd, Option.Some(groupsToAdd.GenTransGroupsToAdd(groupTypesCfg)));
         }
 
-        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> RemoveGroupData(this TransactionContext dbContext, IEnumerable<TransactionGroupCfg> groupsToRemove)
+        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> RemoveGroupData(this DataStore dbContext, IEnumerable<TransactionGroupCfg> groupsToRemove)
         {
             var groupTypesCfg = dbContext.ToGroupTypeCfgEx();
 
             return groupTypesCfg.UpdateGroupData(groupsToRemove, Option.Some(groupsToRemove.GenTransGroupsToRemove(groupTypesCfg)));
         }
 
-        public static GroupTypesCfgEx ToGroupTypeCfgEx(this TransactionContext dbContext)
+        public static GroupTypesCfgEx ToGroupTypeCfgEx(this DataStore dbContext)
         {
             var fnTransNameToUpper = (TransName transName) => transName with { Name = transName.Name.ToUpper() };
             return new GroupTypesCfgEx(
@@ -54,44 +51,54 @@ namespace BudgetMgrWebService.Processors
             );
         }
 
-        public static Task<ActionResult<IEnumerable<TransactionGroupCfg>>> ToTransactionGroupCfgsAsync(this TransactionContext _context)
+        public static IEnumerable<TransactionGroupCfg> ToTransactionGroupCfgs(this DataStore dataStore, bool addMiscGroupType = true)
         {
-            var content = TransactionContent.Of(_context);
-            var _groups = content.GroupTypeCfg.ToTransNamesEx();
+            var content = dataStore.CreateTransactionContnent();
+            var groups = content.GroupTypeCfg.ToTransNamesEx();
+            if (addMiscGroupType == false)
+            {
+                return groups;
+            }
+
             var miscGroup = new TransactionGroupCfg(
-                _groups.GenerateUniqueId(cfg => (int)cfg.Id),
-                "misc",
-                "expense",
+                groups.GenerateUniqueId(cfg => (int)cfg.Id),
+                TransactionGroupTypeProcessor.MiscTransGroupType,
+                TransactionGroupTypeProcessor.ExpenseTransGroupType,
                 content.Transactions.ToMiscTransNamesOfInterest(content)
             ).AsCollection();
-            var transactionGroupCfgs = _groups.Concat(miscGroup).ToArray();
+            return groups.Concat(miscGroup);
+        }
 
-            return (transactionGroupCfgs.Length == 0)
+        public static Task<ActionResult<IEnumerable<TransactionGroupCfg>>> ToTransactionGroupCfgsAsync(this DataStore dataStore)
+        {
+            var transactionGroupCfgs = dataStore.ToTransactionGroupCfgs().ToArray();
+
+            return (transactionGroupCfgs.Count() == 1)
                 ? Task.FromResult<ActionResult<IEnumerable<TransactionGroupCfg>>>(new NotFoundResult())
                 : Task.FromResult<ActionResult<IEnumerable<TransactionGroupCfg>>>(transactionGroupCfgs);
         }
 
         public static void UpdateGroupDataSource(this Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> updateSourceReferences,
-                                                 TransactionContext dbContext)
+                                                 DataStore dataStore)
         {
-            updateSourceReferences.Item1.TransGroupsToAdd.MatchSome(groupsToAdd => dbContext.TransGroups.AddRange(groupsToAdd));
+            updateSourceReferences.Item1.TransGroupsToAdd.MatchSome(groupsToAdd => dataStore.TransGroups.AddRange(groupsToAdd));
 
-            updateSourceReferences.Item1.TransNamesToAdd.MatchSome(namesToAdd => dbContext.TransNames.AddRange(namesToAdd));
+            updateSourceReferences.Item1.TransNamesToAdd.MatchSome(namesToAdd => dataStore.TransNames.AddRange(namesToAdd));
 
             updateSourceReferences.Item1.NameRefsToRemove.MatchSome(nameRefIds =>
             {
                 nameRefIds.ForEach(nameRefId =>
                 {
-                    var nameRefToRemove = dbContext.NameRefs.FirstOrDefault(_nameRef => _nameRef.Id == nameRefId);
+                    var nameRefToRemove = dataStore.NameRefs.FirstOrDefault(_nameRef => _nameRef.Id == nameRefId);
                     // TODO: replace this with an optional match to avoid null reference exception
                     if (nameRefToRemove != null)
                     {
-                        dbContext.NameRefs.Remove(nameRefToRemove);
+                        dataStore.NameRefs.Remove(nameRefToRemove);
                     }
                 });
             });
 
-            updateSourceReferences.Item1.NameRefsToAdd.MatchSome(refsToAdd => dbContext.NameRefs.AddRange(refsToAdd));
+            updateSourceReferences.Item1.NameRefsToAdd.MatchSome(refsToAdd => dataStore.NameRefs.AddRange(refsToAdd));
         }
 
         public static IEnumerable<TransactionGroupCfg> CollateAddedGroupCfgs(this IEnumerable<TransactionGroupCfg> updatedGroupCfgs)
@@ -102,16 +109,16 @@ namespace BudgetMgrWebService.Processors
             // TODO: Also at the momment, you cannot remove a group type from the database,
             //       as this is not fully implemented at this time.
 
-            if (updatedGroupCfgs.Any(g => g.GroupName == miscellaenousGroupType) == false)
+            if (updatedGroupCfgs.Any(g => g.GroupName == TransactionGroupTypeProcessor.MiscTransGroupType) == false)
             {
                 return updatedGroupCfgs;
             }
 
-            var addedTransGroupStartIndex = updatedGroupCfgs.Where(g => g.GroupName == miscellaenousGroupType).FirstOrDefault()?.Id - 1;
-            var _updatedGroupCfgs = updatedGroupCfgs.Where(g => g.GroupName != miscellaenousGroupType).ToArray();
+            var addedTransGroupStartIndex = updatedGroupCfgs.Where(g => g.GroupName == TransactionGroupTypeProcessor.MiscTransGroupType).FirstOrDefault()?.Id - 1;
+            var _updatedGroupCfgs = updatedGroupCfgs.Where(g => g.GroupName != TransactionGroupTypeProcessor.MiscTransGroupType).ToArray();
 
             return _updatedGroupCfgs.Select(g => {
-                if (g.Id == g.DefaultId() && (addedTransGroupStartIndex != null))
+                if (g.Id == TransactionGroupTypeProcessor.DefaultId && (addedTransGroupStartIndex != null))
                 {
                     addedTransGroupStartIndex = addedTransGroupStartIndex + 1;
                     return g with { Id = addedTransGroupStartIndex.Value };
@@ -120,13 +127,28 @@ namespace BudgetMgrWebService.Processors
             }).ToArray();
         }
 
-        public static void UpdateTransactionGroupCfg(this TransactionContext _context, IEnumerable<TransactionGroupCfg> updatedGroupCfgs)
+        public static GroupTypesCfgEx InitialiseTransactionGroupCfg(this DataStore dataStore, IEnumerable<TransactionGroupCfg> updatedGroupCfgs)
+        {
+            dataStore.TransGroupTypes.AddRange(TransactionGroupTypeProcessor.DefaultTransGroupTypes);
+            dataStore.CreditTypesOfInterest.AddRange(TransactionGroupTypeProcessor.DefaultCreditTypeRefs);
+            dataStore.DebitTypesOfInterest.AddRange(TransactionGroupTypeProcessor.DefaultDebitTypeRefs);
+            dataStore.TransTypes.AddRange(TransactionGroupTypeProcessor.DefaultTransTypes);
+            dataStore.SaveChanges();
+            return dataStore.ToGroupTypeCfgEx();
+        }
+
+        public static void UpdateTransactionGroupCfg(this DataStore dataStore, IEnumerable<TransactionGroupCfg> updatedGroupCfgs)
         {
             // persist the groupCfg (which contains the COMPLETE updated data set) to the database, and update the relevant group data source with the new groupCfg data.
             // TODO: Also at the momment, you cannot remove a group type from the database,
             //       as this is not fully implemented at this time.
-            var srcGroupTypesCfgs = _context.ToGroupTypeCfgEx();
-            srcGroupTypesCfgs.AddGroupData(updatedGroupCfgs.CollateAddedGroupCfgs()).UpdateGroupDataSource(_context);
+            var srcGroupTypesCfgs = dataStore.ToGroupTypeCfgEx();
+            var collatedGroupCfgs = updatedGroupCfgs.CollateAddedGroupCfgs();
+            if (srcGroupTypesCfgs.IsEmpty())
+            {
+                srcGroupTypesCfgs = dataStore.InitialiseTransactionGroupCfg(collatedGroupCfgs);
+            }
+            srcGroupTypesCfgs.AddGroupData(collatedGroupCfgs).UpdateGroupDataSource(dataStore);
         }
     }
 }

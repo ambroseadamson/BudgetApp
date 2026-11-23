@@ -1,4 +1,5 @@
 using BudgetMgrServiceLib.Models;
+using BudgetMgrServiceLib.Processors;
 using BudgetMgrWebService.Processors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,21 +16,21 @@ namespace BudgetMgrWebService.Controllers
     [ApiController]
     public class SummaryResultController : ControllerBase
     {
-        private readonly TransactionContext _context;
+        private readonly DataStore dataStore;
 
-        public SummaryResultController(TransactionContext context)
+        public SummaryResultController(DataStore dataStore)
         {
-            _context = context;
+            this.dataStore = dataStore;
         }
 
         // GET: api/SummaryResult
         [HttpGet]
         public async Task<ActionResult<SummaryResult>> GetSummaryResult()
         {
-            return await _context.ToSummaryResultAsync();
+            return await dataStore.ToSummaryResultAsync();
 
-            // TODO:  Revert to the following usage context connects to an actual database    
-            // return await _context.SummaryResult.ToAsync();
+            // TODO:  Revert to the following usage dataStore connects to an actual database    
+            // return await dataStore.SummaryResult.ToAsync();
         }
 
 
@@ -38,15 +39,16 @@ namespace BudgetMgrWebService.Controllers
         public async Task<ActionResult<SummaryResult>> GetSummaryResultByDateRange([FromQuery] DateFilterBodyParams dateFilter)
         {
 
-            var summaryResult = await _context.FindSummaryResultAsync(dateFilter.StartDate, dateFilter.EndDate);
+            var summaryResult = await dataStore.FindSummaryResultAsync(dateFilter.StartDate, dateFilter.EndDate);
 
-            // TODO:  Revert to the following usage context connects to an actual database    
-            // var summaryResult = await _context.SummaryResult.FindAsync(startDate, endDate);
+            // TODO:  Revert to the following usage dataStore connects to an actual database    
+            // var summaryResult = await dataStore.SummaryResult.FindAsync(startDate, endDate);
 
-            if (summaryResult == null)
+            if ((summaryResult == null) || (summaryResult.Value == null))
             {
                 return NotFound();
             }
+
 
             return summaryResult;
         }
@@ -55,8 +57,12 @@ namespace BudgetMgrWebService.Controllers
         [HttpGet("SummaryResultByDateRangeAndGroupType")]
         public async Task<ActionResult<SummaryResult>> GetSummaryResultByDateRangeAndGroupType([FromQuery] DateFilterAndGroupTypeBodyParams dateFilter)
         {
+            if (dateFilter.GroupType != TransactionGroupTypeProcessor.ExpenseTransGroupType)
+            {
+                return BadRequest();
+            }
 
-            var summaryResult = await _context.FindSummaryResultAsync(dateFilter.StartDate, dateFilter.EndDate, dateFilter.GroupType);
+            var summaryResult = await dataStore.FindSummaryResultAsync(dateFilter.StartDate, dateFilter.EndDate, dateFilter.GroupType);
             if (summaryResult == null)
             {
                 return NotFound();

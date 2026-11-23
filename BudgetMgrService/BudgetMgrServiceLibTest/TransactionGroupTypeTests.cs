@@ -288,7 +288,7 @@ namespace BudgetMgrServiceLibTest
         public void Test6_ObtainMiscExpenseTransactionNames(Transaction currTrans)
         {
             var miscNames = currTrans.AsCollection()
-                                     .ToMiscNamesOfInterest("expense", groupTypesCfg)
+                                     .ToMiscNamesOfInterest(TransactionGroupTypeProcessor.ExpenseTransGroupType, groupTypesCfg)
                                      .ToArray();
 
             Assert.True(miscNames.Count() > 0);
@@ -301,7 +301,7 @@ namespace BudgetMgrServiceLibTest
         public void Test7_ObtainMiscIncomeTransactionNames(Transaction currTrans)
         {
             var miscNames = currTrans.AsCollection()
-                                     .ToMiscNamesOfInterest("income", groupTypesCfg)
+                                     .ToMiscNamesOfInterest(TransactionGroupTypeProcessor.IncomeTransGroupType, groupTypesCfg)
                                      .ToArray();
 
             Assert.True(miscNames.Count() > 0);
