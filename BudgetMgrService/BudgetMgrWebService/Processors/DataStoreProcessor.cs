@@ -91,7 +91,7 @@ namespace BudgetMgrWebService.Processors
 
                 var _expenditureGroupNames = (_groupType == groupType) ? miscTransNamesOfInterest : content.GroupTypeCfg.ToExpenseGroup(_groupType).Names.ToArray();
 
-                return new TransactionSummaryEntry(0, _groupType, allTransactions.GenTransactionSummaryData(content.IncomeGroupNames, _expenditureGroupNames).ExpSummaryPct);
+                return new TransactionSummaryEntry(_groupType, allTransactions.GenTransactionSummaryData(content.IncomeGroupNames, _expenditureGroupNames).ExpSummaryPct);
             };
 
             Func<string, TransactionCreditDetails> fnGenIncomeData = (_groupType) =>
@@ -102,7 +102,6 @@ namespace BudgetMgrWebService.Processors
             };
 
             return new SummaryResult(
-                0, 
                 fnGenIncomeData(fnObtainGroupNames().First()), 
                 allTransactions.CreateDateFilter(), 
                 fnObtainGroupNames().Select(groupName => fnGenTransData(groupName)).ToArray()

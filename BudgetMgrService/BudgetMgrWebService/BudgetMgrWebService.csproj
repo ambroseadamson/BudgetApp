@@ -20,8 +20,8 @@
 	  <PrivateAssets>all</PrivateAssets>
 	</PackageReference>
 	<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
-	<PackageReference Include="NSwag.AspNetCore" />
 	<PackageReference Include="Optional" />
+	<PackageReference Include="Scalar.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BudgetMgrServiceLib\BudgetMgrServiceLib.csproj" />
