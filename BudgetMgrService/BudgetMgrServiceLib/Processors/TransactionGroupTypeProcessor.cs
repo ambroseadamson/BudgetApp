@@ -247,9 +247,10 @@ namespace BudgetMgrServiceLib.Processors
         }
 
 
-        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> AddGroupData(this GroupTypesCfgEx groupTypesCfg, IEnumerable<TransactionGroupCfg> groupsToAdd)
+        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> SyncGroupData(this GroupTypesCfgEx groupTypesCfg, IEnumerable<TransactionGroupCfg> groupsToUpdate)
         {
-            return groupTypesCfg.UpdateGroupData(groupsToAdd, Option.Some(groupsToAdd.GenTransGroupsToAdd(groupTypesCfg)));
+            groupsToUpdate = groupsToUpdate.Where(group => group.Id != TransactionGroupTypeProcessor.RemovedGroupId).ToArray();
+            return groupTypesCfg.UpdateGroupData(groupsToUpdate, Option.Some(groupsToUpdate.GenTransGroupsToAdd(groupTypesCfg)));
         }
 
         public static TransactionGroupCfg ToUpdatedGroupWithDefault(this TransactionGroupCfg inputGroupType, IEnumerable<string> updatedNames)

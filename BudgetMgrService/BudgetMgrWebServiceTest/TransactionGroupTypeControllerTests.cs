@@ -10,15 +10,15 @@ namespace BudgetMgrWebServiceTest
 {
     public sealed class TransactionGroupCfgComparer : IEqualityComparer<TransactionGroupCfg>
     {
-        public bool Equals(TransactionGroupCfg x, TransactionGroupCfg y)
+        public bool Equals(TransactionGroupCfg? x, TransactionGroupCfg? y)
         {
-            // NOTE: The following has been commented to fully expose the failure to remove groups from the configuration
-            return ((x.GroupName == y.GroupName) && 
-                    (x.GroupType == y.GroupType) // && 
-                    //(x.Names.SequenceEqual(y.Names))
-                    );
-        }
+            if ((x == null) || (y == null))
+            {
+                return false;
+            }
 
+            return ((x.GroupName == y.GroupName) && (x.GroupType == y.GroupType) && (x.Names.SequenceEqual(y.Names)));
+        }
         public int GetHashCode(TransactionGroupCfg obj) => HashCode.Combine(obj.GroupName, obj.GroupType, obj.Names);
     }
 
@@ -350,7 +350,9 @@ namespace BudgetMgrWebServiceTest
             var comparer = new TransactionGroupCfgComparer();
             Assert.DoesNotContain(groupToRemove, groupCfgResult.Value, comparer);
 
+            // confirm that there are no "orphaned" transaction names
+            var miscGroups = groupCfgResult.Value.First(group => group.GroupName == TransactionGroupTypeProcessor.MiscTransGroupType);
+            Assert.Empty(miscGroups.Names);
         }
-
     }
 }
