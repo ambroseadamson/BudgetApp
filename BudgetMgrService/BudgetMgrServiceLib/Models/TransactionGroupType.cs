@@ -8,35 +8,31 @@ namespace BudgetMgrServiceLib.Models
     public record TransactionName(long Id, string TransType, string Name);
 
 
-    public record TransactionGroupEx(long Id, string GroupName, long GroupTypeFK);
-
-    public record TransactionNameEx(long Id, long TransGroupFK, long TransNameFK);
-
     public record TransactionGroupCfg(long Id, string GroupName, string GroupType, IEnumerable<string> Names);
 
     public record UpdateTransactionName(long Id, string Name);
 
     public record GroupTypesCfgEx(
-        IEnumerable<CreditTypeRef> CreditTypesOfInterest,
-        IEnumerable<DebitTypeRef> DebitTypesOfInterest,
+        IEnumerable<CreditTypeIndex> CreditTypesOfInterest,
+        IEnumerable<DebitTypeIndex> DebitTypesOfInterest,
         IEnumerable<TransName> TransNames,
         IEnumerable<TransType> TransTypes,
         IEnumerable<TransGroupType> TransGroupTypes,
-        IEnumerable<TransactionGroupEx> TransGroups,
-        IEnumerable<TransactionNameEx> NameRefs
+        IEnumerable<TransactionGroupIndex> TransGroups,
+        IEnumerable<TransactionNameIndex> NameRefs
     );
 
     public record GroupUpdateSourceReferences(
-        Option<IEnumerable<TransactionGroupEx>> TransGroupsToAdd,
+        Option<IEnumerable<TransactionGroupIndex>> TransGroupsToAdd,
         Option<IEnumerable<TransName>> TransNamesToAdd,
         Option<IEnumerable<long>> NameRefsToRemove,
-        Option<IEnumerable<TransactionNameEx>> NameRefsToAdd
+        Option<IEnumerable<TransactionNameIndex>> NameRefsToAdd
     );
 
     public record UpdatedGroupSources(
-        IEnumerable<TransactionNameEx> UpdatedNameRefs,
+        IEnumerable<TransactionNameIndex> UpdatedNameRefs,
         Option<IEnumerable<TransName>> UpdatedTransNames,
-        IEnumerable<TransactionGroupEx> UpdatedTransGroups
+        IEnumerable<TransactionGroupIndex> UpdatedTransGroups
     );
 
 }

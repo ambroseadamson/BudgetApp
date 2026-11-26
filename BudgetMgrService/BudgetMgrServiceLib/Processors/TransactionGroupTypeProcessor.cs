@@ -40,21 +40,21 @@ namespace BudgetMgrServiceLib.Processors
             new TransType(8, UnknownTransType)
         ];
 
-        public static readonly CreditTypeRef[] DefaultCreditTypeRefs = [
-            new CreditTypeRef(1, 1)
+        public static readonly CreditTypeIndex[] DefaultCreditTypeRefs = [
+            new CreditTypeIndex(1, 1)
         ];
 
-        public static readonly DebitTypeRef[] DefaultDebitTypeRefs = [
-            new DebitTypeRef(1, 2),
-            new DebitTypeRef(2, 3),
-            new DebitTypeRef(3, 4),
-            new DebitTypeRef(4, 5),
-            new DebitTypeRef(5, 6),
-            new DebitTypeRef(6, 7),
-            new DebitTypeRef(7, 8)
+        public static readonly DebitTypeIndex[] DefaultDebitTypeRefs = [
+            new DebitTypeIndex(1, 2),
+            new DebitTypeIndex(2, 3),
+            new DebitTypeIndex(3, 4),
+            new DebitTypeIndex(4, 5),
+            new DebitTypeIndex(5, 6),
+            new DebitTypeIndex(6, 7),
+            new DebitTypeIndex(7, 8)
         ];
 
-        private static Option<IEnumerable<TransactionGroupEx>> DefaultTransGroup = Option.None<IEnumerable<TransactionGroupEx>>();
+        private static Option<IEnumerable<TransactionGroupIndex>> DefaultTransGroup = Option.None<IEnumerable<TransactionGroupIndex>>();
 
         private static Option<string> DefaultGroupName = Option.None<string>();
 
@@ -62,16 +62,16 @@ namespace BudgetMgrServiceLib.Processors
 
         public static GroupUpdateSourceReferences CreateUpdateSourceReferences(Option<IEnumerable<TransName>> transNamesToAdd,
                                                                                Option<IEnumerable<long>> nameRefsToRemove,
-                                                                               Option<IEnumerable<TransactionNameEx>> nameRefsToAdd,
-                                                                               Option<IEnumerable<TransactionGroupEx>> transGroupsToAdd)
+                                                                               Option<IEnumerable<TransactionNameIndex>> nameRefsToAdd,
+                                                                               Option<IEnumerable<TransactionGroupIndex>> transGroupsToAdd)
 
         {
             return new GroupUpdateSourceReferences(transGroupsToAdd, transNamesToAdd, nameRefsToRemove, nameRefsToAdd);
         }
 
         public static UpdatedGroupSources CreateUpdatedGroupSources(Option<IEnumerable<TransName>> transNames,
-                                                                    IEnumerable<TransactionNameEx> nameRefs,
-                                                                    IEnumerable<TransactionGroupEx> transGroups)
+                                                                    IEnumerable<TransactionNameIndex> nameRefs,
+                                                                    IEnumerable<TransactionGroupIndex> transGroups)
 
         {
             return new UpdatedGroupSources(nameRefs,transNames,transGroups);
@@ -129,16 +129,16 @@ namespace BudgetMgrServiceLib.Processors
                                 .ToArray();
         }
 
-        public static IEnumerable<TransactionGroupEx> ObtainTransGroups(this IEnumerable<TransactionGroupCfg> transGroupSrc, GroupTypesCfgEx groupTypesCfg = null)
+        public static IEnumerable<TransactionGroupIndex> ObtainTransGroups(this IEnumerable<TransactionGroupCfg> transGroupSrc, GroupTypesCfgEx groupTypesCfg = null)
         {
-            return transGroupSrc.Select(transGroup => new TransactionGroupEx(
+            return transGroupSrc.Select(transGroup => new TransactionGroupIndex(
                 TransactionGroupTypeProcessor.DefaultId,
                 transGroup.GroupName,
                 groupTypesCfg.TransGroupTypes.First(groupType => groupType.Type == transGroup.GroupType).Id
             ));
         }
 
-        public static IEnumerable<TransactionGroupEx> GenTransGroupsToRemove(this IEnumerable<TransactionGroupCfg> removeSrc, GroupTypesCfgEx groupTypesCfg)
+        public static IEnumerable<TransactionGroupIndex> GenTransGroupsToRemove(this IEnumerable<TransactionGroupCfg> removeSrc, GroupTypesCfgEx groupTypesCfg)
         {
             var transGroupsToRemove = removeSrc.ObtainTransGroups(groupTypesCfg);
 
@@ -147,7 +147,7 @@ namespace BudgetMgrServiceLib.Processors
                                 .ToArray();
         }
 
-        public static IEnumerable<TransactionGroupEx> GenTransGroupsToAdd(this IEnumerable<TransactionGroupCfg> addSrc, GroupTypesCfgEx groupTypesCfg)
+        public static IEnumerable<TransactionGroupIndex> GenTransGroupsToAdd(this IEnumerable<TransactionGroupCfg> addSrc, GroupTypesCfgEx groupTypesCfg)
         {
             var transGroupsToAdd = addSrc.ObtainTransGroups(groupTypesCfg)
                                          .Where(group => groupTypesCfg.TransGroups.Any(transGroup => group.GroupName == transGroup.GroupName) == false)
@@ -171,29 +171,29 @@ namespace BudgetMgrServiceLib.Processors
             .ToArray();
         }
 
-        public static bool IsValidNameRef(this IEnumerable<TransName> transNames, TransactionNameEx nameRef, string name)
+        public static bool IsValidNameRef(this IEnumerable<TransName> transNames, TransactionNameIndex nameRef, string name)
         {
             return (transNames.First(transName => nameRef.TransNameFK == transName.Id).Name == name);
         }
 
-        public static IEnumerable<TransactionNameEx> ToNameRefsToAddFromGroup(this TransactionGroupCfg currGroup, IEnumerable<TransName> transNames, IEnumerable<TransactionNameEx> transNamesRefs)
+        public static IEnumerable<TransactionNameIndex> ToNameRefsToAddFromGroup(this TransactionGroupCfg currGroup, IEnumerable<TransName> transNames, IEnumerable<TransactionNameIndex> transNamesRefs)
         {
             return currGroup.Names.Where(name =>
             {
                 return transNamesRefs.Where(nameRef => nameRef.TransGroupFK == currGroup.Id)
                                      .Any(nameRef => transNames.IsValidNameRef(nameRef, name)) == false;
             })
-            .Select(name => new TransactionNameEx(0, currGroup.Id, transNames.First(transName => transName.Name == name).Id ));
+            .Select(name => new TransactionNameIndex(0, currGroup.Id, transNames.First(transName => transName.Name == name).Id ));
         }
 
-        public static IEnumerable<TransactionNameEx> GenNameRefsToAdd(this IEnumerable<TransactionGroupCfg> addSrc, IEnumerable<TransName> transNames, IEnumerable<TransactionNameEx> transNamesRefs)
+        public static IEnumerable<TransactionNameIndex> GenNameRefsToAdd(this IEnumerable<TransactionGroupCfg> addSrc, IEnumerable<TransName> transNames, IEnumerable<TransactionNameIndex> transNamesRefs)
         {
 
             var nameRefsToAdd = addSrc.Select(currSrc => currSrc.ToNameRefsToAddFromGroup(transNames, transNamesRefs))
                                       .Flatten();
 
             return transNamesRefs.GenerateUniqueIds(nameRefsToAdd, (transName) => (int)transName.Id)
-                                 .Zip(nameRefsToAdd, (id, nameRefToAdd) => new TransactionNameEx(id, nameRefToAdd.TransGroupFK, nameRefToAdd.TransNameFK))
+                                 .Zip(nameRefsToAdd, (id, nameRefToAdd) => new TransactionNameIndex(id, nameRefToAdd.TransGroupFK, nameRefToAdd.TransNameFK))
                                  .ToArray();
         }
 
@@ -216,7 +216,7 @@ namespace BudgetMgrServiceLib.Processors
             return groupTypesCfg.UpdateGroupData(groupsToUpdate, DefaultTransGroup);
         }
 
-        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> UpdateGroupData(this GroupTypesCfgEx groupTypesCfg, IEnumerable<TransactionGroupCfg> groupsToUpdate, Option<IEnumerable<TransactionGroupEx>> transGroupsToAdd)
+        public static Tuple<GroupUpdateSourceReferences, UpdatedGroupSources> UpdateGroupData(this GroupTypesCfgEx groupTypesCfg, IEnumerable<TransactionGroupCfg> groupsToUpdate, Option<IEnumerable<TransactionGroupIndex>> transGroupsToAdd)
         {
             var _updatedTransGroups = transGroupsToAdd.ValueOr(groupTypesCfg.TransGroups.ToArray());
 
@@ -228,7 +228,7 @@ namespace BudgetMgrServiceLib.Processors
 
             var nameRefsToAdd = updatedTransNames.Map(transNames => groupsToUpdate.GenNameRefsToAdd(transNames, groupTypesCfg.NameRefs));
 
-            var unwrappedRefsToAdd = nameRefsToAdd.ValueOr(new List<TransactionNameEx>() { });
+            var unwrappedRefsToAdd = nameRefsToAdd.ValueOr(new List<TransactionNameIndex>() { });
             var unwrappedRefsToRemove = nameRefsToRemove.ValueOr(new List<long>() { });
 
             var updatedNameRefs = groupTypesCfg.NameRefs.Where(nameRef => unwrappedRefsToRemove.Any(_nameRefId => _nameRefId == nameRef.Id) == false)
@@ -391,7 +391,7 @@ namespace BudgetMgrServiceLib.Processors
 
         public static IEnumerable<string> ToMiscNamesOfInterestFromCfg(this GroupTypesCfgEx groupTypesCfg)
         {
-            Func<TransactionNameEx, TransName, bool> hasMatchingNameRef = (nameRef, transName) => nameRef.TransNameFK == transName.Id;
+            Func<TransactionNameIndex, TransName, bool> hasMatchingNameRef = (nameRef, transName) => nameRef.TransNameFK == transName.Id;
 
             return groupTypesCfg.TransNames
                                 .Where(transName => groupTypesCfg.NameRefs.Any(nameRef => hasMatchingNameRef(nameRef, transName)) == false)
@@ -429,7 +429,7 @@ namespace BudgetMgrServiceLib.Processors
         }
 
 
-        public static TransactionGroupCfg FromGroupTypeEx(this TransactionGroupEx groupTypeEx, GroupTypesCfgEx groupTypesCfg)
+        public static TransactionGroupCfg FromGroupTypeEx(this TransactionGroupIndex groupTypeEx, GroupTypesCfgEx groupTypesCfg)
         {
             var groupTypeVal = groupTypesCfg.TransGroupTypes.First(transGroupType => transGroupType.Id == groupTypeEx.GroupTypeFK).Type;
 

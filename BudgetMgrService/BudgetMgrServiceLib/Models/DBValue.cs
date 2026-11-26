@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace BudgetMgrServiceLib.Models
 {
-    public record CreditTypeRef(
+    public record CreditTypeIndex(
         long Id,
         long TransTypeFK
     );
 
-    public record DebitTypeRef(
+    public record DebitTypeIndex(
         long Id,
         long TransTypeFK
     );
@@ -30,4 +26,7 @@ namespace BudgetMgrServiceLib.Models
         string Type
     );
 
+    public record TransactionGroupIndex(long Id, string GroupName, long GroupTypeFK);
+
+    public record TransactionNameIndex(long Id, long TransGroupFK, long TransNameFK);
 }

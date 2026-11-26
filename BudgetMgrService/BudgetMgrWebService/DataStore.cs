@@ -11,14 +11,14 @@ public class DataStore : DbContext
 
     public DbSet<Transaction> Transactions { get; set; }
 
-    public DbSet<CreditTypeRef> CreditTypesOfInterest { set; get; }
-    public DbSet<DebitTypeRef> DebitTypesOfInterest { set; get; }
+    public DbSet<CreditTypeIndex> CreditTypesOfInterest { set; get; }
+    public DbSet<DebitTypeIndex> DebitTypesOfInterest { set; get; }
     public DbSet<TransName> TransNames { set; get; }
     public DbSet<TransType> TransTypes { set; get; }
 
     public DbSet<TransGroupType> TransGroupTypes { set; get; }
 
-    public DbSet<TransactionGroupEx> TransGroups { set; get; }
+    public DbSet<TransactionGroupIndex> TransGroups { set; get; }
 
-    public DbSet<TransactionNameEx> NameRefs { set; get; }
+    public DbSet<TransactionNameIndex> NameRefs { set; get; }
 }

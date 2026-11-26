@@ -183,13 +183,13 @@ namespace BudgetMgrServiceLibTest
                 hashCodeGenerator = (x) => (x.GroupName.GetHashCode() + x.GroupType.GetHashCode() + x.Names.GetHashCode())
             };
 
-            FunctionalComparer<CreditTypeRef> creditTypeRefComparer = new FunctionalComparer<CreditTypeRef>()
+            FunctionalComparer<CreditTypeIndex> creditTypeRefComparer = new FunctionalComparer<CreditTypeIndex>()
             {
                 comparer = (x, y) => ((x.Id == y.Id) && (x.TransTypeFK == y.TransTypeFK)),
                 hashCodeGenerator = (x) => (x.Id.GetHashCode() + x.TransTypeFK.GetHashCode())
             };
 
-            FunctionalComparer<DebitTypeRef> debitTypeRefComparer = new FunctionalComparer<DebitTypeRef>()
+            FunctionalComparer<DebitTypeIndex> debitTypeRefComparer = new FunctionalComparer<DebitTypeIndex>()
             {
                 comparer = (x, y) => ((x.Id == y.Id) && (x.TransTypeFK == y.TransTypeFK)),
                 hashCodeGenerator = (x) => (x.Id.GetHashCode() + x.TransTypeFK.GetHashCode())
