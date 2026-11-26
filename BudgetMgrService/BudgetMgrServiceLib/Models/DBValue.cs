@@ -1,3 +1,5 @@
+using System;
+
 namespace BudgetMgrServiceLib.Models
 {
     public record CreditTypeIndex(
@@ -29,4 +31,6 @@ namespace BudgetMgrServiceLib.Models
     public record TransactionGroupIndex(long Id, string GroupName, long GroupTypeFK);
 
     public record TransactionNameIndex(long Id, long TransGroupFK, long TransNameFK);
+
+    public record Transaction(long Id, DateTime DateStamp, string TransType, string Description, double Amount);
 }
