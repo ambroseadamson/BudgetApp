@@ -17,11 +17,7 @@ namespace BudgetMgrWebService.Processors
                 return;
             }
 
-            var id = dataStore.ContentFilePath.Count() + 1;
-            var filePathDB = new FilePath(id, contentFilePath);
-
             var groupTypesEx = AppCfgProcessor.ToGroupTypesCfgEx(contentFilePath);
-            dataStore.ContentFilePath.Add(filePathDB);
             dataStore.CreditTypesOfInterest.AddRange(groupTypesEx.CreditTypesOfInterest);
             dataStore.DebitTypesOfInterest.AddRange(groupTypesEx.DebitTypesOfInterest);
             dataStore.TransNames.AddRange(groupTypesEx.TransNames);

@@ -135,23 +135,23 @@ namespace BudgetMgrWebServiceTest
 
         public static readonly string[] linesOfText = [
             "\"Account Name:\",\"FlexAccount ****97018\"\"",
-                "\"Account Balance:\",\"£83.91\"\"",
-                "\"Available Balance: \",\"�30.31\"\"",
-                "",
-                "\"Date\",\"Transaction type\",\"Description\",\"Paid out\",\"Paid in\",\"Balance\"\"",
-                "\"02 Nov 2026\",\"BANK CREDIT\",\"WORK\",\"\",\"�1024.83\",\"�0.00\"\"",
-                "\"03 Nov 2026\",\"ATM WITHDRAWAL\",\"PENSION\",\"�88.81\",\"\",\"�0.00\"\"",
-                "\"07 Nov 2026\",\"STANDING ORDER\",\"NONMAE GAS SERV\",\"�192.29\",\"\",\"�0.00\"\"",
-                "\"09 Nov 2026\",\"DIRECT DEBIT\",\"MORTGAGE\",\"�27.16\",\"\",\"�0.00\"\"",
-                "\"12 Nov 2026\",\"VISA PURCHASE\",\"SUPERMARKET DEU\",\"�185.69\",\"\",\"�0.00\"\"",
-                "\"12 Nov 2026\",\"UNPAID TRANSACTION FEE\",\"MORTGAGE\",\"�106\",\"\",\"�0.00\"\"",
-                "\"16 Nov 2026\",\"ATM WITHDRAWAL\",\"JUNGLE FR\",\"�44.46\",\"\",\"�0.00\"\"",
-                "\"24 Nov 2026\",\"DIRECT DEBIT\",\"NONMAE GAS ENERGY\",\"�185.36\",\"\",\"�0.00\"\"",
-                "\"24 Nov 2026\",\"ATM WITHDRAWAL\",\"WATER COMPANY\",\"�79.37\",\"\",\"�0.00\"\"",
-                "\"27 Nov 2026\",\"UNPAID TRANSACTION FEE\",\"COUNCIL TAX\",\"�-6.1\",\"\",\"�0.00\"\"",
-                "\"21 Nov 2026\",\"VISA PURCHASE\",\"MISC TRANSACTION 1\",\"�10\",\"\",\"�0.00\"\"",
-                "\"25 Nov 2026\",\"DIRECT DEBIT\",\"MISC TRANSACTION 2\",\"�10\",\"\",\"�0.00\"\"",
-                "\"26 Nov 2026\",\"VISA PURCHASE\",\"MISC TRANSACTION 3\",\"�10\",\"\",\"�0.00\"\""
+            "\"Account Balance:\",\"£83.91\"\"",
+            "\"Available Balance: \",\"�30.31\"\"",
+            "",
+            "\"Date\",\"Transaction type\",\"Description\",\"Paid out\",\"Paid in\",\"Balance\"\"",
+            "\"02 Nov 2026\",\"BANK CREDIT\",\"WORK\",\"\",\"�1024.83\",\"�0.00\"\"",
+            "\"03 Nov 2026\",\"ATM WITHDRAWAL\",\"PENSION\",\"�88.81\",\"\",\"�0.00\"\"",
+            "\"07 Nov 2026\",\"STANDING ORDER\",\"NONMAE GAS SERV\",\"�192.29\",\"\",\"�0.00\"\"",
+            "\"09 Nov 2026\",\"DIRECT DEBIT\",\"MORTGAGE\",\"�27.16\",\"\",\"�0.00\"\"",
+            "\"12 Nov 2026\",\"VISA PURCHASE\",\"SUPERMARKET DEU\",\"�185.69\",\"\",\"�0.00\"\"",
+            "\"12 Nov 2026\",\"UNPAID TRANSACTION FEE\",\"MORTGAGE\",\"�106\",\"\",\"�0.00\"\"",
+            "\"16 Nov 2026\",\"ATM WITHDRAWAL\",\"JUNGLE FR\",\"�44.46\",\"\",\"�0.00\"\"",
+            "\"24 Nov 2026\",\"DIRECT DEBIT\",\"NONMAE GAS ENERGY\",\"�185.36\",\"\",\"�0.00\"\"",
+            "\"24 Nov 2026\",\"ATM WITHDRAWAL\",\"WATER COMPANY\",\"�79.37\",\"\",\"�0.00\"\"",
+            "\"27 Nov 2026\",\"UNPAID TRANSACTION FEE\",\"COUNCIL TAX\",\"�-6.1\",\"\",\"�0.00\"\"",
+            "\"21 Nov 2026\",\"VISA PURCHASE\",\"MISC TRANSACTION 1\",\"�10\",\"\",\"�0.00\"\"",
+            "\"25 Nov 2026\",\"DIRECT DEBIT\",\"MISC TRANSACTION 2\",\"�10\",\"\",\"�0.00\"\"",
+            "\"26 Nov 2026\",\"VISA PURCHASE\",\"MISC TRANSACTION 3\",\"�10\",\"\",\"�0.00\"\""
         ];
 
         public static readonly IReadOnlyList<Transaction> fixedTransactions = [

@@ -16,6 +16,16 @@ namespace BudgetMgrServiceLib.Models
 
     public record UpdateTransactionName(long Id, string Name);
 
+    public record GroupTypesCfgEx(
+        IEnumerable<CreditTypeRef> CreditTypesOfInterest,
+        IEnumerable<DebitTypeRef> DebitTypesOfInterest,
+        IEnumerable<TransName> TransNames,
+        IEnumerable<TransType> TransTypes,
+        IEnumerable<TransGroupType> TransGroupTypes,
+        IEnumerable<TransactionGroupEx> TransGroups,
+        IEnumerable<TransactionNameEx> NameRefs
+    );
+
     public record GroupUpdateSourceReferences(
         Option<IEnumerable<TransactionGroupEx>> TransGroupsToAdd,
         Option<IEnumerable<TransName>> TransNamesToAdd,

@@ -11,8 +11,6 @@ public class DataStore : DbContext
 
     public DbSet<Transaction> Transactions { get; set; }
 
-    public DbSet<FilePath> ContentFilePath { get; set; }
-
     public DbSet<CreditTypeRef> CreditTypesOfInterest { set; get; }
     public DbSet<DebitTypeRef> DebitTypesOfInterest { set; get; }
     public DbSet<TransName> TransNames { set; get; }
@@ -23,6 +21,4 @@ public class DataStore : DbContext
     public DbSet<TransactionGroupEx> TransGroups { set; get; }
 
     public DbSet<TransactionNameEx> NameRefs { set; get; }
-
-    public DbSet<TransactionGroupCfg> TransactionGroupCfg { get; set; } = default!;
 }

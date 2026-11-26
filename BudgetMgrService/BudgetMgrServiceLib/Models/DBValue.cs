@@ -30,19 +30,4 @@ namespace BudgetMgrServiceLib.Models
         string Type
     );
 
-    public record FilePath(
-        long Id,
-        string Value
-    );
-
-    public record GroupTypesCfgEx(
-        IEnumerable<CreditTypeRef> CreditTypesOfInterest,
-        IEnumerable<DebitTypeRef> DebitTypesOfInterest,
-        IEnumerable<TransName> TransNames,
-        IEnumerable<TransType> TransTypes,
-        IEnumerable<TransGroupType> TransGroupTypes,
-        IEnumerable<TransactionGroupEx> TransGroups,
-        IEnumerable<TransactionNameEx> NameRefs
-    );
-
 }
